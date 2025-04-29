@@ -32,7 +32,7 @@ function HomePage() {
     const handleLogout = async () => {
         try {
             const response = await fetch('http://localhost:3000/logout', {
-                method: 'POST',
+                method: 'GET',
                 credentials: 'include', // Include cookies for authentication
                 headers: {
                     'Content-Type': 'application/json',
@@ -50,6 +50,32 @@ function HomePage() {
             console.error('Error during logout:', error);
         }
     };
+
+    // Check if the user is authenticated
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/status', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (!data.isAuthenticated) {
+                        navigate('/login');
+                    }
+                } else {
+                    navigate('/login');
+                }
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                navigate('/login');
+            }
+        };
+
+        checkAuthentication();
+    }, [navigate]);
 
     // Fetch games data from API
     // In your React component
