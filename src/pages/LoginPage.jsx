@@ -25,7 +25,7 @@ function LoginPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/login', {
+            const response = await fetch('http://localhost:3000/auth/login', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -44,7 +44,7 @@ function LoginPage() {
             localStorage.setItem('user', JSON.stringify(data.user));
 
             // Redirect to home page
-            navigate('/home');
+            navigate('/');
 
         } catch (error) {
             console.error('Login error:', error);
