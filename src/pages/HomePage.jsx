@@ -15,8 +15,30 @@ function HomePage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
+    const [cartCount, setCartCount] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Function to fetch cart count
+    const fetchCartCount = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/cart/count', {
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setCartCount(data.itemCount); // Changed from data.count to data.itemCount
+            }
+        } catch (error) {
+            console.error('Error fetching cart count:', error);
+        }
+    };
+
+    // Fetch cart count when component mounts
+    useEffect(() => {
+        fetchCartCount();
+    }, []);
 
     // Function to navigate to game details page
     const navigateToGameDetails = (game) => {
@@ -201,13 +223,8 @@ function HomePage() {
                 backgroundSize: 'cover', backgroundPosition: 'center'
             }}>
 
-            {/* Navbar */}
-            <Navbar
-                activeGenre={activeGenre}
-                setActiveGenre={setActiveGenre}
-                genres={genres}
-                filterGamesByGenre={filterGamesByGenre}
-            />
+            {/* Navbar with Cart Count - removed genre filter */}
+            <Navbar cartCount={cartCount} />
 
             {/* Hero Section - Enhanced Recent Uploads */}
             <section className="pt-16 pb-24 px-4 max-w-7xl mx-auto relative">
@@ -226,7 +243,6 @@ function HomePage() {
                     Check out the latest games added to our collection, fresh and ready for your discovery.
                 </p>
 
-                {/* ...existing code for loading, error states and recent games... */}
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
                         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#7C5DF9]"></div>
@@ -237,7 +253,6 @@ function HomePage() {
                     </div>
                 ) : (
                     <div className="flex flex-col md:flex-row gap-8 overflow-visible">
-                        {/* ...existing code for recent game cards... */}
                         {recentGames.map((game) => (
                             <div
                                 key={game.game_id}
@@ -247,7 +262,6 @@ function HomePage() {
                                 onMouseEnter={() => setHoveredCard(`game-${game.game_id}`)}
                                 onMouseLeave={() => setHoveredCard(null)}
                             >
-                                {/* ...existing code for game card contents... */}
                                 {/* Decorative card elements */}
                                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#7C5DF9]/10 rounded-full blur-xl 
                                   group-hover:bg-[#7C5DF9]/20 transition-all duration-500 overflow-visible"></div>
@@ -255,10 +269,8 @@ function HomePage() {
                                   group-hover:bg-[#9b5ffb]/20 transition-all duration-500 overflow-visible"></div>
 
                                 <div className="p-4 sm:p-6 md:p-8 relative">
-                                    {/* ...existing game card content... */}
                                     <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0 mb-4 sm:mb-6">
                                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
-                                            {/* ...existing game icon... */}
                                             {game.gameicon ? (
                                                 <img
                                                     src={game.gameicon}
@@ -344,7 +356,34 @@ function HomePage() {
                             `Explore our selection of ${activeGenre.toLowerCase()} titles curated just for you.`}
                 </p>
 
-                {/* ...existing code for all games grid... */}
+                {/* Genre Tabs - New Addition */}
+                <div className="mb-8 overflow-x-auto no-scrollbar">
+                    <div className="flex space-x-2 min-w-max pb-2">
+                        <button
+                            onClick={() => filterGamesByGenre('All')}
+                            className={`px-4 py-2 rounded-xl transition-all duration-200 ${activeGenre === 'All'
+                                ? 'bg-gradient-to-r cursor-pointer from-[#7C5DF9]/20 to-[#7C5DF9]/10 text-[#7C5DF9] font-medium border border-[#7C5DF9]/30'
+                                : 'bg-white/5 hover:bg-white/10 text-white/80 border border-white/10'
+                                }`}
+                        >
+                            All Genres
+                        </button>
+
+                        {genres.map((genreObj) => (
+                            <button
+                                key={genreObj.genre}
+                                onClick={() => filterGamesByGenre(genreObj.genre)}
+                                className={`px-4 py-2 rounded-xl cursor-pointer transition-all duration-200 ${activeGenre === genreObj.genre
+                                    ? 'bg-gradient-to-r from-[#7C5DF9]/20 to-[#7C5DF9]/10 text-[#7C5DF9] font-medium border border-[#7C5DF9]/30'
+                                    : 'bg-white/5 hover:bg-white/10 text-white/80 border border-white/10'
+                                    }`}
+                            >
+                                {genreObj.genre}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
                         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#7C5DF9]"></div>
@@ -363,7 +402,6 @@ function HomePage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                        {/* ...existing code for game grid items... */}
                         {allGames.map((game) => (
                             <div
                                 key={game.game_id}
