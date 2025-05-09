@@ -4,6 +4,7 @@ import { ShoppingCart, Trash2, Minus, Plus, ArrowLeft, ShoppingBag, X, CheckCirc
 import Navbar from '../components/Navbar';
 import overlay from '../assets/overlay.png';
 import logo from '../assets/logo.svg';
+import useAuthCheck from '../hooks/useAuthCheck';
 
 function CartPage() {
     const navigate = useNavigate();
@@ -18,6 +19,9 @@ function CartPage() {
     // New states for checkout process
     const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart', 'payment', 'confirmation'
     const [paymentMethod, setPaymentMethod] = useState('Credit Card');
+
+    // Check if the user is authenticated
+    useAuthCheck();
 
     // Show toast notification
     const showToast = (message, type = 'success') => {
@@ -288,11 +292,11 @@ function CartPage() {
             <Navbar />
 
             {/* Main Content */}
-            <div className="relative z-20 px-4 md:px-12 py-8 max-w-7xl mx-auto">
+            <div className="relative z-20 px-4 md:px-12 pt-24 pb-8 max-w-7xl mx-auto">
                 <div className="flex items-center gap-3 mb-8">
                     {checkoutStep === 'cart' ? (
                         <button
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/home')}
                             className="bg-white/10 hover:bg-white/15 transition-colors p-2 rounded-full"
                         >
                             <ArrowLeft size={20} />
@@ -333,7 +337,7 @@ function CartPage() {
                         <h2 className="text-2xl font-bold mb-2">Your Cart is Empty</h2>
                         <p className="text-gray-400 mb-6 max-w-md mx-auto">Looks like you haven't added any games to your cart yet. Browse our collection to find your next adventure!</p>
                         <Link
-                            to="/"
+                            to="/home"
                             className="bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-colors px-6 py-3 rounded-xl font-medium"
                         >
                             Explore Games

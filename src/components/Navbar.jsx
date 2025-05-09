@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.svg';
-import { Search, User, ShoppingCart, X, Package, Settings, LogOut } from 'lucide-react';
+import { Search, User, ShoppingCart, X, Package, LogOut } from 'lucide-react';
 
 function Navbar({ cartCount = 0 }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -9,6 +9,12 @@ function Navbar({ cartCount = 0 }) {
     const searchInputRef = useRef(null);
     const searchPopupRef = useRef(null);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Check if a given path is active
+    const isActive = (path) => {
+        return location.pathname === path;
+    };
 
     // Close menus when clicking outside
     useEffect(() => {
@@ -68,8 +74,14 @@ function Navbar({ cartCount = 0 }) {
         }
     };
 
+    // Function to clear search and return to all games
+    const clearSearch = () => {
+        setSearchTerm('')
+        navigate('/?reset=true', { replace: true });
+    };
+
     return (
-        <header className=" top-0 z-50 backdrop-blur-md border-b border-white/5">
+        <header className="fixed top-0 z-50 backdrop-blur-md border-b border-white/5 w-full">
             <nav className='flex justify-between items-center p-5 max-w-7xl mx-auto'>
                 <div className='flex items-center gap-4'>
                     <div className="flex items-center gap-8">
@@ -97,7 +109,7 @@ function Navbar({ cartCount = 0 }) {
                         />
                         {searchTerm && (
                             <button
-                                onClick={() => setSearchTerm('')}
+                                onClick={clearSearch}
                                 className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-white/40 hover:text-white/70 transition-colors"
                             >
                                 <X className="h-4 w-4" />
@@ -115,19 +127,19 @@ function Navbar({ cartCount = 0 }) {
                         <Search className="h-5 w-5 text-white" />
                     </button>
 
-                    {/* Navigation Icons */}
-                    <Link to="/orders" className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" title="My Orders">
-                        <Package className="h-5 w-5 text-white" />
+                    {/* Orders Icon - Active State when on Orders page */}
+                    <Link
+                        to="/orders"
+                        className={`h-10 w-10 flex items-center justify-center rounded-xl border transition-colors cursor-pointer ${isActive('/orders')
+                            ? 'bg-[#7C5DF9]/20 border-[#7C5DF9] text-[#7C5DF9]'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10 text-white'
+                            }`}
+                        title="My Orders"
+                    >
+                        <Package className="h-5 w-5" />
                     </Link>
 
-                    <Link to="/profile" className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" title="Profile">
-                        <User className="h-5 w-5 text-white" />
-                    </Link>
-
-                    <Link to="/settings" className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" title="Settings">
-                        <Settings className="h-5 w-5 text-white" />
-                    </Link>
-
+                    {/* Logout Button */}
                     <button
                         onClick={handleLogout}
                         className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer"
@@ -136,10 +148,17 @@ function Navbar({ cartCount = 0 }) {
                         <LogOut className="h-5 w-5 text-red-400" />
                     </button>
 
-                    <Link to="/cart" className="relative h-10 w-10 flex items-center justify-center rounded-xl bg-[#7C5DF9] border border-white/10 hover:bg-[#7C5DF9]/70 transition-colors cursor-pointer">
-                        <ShoppingCart className="h-5 w-5 text-white" />
+                    {/* Cart Icon - Active State when on Cart page */}
+                    <Link
+                        to="/cart"
+                        className={`relative h-10 w-10 flex items-center justify-center rounded-xl border transition-all duration-300 cursor-pointer ${isActive('/cart')
+                            ? 'bg-[#7C5DF9]/20 border-[#7C5DF9] text-[#7C5DF9]'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10 text-white'
+                            }`}
+                    >
+                        <ShoppingCart className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
                         {cartCount > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform transition-all duration-300 animate-fadeIn">
                                 {cartCount > 9 ? '9+' : cartCount}
                             </span>
                         )}
@@ -149,10 +168,10 @@ function Navbar({ cartCount = 0 }) {
 
             {/* Mobile Search Popup */}
             {isSearchPopupOpen && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-start justify-center p-4 md:hidden" onClick={() => setIsSearchPopupOpen(false)}>
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-999 flex items-start justify-center p-4 md:hidden" onClick={() => setIsSearchPopupOpen(false)}>
                     <div
                         ref={searchPopupRef}
-                        className="w-full max-w-md bg-[#1A1A1C] border border-white/10 rounded-xl p-4 mt-16 animate-slideDown shadow-xl"
+                        className="w-full max-w-md bg-[#1A1A1C] border border-white/10 rounded-[40px] p-4 mt-16 animate-slideDown shadow-xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between mb-4">
@@ -182,7 +201,7 @@ function Navbar({ cartCount = 0 }) {
                             />
                             {searchTerm && (
                                 <button
-                                    onClick={() => setSearchTerm('')}
+                                    onClick={clearSearch}
                                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-white/40 hover:text-white/70 transition-colors"
                                 >
                                     <X className="h-4 w-4" />

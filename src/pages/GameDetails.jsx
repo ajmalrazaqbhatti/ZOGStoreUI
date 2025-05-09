@@ -4,8 +4,12 @@ import { ShoppingCart, Heart, Minus, Plus, Share2, Play, ArrowLeft, Info, Clock,
 import logo from '../assets/logo.svg';
 import overlay from '../assets/overlay.png';
 import Navbar from '../components/Navbar';
+import useAuthCheck from '../hooks/useAuthCheck';
 
 function GameDetails() {
+    // Check if the user is authenticated
+    useAuthCheck();
+
     const navigate = useNavigate();
     const { gameId } = useParams();
     const [game, setGame] = useState(null);
@@ -81,7 +85,7 @@ function GameDetails() {
 
     // Handle back navigation
     const handleBack = () => {
-        navigate('/');
+        navigate('/home');
     };
 
     // Handle quantity change
@@ -218,7 +222,7 @@ function GameDetails() {
 
 
                 {/* Main Content */}
-                <div className="relative z-20 px-4 md:px-12 py-2  max-w-7xl mx-auto" >
+                <div className="relative z-20 px-4 md:px-12 pt-24 pb-8 max-w-7xl mx-auto" >
 
                     {/* Back Button */}
                     <button

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import overlay from '../assets/overlay.png'
 import { Eye, ChevronRight, Gamepad2, X } from 'lucide-react'
 import Navbar from '../components/Navbar'
+import useAuthCheck from '../hooks/useAuthCheck'
 
 function HomePage() {
     const [hoveredCard, setHoveredCard] = useState(null);
@@ -18,6 +19,9 @@ function HomePage() {
     const [cartCount, setCartCount] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Check if the user is authenticated
+    useAuthCheck();
 
     // Function to fetch cart count
     const fetchCartCount = async () => {
@@ -45,40 +49,42 @@ function HomePage() {
         navigate(`/game/${game.game_id}`, { state: { game } });
     };
 
-    // Check if the user is authenticated
-    useEffect(() => {
-        const checkAuthentication = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/auth/status', {
-                    method: 'GET',
-                    credentials: 'include',
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (!data.isAuthenticated) {
-                        navigate('/login');
-                    }
-                } else {
-                    navigate('/login');
-                }
-            } catch (error) {
-                console.error('Authentication check failed:', error);
-                navigate('/login');
-            }
-        };
-
-        checkAuthentication();
-    }, [navigate]);
-
-    // Parse search query from URL
+    // Parse search query from URL and handle reset parameter
     useEffect(() => {
         const query = new URLSearchParams(location.search);
         const search = query.get('search');
+        const reset = query.get('reset');
+
         if (search) {
             setSearchTerm(search);
             setIsSearching(true);
             handleSearchWithTerm(search);
+        } else if (reset === 'true') {
+            // Reset the game state to show all games
+            setSearchTerm('');
+            setIsSearching(false);
+            setActiveGenre('All');
+
+            // Fetch all games
+            setLoading(true);
+            fetch('http://localhost:3000/games', {
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    setAllGames(data);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    console.error("Error fetching games:", error);
+                    setError("Failed to load games. Please try again later.");
+                    setLoading(false);
+                });
         }
     }, [location.search]);
 
@@ -217,7 +223,7 @@ function HomePage() {
     };
 
     return (
-        <div className="bg-[#0A0A0B] min-h-screen text-white font-['Product_Sans',sans-serif] overflow-hidden"
+        <div className="bg-[#0A0A0B] min-h-screen text-white font-['Product_Sans',sans-serif] overflow-hidden pt-20"
             style={{
                 backgroundImage: `url(${overlay})`,
                 backgroundSize: 'cover', backgroundPosition: 'center'

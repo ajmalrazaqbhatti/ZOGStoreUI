@@ -43,8 +43,12 @@ function LoginPage() {
             // Store user data in localStorage or context if needed
             localStorage.setItem('user', JSON.stringify(data.user));
 
-            // Redirect to home page
-            navigate('/');
+            // Check user role and redirect accordingly
+            if (data.user.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/home');
+            }
 
         } catch (error) {
             console.error('Login error:', error);
