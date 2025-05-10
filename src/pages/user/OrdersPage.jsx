@@ -5,9 +5,9 @@ import {
     ArrowLeft, Filter, Truck, Ban, Search, Calendar, DollarSign,
     Inbox, RefreshCw, CreditCard
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import overlay from '../assets/overlay.png';
-import useAuthCheck from '../hooks/useAuthCheck';
+import Navbar from '../../components/Navbar';
+import overlay from '../../assets/overlay.png';
+import useAuthCheck from '../../hooks/useAuthCheck';
 
 function OrdersPage() {
     // Check if the user is authenticated

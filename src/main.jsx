@@ -1,16 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
+import HomePage from './pages/user/HomePage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
-import GameDetails from './pages/GameDetails'
-import CartPage from './pages/CartPage'
-import OrdersPage from './pages/OrdersPage'
-import AdminPage from './pages/AdminPage'
+import GameDetails from './pages/user/GameDetails'
+import CartPage from './pages/user/CartPage'
+import OrdersPage from './pages/user/OrdersPage'
+import AdminPage from './pages/admin/AdminPage'
 import './index.css'
-
-
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

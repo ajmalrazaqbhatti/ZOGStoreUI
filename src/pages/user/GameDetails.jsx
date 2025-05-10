@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ShoppingCart, Heart, Minus, Plus, Share2, Play, ArrowLeft, Info, Clock, X, CheckCircle, AlertCircle } from 'lucide-react';
-import logo from '../assets/logo.svg';
-import overlay from '../assets/overlay.png';
-import Navbar from '../components/Navbar';
-import useAuthCheck from '../hooks/useAuthCheck';
+import logo from '../../assets/logo.svg';
+import overlay from '../../assets/overlay.png';
+import Navbar from '../../components/Navbar';
+import useAuthCheck from '../../hooks/useAuthCheck';
 
 function GameDetails() {
     // Check if the user is authenticated

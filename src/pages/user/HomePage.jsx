@@ -1,9 +1,9 @@
 import { useState, useEffect, } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import overlay from '../assets/overlay.png'
+import overlay from '../../assets/overlay.png'
 import { Eye, ChevronRight, Gamepad2, X } from 'lucide-react'
-import Navbar from '../components/Navbar'
-import useAuthCheck from '../hooks/useAuthCheck'
+import Navbar from '../../components/Navbar'
+import useAuthCheck from '../../hooks/useAuthCheck'
 
 function HomePage() {
     const [hoveredCard, setHoveredCard] = useState(null);

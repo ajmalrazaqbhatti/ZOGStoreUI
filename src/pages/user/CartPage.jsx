@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Trash2, Minus, Plus, ArrowLeft, ShoppingBag, X, CheckCircle, AlertCircle, CreditCard, Wallet, Gift } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import overlay from '../assets/overlay.png';
-import logo from '../assets/logo.svg';
-import useAuthCheck from '../hooks/useAuthCheck';
+import Navbar from '../../components/Navbar';
+import overlay from '../../assets/overlay.png';
+import logo from '../../assets/logo.svg';
+import useAuthCheck from '../../hooks/useAuthCheck';
 
 function CartPage() {
     const navigate = useNavigate();

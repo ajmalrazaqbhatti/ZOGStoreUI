@@ -43,7 +43,7 @@ function Navbar({ cartCount = 0 }) {
 
             if (response.ok) {
                 console.log('User logged out successfully');
-                navigate('/login');
+                navigate('/');
             } else {
                 console.error('Logout failed');
             }
