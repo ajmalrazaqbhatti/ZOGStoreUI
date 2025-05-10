@@ -81,8 +81,14 @@ function AdminPage() {
 
     if (loading) {
         return (
-            <div className="flex h-screen items-center justify-center bg-[#0A0A0B]">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C5DF9]"></div>
+            <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
+                style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}>
+                <div className="relative h-20 w-20">
+                    <div className="absolute inset-0 rounded-full border-t-2 border-[#7C5DF9] animate-spin"></div>
+                    <div className="absolute inset-2 rounded-full border-t-2 border-[#7C5DF9]/60 animate-spin" style={{ animationDuration: '1.5s' }}></div>
+                    <div className="absolute inset-4 rounded-full border-t-2 border-[#7C5DF9]/30 animate-spin" style={{ animationDuration: '2s' }}></div>
+                </div>
+                <p className="mt-6 text-white/70 text-sm animate-pulse">Loading dashboard...</p>
             </div>
         );
     }
@@ -96,14 +102,14 @@ function AdminPage() {
 
             {/* Main Content */}
             <div className="lg:ml-64 transition-all duration-300">
-                <div className="p-4 md:p-8">
+                <div className="p-4 md:p-8 pt-20">
                     <header className="mb-8">
-                        <h1 className="text-2xl font-bold">Dashboard</h1>
-                        <p className="text-gray-400">Welcome to your admin dashboard</p>
+                        <h1 className="text-3xl font-bold">Dashboard</h1>
+                        <p className="text-gray-400">Welcome to your ZogStore dashboard</p>
                     </header>
 
                     {dashboardError && (
-                        <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 mb-6 text-red-200 flex items-center gap-3">
+                        <div className="bg-red-500/20 border border-red-500/30 rounded-3xl p-4 mb-6 text-red-200 flex items-center gap-3">
                             <AlertCircle size={18} />
                             <p>{dashboardError}</p>
                         </div>
@@ -111,43 +117,43 @@ function AdminPage() {
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-5 flex items-center gap-4 hover:bg-white/10 transition-colors">
                             <div className="bg-[#7C5DF9]/20 rounded-full p-3">
                                 <Users size={24} className="text-[#7C5DF9]" />
                             </div>
                             <div>
                                 <p className="text-gray-400 text-sm">Total Users</p>
-                                <h3 className="text-2xl font-bold">{stats?.totalUsers || 0}</h3>
+                                <h3 className="text-3xl font-bold">{stats?.totalUsers || 0}</h3>
                             </div>
                         </div>
 
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-5 flex items-center gap-4 hover:bg-white/10 transition-colors">
                             <div className="bg-[#7C5DF9]/20 rounded-full p-3">
                                 <Layers size={24} className="text-[#7C5DF9]" />
                             </div>
                             <div>
                                 <p className="text-gray-400 text-sm">Total Games</p>
-                                <h3 className="text-2xl font-bold">{stats?.totalGames || 0}</h3>
+                                <h3 className="text-3xl font-bold">{stats?.totalGames || 0}</h3>
                             </div>
                         </div>
 
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-5 flex items-center gap-4 hover:bg-white/10 transition-colors">
                             <div className="bg-[#7C5DF9]/20 rounded-full p-3">
                                 <ShoppingBag size={24} className="text-[#7C5DF9]" />
                             </div>
                             <div>
                                 <p className="text-gray-400 text-sm">Total Orders</p>
-                                <h3 className="text-2xl font-bold">{stats?.totalOrders || 0}</h3>
+                                <h3 className="text-3xl font-bold">{stats?.totalOrders || 0}</h3>
                             </div>
                         </div>
 
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-5 flex items-center gap-4 hover:bg-white/10 transition-colors">
                             <div className="bg-[#7C5DF9]/20 rounded-full p-3">
                                 <DollarSign size={24} className="text-[#7C5DF9]" />
                             </div>
                             <div>
                                 <p className="text-gray-400 text-sm">Total Sales</p>
-                                <h3 className="text-2xl font-bold">{formatCurrency(stats?.totalSales)}</h3>
+                                <h3 className="text-3xl font-bold">{formatCurrency(stats?.totalSales)}</h3>
                             </div>
                         </div>
                     </div>
@@ -155,13 +161,13 @@ function AdminPage() {
                     {/* Data Cards Row */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                         {/* Recent Orders */}
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 hover:bg-white/10 transition-colors">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-lg font-bold flex items-center gap-2">
                                     <Activity size={18} className="text-[#7C5DF9]" />
                                     Recent Orders
                                 </h3>
-                                <Link to="/admin/orders" className="text-sm text-[#7C5DF9] hover:underline">
+                                <Link to="/admin/orders" className="text-sm text-[#7C5DF9] hover:text-[#9F7AFF] transition-colors hover:underline">
                                     View All
                                 </Link>
                             </div>
@@ -189,7 +195,7 @@ function AdminPage() {
                         </div>
 
                         {/* Payment Methods */}
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 hover:bg-white/10 transition-colors">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-lg font-bold flex items-center gap-2">
                                     <CreditCard size={18} className="text-[#7C5DF9]" />
@@ -219,13 +225,13 @@ function AdminPage() {
 
                     {/* Top Games Card */}
                     {topGames.length > 0 && (
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-8">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 mb-8 hover:bg-white/10 transition-colors">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-lg font-bold flex items-center gap-2">
                                     <BarChart3 size={18} className="text-[#7C5DF9]" />
                                     Top Selling Games
                                 </h3>
-                                <Link to="/admin/games" className="text-sm text-[#7C5DF9] hover:underline">
+                                <Link to="/admin/games" className="text-sm text-[#7C5DF9] hover:text-[#9F7AFF] transition-colors hover:underline">
                                     View All Games
                                 </Link>
                             </div>
@@ -247,7 +253,7 @@ function AdminPage() {
                                     </thead>
                                     <tbody className="divide-y divide-white/10">
                                         {topGames.map(game => (
-                                            <tr key={game.game_id} className="hover:bg-white/5">
+                                            <tr key={game.game_id} className="hover:bg-white/5 transition-colors">
                                                 <td className="px-4 py-3 whitespace-nowrap font-medium">
                                                     {game.title}
                                                 </td>

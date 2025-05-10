@@ -12,6 +12,7 @@ import {
     ChevronRight
 } from 'lucide-react';
 import logo from '../assets/logo.svg';
+import overlay from '../assets/overlay.png';
 
 function AdminSidebar() {
     const location = useLocation();
@@ -99,7 +100,7 @@ function AdminSidebar() {
         <>
             {/* Mobile Menu Button */}
             <button
-                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[#1A1A1C] text-white"
+                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[#0A0A0B]/80 backdrop-blur-md border border-white/10 text-white"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -108,36 +109,35 @@ function AdminSidebar() {
             {/* Sidebar Overlay (Mobile) */}
             {isMobileMenuOpen && (
                 <div
-                    className="lg:hidden fixed inset-0 bg-black/80 z-40"
+                    className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-md z-40"
                     onClick={() => setIsMobileMenuOpen(false)}
                 ></div>
             )}
 
             {/* Sidebar */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#1A1A1C] text-white transform transition-transform duration-300 ease-in-out ${(isOpen || isMobileMenuOpen) ? 'translate-x-0' : '-translate-x-full'
+                className={`fixed inset-y-0 left-0 z-50 w-64  backdrop-blur-md text-white transform transition-transform duration-300 ease-in-out ${(isOpen || isMobileMenuOpen) ? 'translate-x-0' : '-translate-x-full'
                     } lg:translate-x-0 border-r border-white/10`}
+                style={{
+                    backgroundImage: `url(${overlay})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundBlendMode: 'overlay'
+                }}
             >
                 {/* Logo and Header */}
                 <div className="p-4 flex justify-between items-center border-b border-white/10">
                     <Link to="/admin" className="flex items-center gap-2">
-                        <img src={logo} alt="ZOG Store" className="h-8" />
-                        <span className="font-bold text-lg">Admin</span>
+                        <img src={logo} alt="ZOG Store" className="h-8 drop-shadow-[0_0_10px_rgba(167,139,250,0.3)]" />
+                        <span className="font-bold text-lg">ZOGStore</span>
                     </Link>
 
-                    {/* Toggle Button (Desktop) */}
-                    <button
-                        className="hidden lg:block p-1 rounded hover:bg-white/10"
-                        onClick={() => setIsOpen(!isOpen)}
-                    >
-                        <ChevronRight size={20} className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                    </button>
                 </div>
 
                 {/* User Info */}
                 <div className="p-4 border-b border-white/10">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#7C5DF9]/30 flex items-center justify-center text-[#7C5DF9] font-bold">
+                        <div className="w-10 h-10 rounded-full bg-[#7C5DF9]/20 flex items-center justify-center text-[#7C5DF9] font-bold">
                             {userData?.username?.charAt(0).toUpperCase() || 'A'}
                         </div>
                         <div>
@@ -154,9 +154,9 @@ function AdminSidebar() {
                             <li key={item.path}>
                                 <Link
                                     to={item.path}
-                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive(item.path)
-                                            ? 'bg-[#7C5DF9]/20 text-[#7C5DF9] font-medium'
-                                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                                    className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors ${isActive(item.path)
+                                        ? 'bg-[#7C5DF9]/20 text-[#7C5DF9] border border-[#7C5DF9]/30 font-medium'
+                                        : 'text-white/70 hover:bg-white/5 hover:text-white border border-transparent'
                                         }`}
                                 >
                                     {item.icon}
@@ -168,10 +168,10 @@ function AdminSidebar() {
                 </nav>
 
                 {/* Logout Button */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+                <div className="absolute bottom-0 left-0 right-0 p-4">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-red-400 hover:bg-red-500/10 transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 w-full rounded-xl text-red-400 hover:bg-red-500/10 transition-colors border border-transparent hover:border-red-500/20 cursor-pointer"
                     >
                         <LogOut size={20} />
                         <span>Logout</span>

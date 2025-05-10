@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Search, Plus, Edit, Trash2, Filter, RefreshCw, AlertCircle, Check, X, Save } from 'lucide-react';
 import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
@@ -18,6 +18,8 @@ function GameManagement() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [gameToDelete, setGameToDelete] = useState(null);
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchTimeout, setSearchTimeout] = useState(null);
 
     // Edit game modal states
     const [showEditModal, setShowEditModal] = useState(false);
@@ -28,8 +30,7 @@ function GameManagement() {
         price: '',
         platform: '',
         genre: '',
-        gameicon: '',
-        stock_quantity: ''
+        gameicon: ''
     });
     const [editFormErrors, setEditFormErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
@@ -42,7 +43,6 @@ function GameManagement() {
         price: '',
         genre: '',
         platform: '',
-        stock_quantity: '0',
         gameicon: ''
     });
     const [addFormErrors, setAddFormErrors] = useState({});
@@ -54,29 +54,41 @@ function GameManagement() {
         fetchGenres();
     }, []);
 
+    // Debounced search function
+    const performSearch = useCallback((query) => {
+        // Clear any existing timeout
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+
+        // If search term is empty, just return to regular filtering
+        if (!query.trim()) {
+            if (selectedGenre !== 'All') {
+                fetchGamesByGenre(selectedGenre);
+            } else {
+                fetchGames();
+            }
+            return;
+        }
+
+        // Set a new timeout for the search API call
+        const timeout = setTimeout(() => {
+            fetchGamesBySearch(query);
+        }, 500); // 500ms debounce
+
+        setSearchTimeout(timeout);
+    }, [selectedGenre, searchTimeout]);
+
     // Filter games based on search term and genre
     useEffect(() => {
-        if (!games) return;
-
-        let filtered = [...games];
-
-        // Apply genre filter
-        if (selectedGenre !== 'All') {
-            filtered = filtered.filter(game => game.genre === selectedGenre);
-        }
-
-        // Apply search filter
         if (searchTerm) {
-            const search = searchTerm.toLowerCase();
-            filtered = filtered.filter(game =>
-                game.title.toLowerCase().includes(search) ||
-                game.description.toLowerCase().includes(search) ||
-                String(game.game_id).includes(search)
-            );
+            performSearch(searchTerm);
+        } else if (selectedGenre !== 'All') {
+            fetchGamesByGenre(selectedGenre);
+        } else {
+            fetchGames();
         }
-
-        setFilteredGames(filtered);
-    }, [searchTerm, selectedGenre, games]);
+    }, [searchTerm, selectedGenre, performSearch]);
 
     const fetchGames = async () => {
         setLoading(true);
@@ -99,6 +111,56 @@ function GameManagement() {
             setError('Failed to load games. Please try again.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchGamesByGenre = async (genre) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetch(`http://localhost:3000/games/filter?genre=${encodeURIComponent(genre)}`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch games by genre');
+            }
+
+            const data = await response.json();
+            setGames(data);
+            setFilteredGames(data);
+        } catch (error) {
+            console.error('Error fetching games by genre:', error);
+            setError('Failed to filter games. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchGamesBySearch = async (title) => {
+        if (!title.trim()) return;
+
+        setIsSearching(true);
+        setError(null);
+
+        try {
+            const response = await fetch(`http://localhost:3000/games/search?title=${encodeURIComponent(title)}`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to search games');
+            }
+
+            const data = await response.json();
+            setGames(data);
+            setFilteredGames(data);
+        } catch (error) {
+            console.error('Error searching games:', error);
+            setError('Failed to search games. Please try again.');
+        } finally {
+            setIsSearching(false);
         }
     };
 
@@ -177,7 +239,6 @@ function GameManagement() {
             price: game.price || '',
             genre: game.genre || '',
             platform: game.platform || '',
-            stock_quantity: game.stock_quantity || '',
             gameicon: game.gameicon || ''
         });
         setEditFormErrors({});
@@ -194,7 +255,6 @@ function GameManagement() {
             price: '',
             genre: '',
             platform: '',
-            stock_quantity: '',
             gameicon: ''
         });
         setEditFormErrors({});
@@ -239,12 +299,6 @@ function GameManagement() {
             errors.price = 'Price must be a valid number';
         }
 
-        if (!editForm.stock_quantity.toString().trim()) {
-            errors.stock_quantity = 'Stock quantity is required';
-        } else if (isNaN(parseInt(editForm.stock_quantity))) {
-            errors.stock_quantity = 'Stock quantity must be a valid number';
-        }
-
         setEditFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -272,7 +326,6 @@ function GameManagement() {
                     price: editForm.price,
                     genre: editForm.genre,
                     platform: editForm.platform,
-                    stock_quantity: parseInt(editForm.stock_quantity),
                     gameicon: editForm.gameicon
                 }),
             });
@@ -291,7 +344,6 @@ function GameManagement() {
                         price: editForm.price,
                         genre: editForm.genre,
                         platform: editForm.platform,
-                        stock_quantity: parseInt(editForm.stock_quantity),
                         gameicon: editForm.gameicon
                     }
                     : game
@@ -315,7 +367,6 @@ function GameManagement() {
             price: '',
             genre: '',
             platform: '',
-            stock_quantity: '0',
             gameicon: ''
         });
         setAddFormErrors({});
@@ -331,7 +382,6 @@ function GameManagement() {
             price: '',
             genre: '',
             platform: '',
-            stock_quantity: '0',
             gameicon: ''
         });
         setAddFormErrors({});
@@ -376,12 +426,6 @@ function GameManagement() {
             errors.price = 'Price must be a valid number';
         }
 
-        if (!addForm.stock_quantity.toString().trim()) {
-            errors.stock_quantity = 'Stock quantity is required';
-        } else if (isNaN(parseInt(addForm.stock_quantity))) {
-            errors.stock_quantity = 'Stock quantity must be a valid number';
-        }
-
         setAddFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -409,7 +453,6 @@ function GameManagement() {
                     price: addForm.price,
                     genre: addForm.genre,
                     platform: addForm.platform,
-                    stock_quantity: parseInt(addForm.stock_quantity),
                     gameicon: addForm.gameicon
                 }),
             });
@@ -448,17 +491,17 @@ function GameManagement() {
                 <div className="p-4 md:p-8">
                     {/* Toast Notification */}
                     {toast.visible && (
-                        <div className={`fixed bottom-4 right-4 z-50 p-4 rounded-xl shadow-xl flex items-center gap-3 animate-fadeIn
-                            bg-black/80 backdrop-blur-md border ${toast.type === 'success' ? 'border-green-500/30' : 'border-red-500/30'} max-w-md`}>
+                        <div className="fixed bottom-4 right-4 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-fadeIn
+                            bg-black/80 backdrop-blur-md border border-white/10 max-w-md">
                             {toast.type === 'success' ? (
-                                <Check className="h-5 w-5 text-green-400" />
+                                <Check className="h-5 w-5 text-[#7C5DF9]" />
                             ) : (
                                 <AlertCircle className="h-5 w-5 text-red-400" />
                             )}
                             <span className="text-white text-sm">{toast.message}</span>
                             <button
                                 onClick={() => setToast(prev => ({ ...prev, visible: false }))}
-                                className="ml-2 text-white/50 hover:text-white"
+                                className="ml-2 text-white/50 hover:text-white transition-colors cursor-pointer"
                             >
                                 <X size={16} />
                             </button>
@@ -468,22 +511,23 @@ function GameManagement() {
                     {/* Delete Confirmation Modal */}
                     {showDeleteModal && (
                         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                            <div className="bg-[#1A1A1C] rounded-2xl p-6 max-w-md w-full shadow-xl border border-white/10">
-                                <h3 className="text-xl font-bold mb-2">Delete Game</h3>
-                                <p className="text-gray-400 mb-4">
+                            <div className="bg-[#1A1A1C] rounded-3xl p-5 max-w-sm w-full shadow-3xl border border-white/10">
+                                <h3 className="text-lg font-bold mb-2">Delete Game</h3>
+                                <p className="text-gray-400 mb-4 text-sm">
                                     Are you sure you want to delete "{gameToDelete?.title}"? This action cannot be undone.
                                 </p>
                                 <div className="flex gap-3 justify-end">
                                     <button
                                         onClick={() => setShowDeleteModal(false)}
-                                        className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                                        className="px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-lg transition-colors text-sm cursor-pointer"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleDeleteConfirm}
-                                        className="px-4 py-2 bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors"
+                                        className="px-3 py-1.5 bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors text-sm flex items-center gap-2 cursor-pointer"
                                     >
+                                        <Trash2 size={14} />
                                         Delete
                                     </button>
                                 </div>
@@ -494,18 +538,18 @@ function GameManagement() {
                     {/* Edit Game Modal */}
                     {showEditModal && gameToEdit && (
                         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-                            <div className="bg-[#1A1A1C] rounded-2xl p-6 max-w-3xl w-full shadow-xl border border-white/10 my-8">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold">Edit Game</h3>
+                            <div className="bg-[#1A1A1C] rounded-3xl p-5 max-w-3xl w-full shadow-3xl border border-white/10 my-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-bold">Edit Game</h3>
                                     <button
                                         onClick={closeEditModal}
-                                        className="text-white/70 hover:text-white"
+                                        className="text-white/70 hover:text-white cursor-pointer"
                                     >
-                                        <X size={20} />
+                                        <X size={18} />
                                     </button>
                                 </div>
 
-                                <form onSubmit={handleEditSubmit} className="space-y-6">
+                                <form onSubmit={handleEditSubmit} className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -519,7 +563,7 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${editFormErrors.title
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             />
                                             {editFormErrors.title && (
                                                 <p className="mt-1 text-sm text-red-400">{editFormErrors.title}</p>
@@ -537,7 +581,7 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${editFormErrors.genre
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             >
                                                 <option value="">Select Genre</option>
                                                 {genres.map((genre, index) => (
@@ -563,7 +607,7 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${editFormErrors.platform
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             />
                                             {editFormErrors.platform && (
                                                 <p className="mt-1 text-sm text-red-400">{editFormErrors.platform}</p>
@@ -582,29 +626,10 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${editFormErrors.price
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             />
                                             {editFormErrors.price && (
                                                 <p className="mt-1 text-sm text-red-400">{editFormErrors.price}</p>
-                                            )}
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-1">
-                                                Stock Quantity *
-                                            </label>
-                                            <input
-                                                type="number"
-                                                name="stock_quantity"
-                                                value={editForm.stock_quantity}
-                                                onChange={handleEditChange}
-                                                className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${editFormErrors.stock_quantity
-                                                    ? 'border-red-500/50 focus:ring-red-500/30'
-                                                    : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
-                                            />
-                                            {editFormErrors.stock_quantity && (
-                                                <p className="mt-1 text-sm text-red-400">{editFormErrors.stock_quantity}</p>
                                             )}
                                         </div>
 
@@ -617,7 +642,7 @@ function GameManagement() {
                                                 name="gameicon"
                                                 value={editForm.gameicon}
                                                 onChange={handleEditChange}
-                                                className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                                                className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 cursor-pointer"
                                             />
                                         </div>
                                     </div>
@@ -631,7 +656,7 @@ function GameManagement() {
                                             value={editForm.description}
                                             onChange={handleEditChange}
                                             rows={5}
-                                            className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                                            className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 cursor-pointer"
                                         ></textarea>
                                     </div>
 
@@ -639,23 +664,23 @@ function GameManagement() {
                                         <button
                                             type="button"
                                             onClick={closeEditModal}
-                                            className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/15 transition-colors"
+                                            className="px-3 py-1.5 bg-white/10 rounded-lg hover:bg-white/15 transition-colors text-sm cursor-pointer"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
                                             disabled={submitting}
-                                            className="px-4 py-2 bg-[#7C5DF9] rounded-lg hover:bg-[#6A4FF0] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="px-3 py-1.5 bg-[#7C5DF9] rounded-lg hover:bg-[#6A4FF0] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm cursor-pointer"
                                         >
                                             {submitting ? (
                                                 <>
-                                                    <div className="h-4 w-4 border-2 border-white/30 border-t-white/80 rounded-full animate-spin"></div>
+                                                    <div className="h-3 w-3 border-2 border-white/30 border-t-white/80 rounded-full animate-spin"></div>
                                                     Saving...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Save size={16} />
+                                                    <Save size={14} />
                                                     Save Changes
                                                 </>
                                             )}
@@ -669,18 +694,18 @@ function GameManagement() {
                     {/* Add Game Modal */}
                     {showAddModal && (
                         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-                            <div className="bg-[#1A1A1C] rounded-2xl p-6 max-w-3xl w-full shadow-xl border border-white/10 my-8">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold">Add New Game</h3>
+                            <div className="bg-[#1A1A1C] rounded-3xl p-5 max-w-3xl w-full shadow-3xl border border-white/10 my-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-bold">Add New Game</h3>
                                     <button
                                         onClick={closeAddModal}
-                                        className="text-white/70 hover:text-white"
+                                        className="text-white/70 hover:text-white cursor-pointer"
                                     >
-                                        <X size={20} />
+                                        <X size={18} />
                                     </button>
                                 </div>
 
-                                <form onSubmit={handleAddSubmit} className="space-y-6">
+                                <form onSubmit={handleAddSubmit} className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -694,7 +719,7 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${addFormErrors.title
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             />
                                             {addFormErrors.title && (
                                                 <p className="mt-1 text-sm text-red-400">{addFormErrors.title}</p>
@@ -712,7 +737,7 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${addFormErrors.genre
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             >
                                                 <option value="">Select Genre</option>
                                                 {genres.map((genre, index) => (
@@ -738,7 +763,7 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${addFormErrors.platform
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             />
                                             {addFormErrors.platform && (
                                                 <p className="mt-1 text-sm text-red-400">{addFormErrors.platform}</p>
@@ -757,29 +782,10 @@ function GameManagement() {
                                                 className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${addFormErrors.price
                                                     ? 'border-red-500/50 focus:ring-red-500/30'
                                                     : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
+                                                    } cursor-pointer`}
                                             />
                                             {addFormErrors.price && (
                                                 <p className="mt-1 text-sm text-red-400">{addFormErrors.price}</p>
-                                            )}
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-1">
-                                                Stock Quantity *
-                                            </label>
-                                            <input
-                                                type="number"
-                                                name="stock_quantity"
-                                                value={addForm.stock_quantity}
-                                                onChange={handleAddChange}
-                                                className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${addFormErrors.stock_quantity
-                                                    ? 'border-red-500/50 focus:ring-red-500/30'
-                                                    : 'border-white/10 focus:ring-[#7C5DF9]/50'
-                                                    }`}
-                                            />
-                                            {addFormErrors.stock_quantity && (
-                                                <p className="mt-1 text-sm text-red-400">{addFormErrors.stock_quantity}</p>
                                             )}
                                         </div>
 
@@ -792,7 +798,7 @@ function GameManagement() {
                                                 name="gameicon"
                                                 value={addForm.gameicon}
                                                 onChange={handleAddChange}
-                                                className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                                                className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 cursor-pointer"
                                             />
                                         </div>
                                     </div>
@@ -806,7 +812,7 @@ function GameManagement() {
                                             value={addForm.description}
                                             onChange={handleAddChange}
                                             rows={5}
-                                            className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                                            className="w-full px-4 py-2 bg-black/30 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 cursor-pointer"
                                         ></textarea>
                                     </div>
 
@@ -814,23 +820,23 @@ function GameManagement() {
                                         <button
                                             type="button"
                                             onClick={closeAddModal}
-                                            className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/15 transition-colors"
+                                            className="px-3 py-1.5 bg-white/10 rounded-lg hover:bg-white/15 transition-colors text-sm cursor-pointer"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
                                             disabled={addingGame}
-                                            className="px-4 py-2 bg-[#7C5DF9] rounded-lg hover:bg-[#6A4FF0] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="px-3 py-1.5 bg-[#7C5DF9] rounded-lg hover:bg-[#6A4FF0] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm cursor-pointer"
                                         >
                                             {addingGame ? (
                                                 <>
-                                                    <div className="h-4 w-4 border-2 border-white/30 border-t-white/80 rounded-full animate-spin"></div>
+                                                    <div className="h-3 w-3 border-2 border-white/30 border-t-white/80 rounded-full animate-spin"></div>
                                                     Adding...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Plus size={16} />
+                                                    <Plus size={14} />
                                                     Add Game
                                                 </>
                                             )}
@@ -844,12 +850,12 @@ function GameManagement() {
                     {/* Header */}
                     <header className="flex justify-between items-center mb-8">
                         <div>
-                            <h1 className="text-2xl font-bold">Game Management</h1>
+                            <h1 className="text-3xl font-bold">Game Management</h1>
                             <p className="text-gray-400">Manage games in your store</p>
                         </div>
                         <button
                             onClick={openAddModal}
-                            className="bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-colors px-4 py-2 rounded-xl flex items-center gap-2"
+                            className="bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-colors px-4 py-2 rounded-xl flex items-center gap-2 cursor-pointer"
                         >
                             <Plus size={18} />
                             Add New Game
@@ -857,24 +863,28 @@ function GameManagement() {
                     </header>
 
                     {/* Search and Filter Bar */}
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+                    <div className="bg-white/5 border border-white/10 rounded-3xl p-4 mb-6">
                         <div className="flex flex-col md:flex-row gap-4">
                             {/* Search Input */}
                             <div className="relative flex-grow">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Search size={16} className="text-gray-400" />
+                                    {isSearching ? (
+                                        <div className="h-4 w-4 border-2 border-gray-400/20 border-t-gray-400 rounded-full animate-spin"></div>
+                                    ) : (
+                                        <Search size={16} className="text-gray-400" />
+                                    )}
                                 </div>
                                 <input
                                     type="text"
                                     placeholder="Search games by title, ID or description..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                                    className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 cursor-pointer"
                                 />
                                 {searchTerm && (
                                     <button
                                         onClick={() => setSearchTerm('')}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
                                     >
                                         <X size={16} />
                                     </button>
@@ -886,7 +896,7 @@ function GameManagement() {
                                 <select
                                     value={selectedGenre}
                                     onChange={(e) => setSelectedGenre(e.target.value)}
-                                    className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none"
+                                    className="w-full px-3 py-2 bg-[#1A1A1C] border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none cursor-pointer"
                                     style={{
                                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                         backgroundRepeat: 'no-repeat',
@@ -906,24 +916,37 @@ function GameManagement() {
                             {/* Refresh Button */}
                             <button
                                 onClick={fetchGames}
-                                className="px-4 py-2 bg-white/10 hover:bg-white/15 rounded-lg flex items-center gap-2 transition-colors"
+                                disabled={loading}
+                                className="px-4 py-2 bg-white/10 hover:bg-white/15 rounded-xl flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
                             >
-                                <RefreshCw size={16} />
+                                {loading && !isSearching ? (
+                                    <div className="h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                ) : (
+                                    <RefreshCw size={16} />
+                                )}
                                 Refresh
                             </button>
                         </div>
                     </div>
 
+                    {/* Search in progress indicator */}
+                    {isSearching && !loading && (
+                        <div className="bg-[#7C5DF9]/10 border border-[#7C5DF9]/30 rounded-3xl p-4 mb-6 flex items-center justify-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-[#7C5DF9]"></div>
+                            <span className="text-[#7C5DF9]">Searching...</span>
+                        </div>
+                    )}
+
                     {/* Error Message */}
                     {error && (
-                        <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 mb-6 text-center">
+                        <div className="bg-red-500/20 border border-red-500/30 rounded-3xl p-4 mb-6 text-center">
                             <p className="text-red-200 flex items-center justify-center gap-2">
                                 <AlertCircle size={16} />
                                 {error}
                             </p>
                             <button
-                                className="mt-2 text-sm text-white/80 hover:text-white underline"
-                                onClick={fetchGames}
+                                className="mt-2 text-sm text-white/80 hover:text-white underline cursor-pointer"
+                                onClick={searchTerm ? () => performSearch(searchTerm) : fetchGames}
                             >
                                 Try Again
                             </button>
@@ -931,7 +954,7 @@ function GameManagement() {
                     )}
 
                     {/* Loading Indicator */}
-                    {loading && (
+                    {loading && !isSearching && (
                         <div className="flex justify-center items-center h-64">
                             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C5DF9]"></div>
                         </div>
@@ -939,13 +962,13 @@ function GameManagement() {
 
                     {/* Games Table */}
                     {!loading && !error && (
-                        <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+                        <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden">
                             {filteredGames.length === 0 ? (
                                 <div className="p-8 text-center">
                                     <div className="inline-flex items-center justify-center w-16 h-16 bg-[#7C5DF9]/20 rounded-full mb-4">
                                         <Filter size={24} className="text-[#7C5DF9]" />
                                     </div>
-                                    <h3 className="text-xl font-medium mb-2">No games found</h3>
+                                    <h3 className="text-3xl font-medium mb-2">No games found</h3>
                                     <p className="text-gray-400 mb-4">
                                         {searchTerm
                                             ? `No games match your search for "${searchTerm}"`
@@ -958,7 +981,7 @@ function GameManagement() {
                                             setSearchTerm('');
                                             setSelectedGenre('All');
                                         }}
-                                        className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-lg transition-colors"
+                                        className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-lg transition-colors cursor-pointer"
                                     >
                                         Clear Filters
                                     </button>
@@ -981,9 +1004,6 @@ function GameManagement() {
                                                     Price
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                                    Stock
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                                                     Added
                                                 </th>
                                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -1003,7 +1023,7 @@ function GameManagement() {
                                                                 <img
                                                                     src={game.gameicon}
                                                                     alt={game.title}
-                                                                    className="h-10 w-10 rounded-lg mr-3 object-cover bg-black/30"
+                                                                    className="h-10 w-10 rounded-xl mr-3 object-cover bg-black/30"
                                                                 />
                                                             ) : (
                                                                 <div className="h-10 w-10 rounded-lg mr-3 bg-[#7C5DF9]/20 flex items-center justify-center">
@@ -1019,15 +1039,6 @@ function GameManagement() {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                         {formatPrice(game.price)}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                        <span className={
-                                                            game.stock_quantity <= 0 ? 'text-red-400' :
-                                                                game.stock_quantity < 5 ? 'text-yellow-400' :
-                                                                    'text-green-400'
-                                                        }>
-                                                            {game.stock_quantity}
-                                                        </span>
-                                                    </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                                         {formatDate(game.created_at)}
                                                     </td>
@@ -1035,14 +1046,14 @@ function GameManagement() {
                                                         <div className="flex items-center justify-end space-x-2">
                                                             <button
                                                                 onClick={() => openEditModal(game)}
-                                                                className="p-1.5 bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg hover:bg-[#7C5DF9]/30 transition-colors"
+                                                                className="p-1.5 bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg hover:bg-[#7C5DF9]/30 transition-colors cursor-pointer"
                                                                 title="Edit Game"
                                                             >
                                                                 <Edit size={16} />
                                                             </button>
                                                             <button
                                                                 onClick={() => confirmDelete(game)}
-                                                                className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                                                                className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors cursor-pointer"
                                                                 title="Delete Game"
                                                             >
                                                                 <Trash2 size={16} />

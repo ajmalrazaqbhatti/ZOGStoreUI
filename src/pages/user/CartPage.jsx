@@ -281,7 +281,7 @@ function CartPage() {
                     <span className="text-white text-sm">{toast.message}</span>
                     <button
                         onClick={() => setToast(prev => ({ ...prev, visible: false }))}
-                        className="ml-2 text-white/50 hover:text-white transition-colors"
+                        className="ml-2 text-white/50 hover:text-white transition-colors cursor-pointer"
                     >
                         <X size={16} />
                     </button>
@@ -292,19 +292,19 @@ function CartPage() {
             <Navbar />
 
             {/* Main Content */}
-            <div className="relative z-20 px-4 md:px-12 pt-24 pb-8 max-w-7xl mx-auto">
+            <div className="relative z-20 px-4 md:px-12 py-8 max-w-7xl mx-auto pt-24">
                 <div className="flex items-center gap-3 mb-8">
                     {checkoutStep === 'cart' ? (
                         <button
                             onClick={() => navigate('/home')}
-                            className="bg-white/10 hover:bg-white/15 transition-colors p-2 rounded-full"
+                            className="bg-white/10 hover:bg-white/15 transition-colors p-2 rounded-full cursor-pointer"
                         >
                             <ArrowLeft size={20} />
                         </button>
                     ) : (
                         <button
                             onClick={cancelPayment}
-                            className="bg-white/10 hover:bg-white/15 transition-colors p-2 rounded-full"
+                            className="bg-white/10 hover:bg-white/15 transition-colors p-2 rounded-full cursor-pointer"
                         >
                             <ArrowLeft size={20} />
                         </button>
@@ -321,7 +321,7 @@ function CartPage() {
                     <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6 text-center">
                         <p className="text-red-200">{error}</p>
                         <button
-                            className="mt-2 text-sm text-white/80 hover:text-white underline"
+                            className="mt-2 text-sm text-white/80 hover:text-white underline cursor-pointer"
                             onClick={() => window.location.reload()}
                         >
                             Try Again
@@ -350,7 +350,7 @@ function CartPage() {
                             <div className="flex flex-col lg:flex-row gap-8">
                                 {/* Cart Items */}
                                 <div className="w-full lg:w-2/3">
-                                    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden">
+                                    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden">
                                         {cartItems.map(item => (
                                             <div
                                                 key={item.cart_id}
@@ -387,7 +387,7 @@ function CartPage() {
                                                             <button
                                                                 onClick={() => removeItem(item.cart_id)}
                                                                 disabled={processingItem === item.cart_id}
-                                                                className="sm:hidden bg-red-500/20 p-1.5 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors"
+                                                                className="sm:hidden bg-red-500/20 p-1.5 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors cursor-pointer"
                                                             >
                                                                 {processingItem === item.cart_id ? (
                                                                     <div className="h-4 w-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
@@ -405,7 +405,7 @@ function CartPage() {
                                                         <button
                                                             onClick={() => updateQuantity(item.cart_id, item.quantity - 1)}
                                                             disabled={item.quantity <= 1 || processingItem === item.cart_id}
-                                                            className={`p-2 rounded-l-lg ${item.quantity <= 1 ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 'bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white'}`}
+                                                            className={`p-2 rounded-l-lg cursor-pointer ${item.quantity <= 1 ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 'bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white'}`}
                                                         >
                                                             <Minus size={16} />
                                                         </button>
@@ -419,7 +419,7 @@ function CartPage() {
                                                         <button
                                                             onClick={() => updateQuantity(item.cart_id, item.quantity + 1)}
                                                             disabled={processingItem === item.cart_id}
-                                                            className="p-2 rounded-r-lg bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"
+                                                            className="p-2 rounded-r-lg bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white cursor-pointer"
                                                         >
                                                             <Plus size={16} />
                                                         </button>
@@ -429,7 +429,7 @@ function CartPage() {
                                                     <button
                                                         onClick={() => removeItem(item.cart_id)}
                                                         disabled={processingItem === item.cart_id}
-                                                        className="hidden sm:flex bg-red-500/20 p-2 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors"
+                                                        className="hidden sm:flex bg-red-500/20 p-2 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors cursor-pointer"
                                                     >
                                                         {processingItem === item.cart_id ? (
                                                             <div className="h-5 w-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
@@ -446,17 +446,13 @@ function CartPage() {
                                 {/* Cart Summary */}
                                 {cartItems.length > 0 && (
                                     <div className="w-full lg:w-1/3">
-                                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+                                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6">
                                             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
 
                                             <div className="space-y-3 mb-6">
                                                 <div className="flex justify-between py-2">
                                                     <span className="text-gray-300">Subtotal</span>
                                                     <span className="font-medium">${calculateSubtotal()}</span>
-                                                </div>
-                                                <div className="flex justify-between py-2">
-                                                    <span className="text-gray-300">Tax</span>
-                                                    <span className="font-medium">$0.00</span>
                                                 </div>
                                                 <div className="border-t border-white/10 my-2"></div>
                                                 <div className="flex justify-between py-2">
@@ -468,14 +464,14 @@ function CartPage() {
                                             <button
                                                 onClick={startCheckout}
                                                 disabled={cartItems.length === 0}
-                                                className="w-full bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-all py-3.5 rounded-xl font-medium text-center flex items-center justify-center"
+                                                className="w-full bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-all py-3.5 rounded-xl font-medium text-center flex items-center justify-center cursor-pointer"
                                             >
                                                 Proceed to Checkout
                                             </button>
 
                                             <button
                                                 onClick={() => navigate('/')}
-                                                className="w-full mt-3 bg-transparent border border-white/30 hover:border-white/50 transition-all py-3 rounded-xl font-medium"
+                                                className="w-full mt-3 bg-transparent border border-white/30 hover:border-white/50 transition-all py-3 rounded-xl font-medium cursor-pointer"
                                             >
                                                 Continue Shopping
                                             </button>
@@ -584,10 +580,6 @@ function CartPage() {
                                                 <span className="text-gray-300">Items ({itemCount})</span>
                                                 <span className="font-medium">${calculateSubtotal()}</span>
                                             </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-300">Tax</span>
-                                                <span className="font-medium">$0.00</span>
-                                            </div>
                                             <div className="border-t border-white/10 my-2"></div>
                                             <div className="flex justify-between">
                                                 <span className="text-xl">Total</span>
@@ -605,7 +597,7 @@ function CartPage() {
                                         <button
                                             onClick={handleCheckout}
                                             disabled={checkingOut}
-                                            className="w-full bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-all py-3.5 rounded-xl font-medium text-center flex items-center justify-center"
+                                            className="w-full bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-all py-3.5 rounded-xl font-medium text-center flex items-center justify-center cursor-pointer"
                                         >
                                             {checkingOut ? (
                                                 <>
@@ -620,7 +612,7 @@ function CartPage() {
                                         <button
                                             onClick={cancelPayment}
                                             disabled={checkingOut}
-                                            className="w-full mt-3 bg-transparent border border-white/30 hover:border-white/50 transition-all py-3 rounded-xl font-medium"
+                                            className="w-full mt-3 bg-transparent border border-white/30 hover:border-white/50 transition-all py-3 rounded-xl font-medium cursor-pointer"
                                         >
                                             Back to Cart
                                         </button>

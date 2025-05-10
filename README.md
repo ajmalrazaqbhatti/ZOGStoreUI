@@ -1,12 +1,90 @@
-# React + Vite
+# ZOGStore UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern e-commerce frontend application built with React and Vite.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+ZOGStore UI is a responsive web application that provides a seamless shopping experience for customers. It features product browsing, cart management, user authentication, and checkout process.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Product catalog with search and filtering
+- User authentication and profile management
+- Shopping cart functionality
+- Responsive design for mobile and desktop
+- Order history and tracking
+
+## Tech Stack
+
+- React 18+
+- Vite
+- React Router
+- Context API for state management
+- CSS Modules/Styled Components
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16+)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+   ```
+   git clone https://github.com/yourusername/ZOGStore.git
+   cd ZOGStoreUI
+   ```
+
+2. Install dependencies
+   ```
+   npm install
+   # or
+   yarn
+   ```
+
+3. Start the development server
+   ```
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+## Project Structure
+
+```
+ZOGStoreUI/
+├── public/          # Static assets
+├── src/
+│   ├── assets/      # Images, fonts, etc.
+│   ├── components/  # Reusable UI components
+│   ├── context/     # React context for state management
+│   ├── hooks/       # Custom React hooks
+│   ├── pages/       # Page components
+│   ├── services/    # API service functions
+│   ├── utils/       # Utility functions
+│   ├── App.jsx      # Main App component
+│   └── main.jsx     # Application entry point
+├── .eslintrc.cjs    # ESLint configuration
+├── index.html       # HTML template
+├── package.json     # Project dependencies and scripts
+└── vite.config.js   # Vite configuration
+```
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build locally
+
+## Contributing
+
+Please read our contribution guidelines before submitting a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Search, RefreshCw, ShoppingBag, AlertCircle, Check, X,
-    Edit, Trash2, Clock, Truck, PackageCheck, XCircle, ArrowUpDown,
+    Edit, Trash2, Clock, Truck, PackageCheck, XCircle,
     Calendar, User, Info, ChevronDown, ChevronUp,
     Package, ShoppingCart
 } from 'lucide-react';
@@ -19,7 +19,6 @@ function OrderManagement() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [statusFilter, setStatusFilter] = useState('All');
-    const [sortConfig, setSortConfig] = useState({ key: 'order_date', direction: 'descending' });
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [orderToDelete, setOrderToDelete] = useState(null);
@@ -37,7 +36,7 @@ function OrderManagement() {
         fetchOrders();
     }, []);
 
-    // Filter and sort orders based on search term, status, and sorting
+    // Filter orders based on status
     useEffect(() => {
         if (!orders.length) return;
 
@@ -61,37 +60,8 @@ function OrderManagement() {
             );
         }
 
-        // Apply sorting
-        if (sortConfig.key) {
-            filtered.sort((a, b) => {
-                // Handle different data types
-                let aValue = a[sortConfig.key];
-                let bValue = b[sortConfig.key];
-
-                // Convert date strings to Date objects for comparison
-                if (sortConfig.key === 'order_date') {
-                    aValue = new Date(a.order_date);
-                    bValue = new Date(b.order_date);
-                }
-
-                // If numbers, convert to numbers
-                if (sortConfig.key === 'total_amount' || sortConfig.key === 'order_id') {
-                    aValue = Number(a[sortConfig.key]);
-                    bValue = Number(b[sortConfig.key]);
-                }
-
-                if (aValue < bValue) {
-                    return sortConfig.direction === 'ascending' ? -1 : 1;
-                }
-                if (aValue > bValue) {
-                    return sortConfig.direction === 'ascending' ? 1 : -1;
-                }
-                return 0;
-            });
-        }
-
         setFilteredOrders(filtered);
-    }, [searchTerm, statusFilter, sortConfig, orders]);
+    }, [searchTerm, statusFilter, orders]);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -115,15 +85,6 @@ function OrderManagement() {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Request sorting
-    const requestSort = (key) => {
-        let direction = 'ascending';
-        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-            direction = 'descending';
-        }
-        setSortConfig({ key, direction });
     };
 
     // Show toast notification
@@ -293,17 +254,17 @@ function OrderManagement() {
                 <div className="p-4 md:p-8">
                     {/* Toast Notification */}
                     {toast.visible && (
-                        <div className={`fixed bottom-4 right-4 z-50 p-4 rounded-xl shadow-xl flex items-center gap-3 animate-fadeIn
-                            bg-black/80 backdrop-blur-md border ${toast.type === 'success' ? 'border-green-500/30' : 'border-red-500/30'} max-w-md`}>
+                        <div className="fixed bottom-4 right-4 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-fadeIn
+                            bg-black/80 backdrop-blur-md border border-white/10 max-w-md">
                             {toast.type === 'success' ? (
-                                <Check className="h-5 w-5 text-green-400" />
+                                <Check className="h-5 w-5 text-[#7C5DF9]" />
                             ) : (
                                 <AlertCircle className="h-5 w-5 text-red-400" />
                             )}
                             <span className="text-white text-sm">{toast.message}</span>
                             <button
                                 onClick={() => setToast(prev => ({ ...prev, visible: false }))}
-                                className="ml-2 text-white/50 hover:text-white"
+                                className="ml-2 text-white/50 hover:text-white transition-colors cursor-pointer"
                             >
                                 <X size={16} />
                             </button>
@@ -313,15 +274,15 @@ function OrderManagement() {
                     {/* Delete Confirmation Modal */}
                     {showDeleteModal && (
                         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                            <div className="bg-[#1A1A1C] rounded-2xl p-6 max-w-md w-full shadow-xl border border-white/10">
-                                <h3 className="text-xl font-bold mb-2">Delete Order</h3>
-                                <p className="text-gray-400 mb-4">
+                            <div className="bg-[#1A1A1C] rounded-xl p-5 max-w-sm w-full shadow-xl border border-white/10">
+                                <h3 className="text-lg font-bold mb-2">Delete Order</h3>
+                                <p className="text-gray-400 mb-4 text-sm">
                                     Are you sure you want to delete Order #{orderToDelete?.order_id}? This action cannot be undone.
                                 </p>
                                 <div className="flex gap-3 justify-end">
                                     <button
                                         onClick={() => setShowDeleteModal(false)}
-                                        className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                                        className="px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-lg transition-colors text-sm cursor-pointer"
                                         disabled={processingOrder === orderToDelete?.order_id}
                                     >
                                         Cancel
@@ -329,16 +290,16 @@ function OrderManagement() {
                                     <button
                                         onClick={handleDeleteConfirm}
                                         disabled={processingOrder === orderToDelete?.order_id}
-                                        className="px-4 py-2 bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors flex items-center gap-2"
+                                        className="px-3 py-1.5 bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors flex items-center gap-2 text-sm cursor-pointer"
                                     >
                                         {processingOrder === orderToDelete?.order_id ? (
                                             <>
-                                                <div className="h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                                <div className="h-3 w-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                                                 Deleting...
                                             </>
                                         ) : (
                                             <>
-                                                <Trash2 size={16} />
+                                                <Trash2 size={14} />
                                                 Delete
                                             </>
                                         )}
@@ -351,9 +312,9 @@ function OrderManagement() {
                     {/* Status Change Modal */}
                     {showStatusModal && (
                         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                            <div className="bg-[#1A1A1C] rounded-2xl p-6 max-w-md w-full shadow-xl border border-white/10">
-                                <h3 className="text-xl font-bold mb-2">Update Order Status</h3>
-                                <p className="text-gray-400 mb-4">
+                            <div className="bg-[#1A1A1C] rounded-xl p-5 max-w-sm w-full shadow-xl border border-white/10">
+                                <h3 className="text-lg font-bold mb-2">Update Order Status</h3>
+                                <p className="text-gray-400 mb-4 text-sm">
                                     Change the status for Order #{statusChangeOrder?.order_id}
                                 </p>
 
@@ -365,7 +326,7 @@ function OrderManagement() {
                                         id="status"
                                         value={newStatus}
                                         onChange={(e) => setNewStatus(e.target.value)}
-                                        className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none"
+                                        className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none text-sm"
                                         style={{
                                             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                             backgroundRepeat: 'no-repeat',
@@ -384,7 +345,7 @@ function OrderManagement() {
                                 <div className="flex gap-3 justify-end">
                                     <button
                                         onClick={() => setShowStatusModal(false)}
-                                        className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                                        className="px-3 py-1.5 bg-white/10 hover:bg-white/15 rounded-lg transition-colors text-sm cursor-pointer"
                                         disabled={processingOrder === statusChangeOrder?.order_id}
                                     >
                                         Cancel
@@ -392,16 +353,16 @@ function OrderManagement() {
                                     <button
                                         onClick={handleStatusChange}
                                         disabled={processingOrder === statusChangeOrder?.order_id || newStatus === statusChangeOrder?.status.toLowerCase()}
-                                        className="px-4 py-2 bg-[#7C5DF9]/80 hover:bg-[#7C5DF9] rounded-lg transition-colors flex items-center gap-2"
+                                        className="px-3 py-1.5 bg-[#7C5DF9]/80 hover:bg-[#7C5DF9] rounded-lg transition-colors flex items-center gap-2 text-sm cursor-pointer"
                                     >
                                         {processingOrder === statusChangeOrder?.order_id ? (
                                             <>
-                                                <div className="h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                                <div className="h-3 w-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                                                 Updating...
                                             </>
                                         ) : (
                                             <>
-                                                <Check size={16} />
+                                                <Check size={14} />
                                                 Update Status
                                             </>
                                         )}
@@ -418,7 +379,7 @@ function OrderManagement() {
                     </header>
 
                     {/* Search and Filter Bar */}
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+                    <div className="bg-white/5 border border-white/10 rounded-3xl p-4 mb-6">
                         <div className="flex flex-col md:flex-row gap-4">
                             {/* Search Input */}
                             <div className="relative flex-grow">
@@ -430,12 +391,12 @@ function OrderManagement() {
                                     placeholder="Search by order ID, customer name or email..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                                    className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
                                 />
                                 {searchTerm && (
                                     <button
                                         onClick={() => setSearchTerm('')}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
                                     >
                                         <X size={16} />
                                     </button>
@@ -447,7 +408,7 @@ function OrderManagement() {
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none"
+                                    className="w-full px-3 py-2  bg-[#1A1A1C] rounded-xl border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none"
                                     style={{
                                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                         backgroundRepeat: 'no-repeat',
@@ -467,7 +428,7 @@ function OrderManagement() {
                             {/* Refresh Button */}
                             <button
                                 onClick={fetchOrders}
-                                className="px-4 py-2 bg-white/10 hover:bg-white/15 rounded-lg flex items-center gap-2 transition-colors"
+                                className="px-4 py-2 bg-white/10 hover:bg-white/15 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
                             >
                                 <RefreshCw size={16} />
                                 Refresh
@@ -483,7 +444,7 @@ function OrderManagement() {
                                 {error}
                             </p>
                             <button
-                                className="mt-2 text-sm text-white/80 hover:text-white underline"
+                                className="mt-2 text-sm text-white/80 hover:text-white underline cursor-pointer"
                                 onClick={fetchOrders}
                             >
                                 Try Again
@@ -500,7 +461,7 @@ function OrderManagement() {
 
                     {/* Orders Table */}
                     {!loading && !error && (
-                        <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+                        <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden">
                             {filteredOrders.length === 0 ? (
                                 <div className="p-8 text-center">
                                     <div className="inline-flex items-center justify-center w-16 h-16 bg-[#7C5DF9]/20 rounded-full mb-4">
@@ -519,7 +480,7 @@ function OrderManagement() {
                                             setSearchTerm('');
                                             setStatusFilter('All');
                                         }}
-                                        className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-lg transition-colors"
+                                        className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-lg transition-colors cursor-pointer"
                                     >
                                         Clear Filters
                                     </button>
@@ -529,54 +490,22 @@ function OrderManagement() {
                                     <table className="min-w-full divide-y divide-white/10">
                                         <thead className="bg-black/20">
                                             <tr>
-                                                <th
-                                                    className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer select-none hover:text-white"
-                                                    onClick={() => requestSort('order_id')}
-                                                >
-                                                    <div className="flex items-center gap-1">
-                                                        Order ID
-                                                        <ArrowUpDown size={14} className="opacity-50" />
-                                                    </div>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                                    Order ID
                                                 </th>
-                                                <th
-                                                    className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer select-none hover:text-white"
-                                                    onClick={() => requestSort('username')}
-                                                >
-                                                    <div className="flex items-center gap-1">
-                                                        Customer
-                                                        <ArrowUpDown size={14} className="opacity-50" />
-                                                    </div>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                                    Customer
                                                 </th>
-                                                <th
-                                                    className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer select-none hover:text-white"
-                                                    onClick={() => requestSort('order_date')}
-                                                >
-                                                    <div className="flex items-center gap-1">
-                                                        Date
-                                                        <ArrowUpDown size={14} className="opacity-50" />
-                                                    </div>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                                    Date
                                                 </th>
-                                                <th
-                                                    className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer select-none hover:text-white"
-                                                    onClick={() => requestSort('status')}
-                                                >
-                                                    <div className="flex items-center gap-1">
-                                                        Status
-                                                        <ArrowUpDown size={14} className="opacity-50" />
-                                                    </div>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                                    Status
                                                 </th>
-                                                <th
-                                                    className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer select-none hover:text-white"
-                                                    onClick={() => requestSort('total_amount')}
-                                                >
-                                                    <div className="flex items-center gap-1">
-                                                        Total
-                                                        <ArrowUpDown size={14} className="opacity-50" />
-                                                    </div>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                                    Total
                                                 </th>
-                                                <th
-                                                    className="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider"
-                                                >
+                                                <th className="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                                                     Items
                                                 </th>
                                                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -618,7 +547,7 @@ function OrderManagement() {
                                                             <div className="flex items-center justify-end space-x-2">
                                                                 <button
                                                                     onClick={() => toggleOrderDetails(order.order_id)}
-                                                                    className={`p-1.5 transition-colors ${showOrderDetails === order.order_id
+                                                                    className={`p-1.5 transition-colors cursor-pointer ${showOrderDetails === order.order_id
                                                                         ? 'bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg'
                                                                         : 'bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30'
                                                                         }`}
@@ -632,14 +561,14 @@ function OrderManagement() {
                                                                 </button>
                                                                 <button
                                                                     onClick={() => openStatusChangeModal(order)}
-                                                                    className="p-1.5 bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg hover:bg-[#7C5DF9]/30 transition-colors"
+                                                                    className="p-1.5 bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg hover:bg-[#7C5DF9]/30 transition-colors cursor-pointer"
                                                                     title="Change Status"
                                                                 >
                                                                     <Edit size={16} />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => confirmDelete(order)}
-                                                                    className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                                                                    className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors cursor-pointer"
                                                                     title="Delete Order"
                                                                 >
                                                                     <Trash2 size={16} />
@@ -654,8 +583,8 @@ function OrderManagement() {
                                                             <td colSpan="7" className="px-4 py-4 bg-black/30">
                                                                 <div className="grid grid-cols-1 gap-6">
                                                                     {/* Order Information Cards */}
-                                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                                                        <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+                                                                    <div className="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
+                                                                        <div className="bg-white/5 border border-white/10 rounded-3xl p-3">
                                                                             <h4 className="font-medium mb-2 flex items-center gap-1.5">
                                                                                 <Calendar size={14} className="text-[#7C5DF9]" />
                                                                                 Order Details
@@ -681,55 +610,11 @@ function OrderManagement() {
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-
-                                                                        <div className="bg-white/5 border border-white/10 rounded-lg p-3">
-                                                                            <h4 className="font-medium mb-2 flex items-center gap-1.5">
-                                                                                <User size={14} className="text-[#7C5DF9]" />
-                                                                                Customer Information
-                                                                            </h4>
-                                                                            <div className="space-y-2 text-gray-300">
-                                                                                <div className="flex justify-between">
-                                                                                    <span>Name:</span>
-                                                                                    <span className="font-medium text-white">{order.username}</span>
-                                                                                </div>
-                                                                                <div className="flex justify-between">
-                                                                                    <span>Email:</span>
-                                                                                    <span className="font-medium text-white">{order.email}</span>
-                                                                                </div>
-                                                                                <div className="flex justify-between">
-                                                                                    <span>User ID:</span>
-                                                                                    <span>{order.user_id}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div className="bg-white/5 border border-white/10 rounded-lg p-3">
-                                                                            <h4 className="font-medium mb-2 flex items-center gap-1.5">
-                                                                                <ShoppingBag size={14} className="text-[#7C5DF9]" />
-                                                                                Actions
-                                                                            </h4>
-                                                                            <div className="space-y-2">
-                                                                                <button
-                                                                                    onClick={() => openStatusChangeModal(order)}
-                                                                                    className="w-full py-2 bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg hover:bg-[#7C5DF9]/30 transition-colors flex items-center justify-center gap-1.5"
-                                                                                >
-                                                                                    <Edit size={14} />
-                                                                                    Change Status
-                                                                                </button>
-                                                                                <button
-                                                                                    onClick={() => confirmDelete(order)}
-                                                                                    className="w-full py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center justify-center gap-1.5"
-                                                                                >
-                                                                                    <Trash2 size={14} />
-                                                                                    Delete Order
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
                                                                     </div>
 
                                                                     {/* Order Items Section */}
                                                                     {order.items && order.items.length > 0 && (
-                                                                        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                                                                        <div className="bg-white/5 border border-white/10 rounded-3xl p-4">
                                                                             <h4 className="font-medium mb-3 flex items-center gap-1.5">
                                                                                 <ShoppingCart size={16} className="text-[#7C5DF9]" />
                                                                                 Order Items

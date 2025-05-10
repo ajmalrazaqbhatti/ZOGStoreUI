@@ -139,14 +139,6 @@ function Navbar({ cartCount = 0 }) {
                         <Package className="h-5 w-5" />
                     </Link>
 
-                    {/* Logout Button */}
-                    <button
-                        onClick={handleLogout}
-                        className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer"
-                        title="Logout"
-                    >
-                        <LogOut className="h-5 w-5 text-red-400" />
-                    </button>
 
                     {/* Cart Icon - Active State when on Cart page */}
                     <Link
@@ -163,6 +155,15 @@ function Navbar({ cartCount = 0 }) {
                             </span>
                         )}
                     </Link>
+
+                    {/* Logout Button */}
+                    <button
+                        onClick={handleLogout}
+                        className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer"
+                        title="Logout"
+                    >
+                        <LogOut className="h-5 w-5 text-red-400" />
+                    </button>
                 </div>
             </nav>
 
@@ -171,17 +172,17 @@ function Navbar({ cartCount = 0 }) {
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-999 flex items-start justify-center p-4 md:hidden" onClick={() => setIsSearchPopupOpen(false)}>
                     <div
                         ref={searchPopupRef}
-                        className="w-full max-w-md bg-[#1A1A1C] border border-white/10 rounded-[40px] p-4 mt-16 animate-slideDown shadow-xl"
+                        className="w-full max-w-md bg-[#1A1A1C] border border-white/10 rounded-3xl p-4 mt-20 animate-slideDown shadow-xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">Search Games</h3>
-                            <button onClick={() => setIsSearchPopupOpen(false)} className="text-white/60 hover:text-white">
+                            <button onClick={() => setIsSearchPopupOpen(false)} className="text-white/60 hover:text-white cursor-pointer">
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none cursor-pointer">
                                 <Search className="h-4 w-4 text-white/50" />
                             </div>
                             <input

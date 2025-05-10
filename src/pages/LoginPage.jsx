@@ -126,11 +126,7 @@ function LoginPage() {
                             </div>
                         )}
 
-                        <div className="flex items-center justify-center text-sm">
-                            <a href="#" className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
-                                Forgot password?
-                            </a>
-                        </div>
+
 
                         <div>
                             <button

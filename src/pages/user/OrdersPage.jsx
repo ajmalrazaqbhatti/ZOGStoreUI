@@ -70,16 +70,19 @@ function OrdersPage() {
 
     // Get status icon based on status
     const getStatusIcon = (status) => {
-        switch (status) {
-            case 'Completed':
+        // Handle undefined or null status
+        if (!status) return <Clock size={16} />;
+
+        switch (status.toLowerCase()) {
+            case 'delivered':
                 return <CheckCircle size={16} />;
-            case 'Processing':
+            case 'processing':
                 return <RefreshCw size={16} />;
-            case 'Pending':
+            case 'pending':
                 return <Clock size={16} />;
-            case 'Shipped':
+            case 'shipped':
                 return <Truck size={16} />;
-            case 'Failed':
+            case 'canceled':
                 return <Ban size={16} />;
             default:
                 return <Clock size={16} />;
@@ -88,16 +91,19 @@ function OrdersPage() {
 
     // Get status badge styling
     const getStatusBadge = (status) => {
-        switch (status) {
-            case 'Completed':
+        // Handle undefined or null status
+        if (!status) return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+
+        switch (status.toLowerCase()) {
+            case 'delivered':
                 return 'bg-green-500/20 text-green-400 border-green-500/30';
-            case 'Processing':
+            case 'processing':
                 return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-            case 'Pending':
+            case 'pending':
                 return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-            case 'Shipped':
+            case 'shipped':
                 return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30';
-            case 'Failed':
+            case 'canceled':
                 return 'bg-red-500/20 text-red-400 border-red-500/30';
             default:
                 return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
@@ -109,7 +115,7 @@ function OrdersPage() {
     // Render skeleton loaders during loading state
     const renderSkeletonLoaders = () => {
         return Array(3).fill().map((_, index) => (
-            <div key={`skeleton-${index}`} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden animate-pulse">
+            <div key={`skeleton-${index}`} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden animate-pulse">
                 <div className="p-6 border-b border-white/10">
                     <div className="flex flex-col sm:flex-row justify-between gap-4">
                         <div>
@@ -157,7 +163,7 @@ function OrdersPage() {
             <Navbar />
 
             {/* Main Content */}
-            <div className="relative z-20 px-4 md:px-12 py-8 max-w-4xl pt-24 mx-auto">
+            <div className="relative z-20 px-4 md:px-12 py-8 max-w-7xl mx-auto pt-24">
                 {/* Header Section with Back Button */}
                 <div className="flex items-center gap-3 mb-8">
                     <button
@@ -221,7 +227,7 @@ function OrdersPage() {
                             {searchTerm && (
                                 <button
                                     onClick={() => setSearchTerm('')}
-                                    className="bg-white/10 hover:bg-white/15 transition-colors px-6 py-3 rounded-xl font-medium flex items-center gap-2 cursor-pointer"
+                                    className="bg-white/10 hover:bg-white/15 transition-colors px-6 py-3 rounded-3xl font-medium flex items-center gap-2 cursor-pointer"
                                 >
                                     <X size={18} />
                                     Clear Search
@@ -253,7 +259,7 @@ function OrdersPage() {
                 {!loading && !error && filteredOrders.length > 0 && (
                     <>
                         {/* Search, Filter and Sort Options */}
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 mb-6">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-4 mb-6">
                             <div className="flex flex-col md:flex-row gap-4">
                                 {/* Search Bar */}
                                 <div className="relative flex-grow">
@@ -265,7 +271,7 @@ function OrdersPage() {
                                         placeholder="Search by order ID or item name"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 bg-black/30 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                                        className="w-full pl-10 pr-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
                                     />
                                     {searchTerm && (
                                         <button
@@ -331,7 +337,7 @@ function OrdersPage() {
                             {filteredOrders.map(order => (
                                 <div
                                     key={order.order_id}
-                                    className={`bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden transition-all duration-300 shadow-lg 
+                                    className={`bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden transition-all duration-300 shadow-lg 
                                     ${expandedOrder === order.order_id ? 'ring-2 ring-[#7C5DF9]/50' : 'hover:border-white/20'}`}
                                 >
                                     {/* Order Header */}
@@ -342,9 +348,9 @@ function OrdersPage() {
                                                     <h3 className="text-lg font-semibold">
                                                         Order #{order.order_id}
                                                     </h3>
-                                                    <span className={`px-3 py-1 text-xs rounded-full border ${getStatusBadge(order.payment_status)} flex items-center gap-1.5`}>
-                                                        {getStatusIcon(order.payment_status)}
-                                                        {order.payment_status || 'Processing'}
+                                                    <span className={`px-3 py-1 text-xs rounded-full border ${getStatusBadge(order.order_status)} flex items-center gap-1.5`}>
+                                                        {getStatusIcon(order.order_status)}
+                                                        {order.order_status || 'Processing'}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-400 flex items-center gap-1.5">
@@ -386,39 +392,67 @@ function OrdersPage() {
                                     {expandedOrder === order.order_id && (
                                         <div className="p-4 sm:p-6 bg-gradient-to-b from-[#7C5DF9]/5 to-transparent animate-fadeIn">
                                             {/* Items Section */}
-                                            <div className="bg-black/20 border border-white/10 rounded-xl p-4 mb-6">
+                                            <div className="bg-black/20 border border-white/10 rounded-3xl p-4 mb-6">
                                                 <h4 className="font-medium mb-4 flex items-center gap-2 text-[#7C5DF9]">
                                                     <Package size={16} />
                                                     Order Items
                                                 </h4>
                                                 <div className="space-y-4">
-                                                    {order.items.map(item => (
-                                                        <div
-                                                            key={item.order_item_id}
-                                                            className="flex items-center justify-between py-3 border-b border-white/5 last:border-0"
-                                                        >
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#7C5DF9]/20 text-[#7C5DF9] font-medium text-sm">
-                                                                    {item.quantity}
-                                                                </div>
-                                                                <div>
-                                                                    <div className="font-medium">{item.title}</div>
-                                                                    <div className="text-sm text-gray-400 flex items-center gap-1">
-                                                                        <DollarSign size={12} />
-                                                                        {parseFloat(item.price).toFixed(2)} each
+                                                    {order.items.length > 0 ? (
+                                                        order.items.map(item => (
+                                                            <div
+                                                                key={item?.order_item_id || `missing-item-${Math.random()}`}
+                                                                className="flex items-center justify-between py-3 border-b border-white/5 last:border-0"
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#7C5DF9]/20 text-[#7C5DF9] font-medium text-sm">
+                                                                        {item?.quantity || 0}
+                                                                    </div>
+                                                                    <div>
+                                                                        <div className="font-medium">
+                                                                            {item?.title || (
+                                                                                <span className="text-red-400">Game Not Available</span>
+                                                                            )}
+                                                                        </div>
+                                                                        {item ? (
+                                                                            <div className="text-sm text-gray-400 flex items-center gap-1">
+                                                                                <DollarSign size={12} />
+                                                                                {parseFloat(item.price).toFixed(2)} each
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="text-sm text-gray-400">
+                                                                                Item data unavailable
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 </div>
+                                                                <div className="font-medium">
+                                                                    {item ? (
+                                                                        `$${parseFloat(item.subtotal).toFixed(2)}`
+                                                                    ) : (
+                                                                        "N/A"
+                                                                    )}
+                                                                </div>
                                                             </div>
-                                                            <div className="font-medium">${parseFloat(item.subtotal).toFixed(2)}</div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="py-3 text-center">
+                                                            <div className="inline-flex items-center justify-center w-10 h-10 bg-red-500/10 rounded-full mb-2">
+                                                                <Ban size={20} className="text-red-400" />
+                                                            </div>
+                                                            <p className="text-red-400 font-medium">Games Not Available or Deleted</p>
+                                                            <p className="text-sm text-gray-400 mt-1">
+                                                                The items in this order are no longer available in our system.
+                                                            </p>
                                                         </div>
-                                                    ))}
+                                                    )}
                                                 </div>
                                             </div>
 
                                             {/* Order Summary Section */}
                                             <div className="flex flex-col sm:flex-row gap-6">
                                                 <div className="flex-grow">
-                                                    <div className="bg-black/20 border border-white/10 rounded-xl p-4">
+                                                    <div className="bg-black/20 border border-white/10 rounded-3xl p-4">
                                                         <h4 className="font-medium mb-4 flex items-center gap-2 text-[#7C5DF9]">
                                                             <CreditCard size={16} />
                                                             Payment Information
@@ -430,25 +464,14 @@ function OrdersPage() {
                                                                     {order.payment_method}
                                                                 </span>
                                                             </div>
-                                                            <div className="flex justify-between items-center">
-                                                                <span className="text-gray-400">Payment ID:</span>
-                                                                <span className="font-mono bg-white/10 px-3 py-1 rounded-lg text-xs">
-                                                                    {order.payment_id}
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex justify-between items-center">
-                                                                <span className="text-gray-400">Status:</span>
-                                                                <span className={`px-3 py-1 text-xs rounded-lg flex items-center gap-1.5 ${getStatusBadge(order.payment_status)}`}>
-                                                                    {getStatusIcon(order.payment_status)}
-                                                                    {order.payment_status || 'Processing'}
-                                                                </span>
-                                                            </div>
+
+
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div className="sm:w-64">
-                                                    <div className="bg-black/20 border border-white/10 rounded-xl p-4">
+                                                    <div className="bg-black/20 border border-white/10 rounded-3xl p-4">
                                                         <h4 className="font-medium mb-4 flex items-center gap-2 text-[#7C5DF9]">
                                                             <DollarSign size={16} />
                                                             Order Summary
@@ -458,10 +481,7 @@ function OrdersPage() {
                                                                 <span className="text-gray-400">Subtotal</span>
                                                                 <span>${parseFloat(order.total_amount).toFixed(2)}</span>
                                                             </div>
-                                                            <div className="flex justify-between">
-                                                                <span className="text-gray-400">Tax</span>
-                                                                <span>$0.00</span>
-                                                            </div>
+
                                                             <div className="border-t border-white/10 my-2 pt-2">
                                                                 <div className="flex justify-between font-bold">
                                                                     <span>Total</span>

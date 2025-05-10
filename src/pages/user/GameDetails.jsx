@@ -173,7 +173,7 @@ function GameDetails() {
                     <p className="text-gray-400 mb-8">{error || "The game you're looking for doesn't exist or couldn't be loaded."}</p>
                     <button
                         onClick={handleBack}
-                        className="bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-all px-6 py-3 rounded-xl text-white font-medium w-full flex items-center justify-center gap-2 shadow-lg shadow-purple-900/30"
+                        className="bg-[#7C5DF9] hover:bg-[#6A4FF0] transition-all py-3 rounded-xl text-white font-medium w-full flex items-center justify-center gap-2 shadow-lg shadow-purple-900/30"
                     >
                         <ArrowLeft size={18} />
                         Back to Games
@@ -191,6 +191,7 @@ function GameDetails() {
                 backgroundPosition: 'center',
                 backdropFilter: 'blur(8px)',
                 WebkitBackdropFilter: 'blur(8px)',
+                backgroundBlendMode: 'luminosity',
                 position: 'relative'
             }}>
             {/* Add an additional blurred overlay for better effect */}
@@ -227,7 +228,7 @@ function GameDetails() {
                     {/* Back Button */}
                     <button
                         onClick={handleBack}
-                        className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 transition-colors px-4 py-2 rounded-lg  hover:bg-black/5 backdrop-blur-lg cursor-pointer"
+                        className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 transition-colors py-2 rounded-lg b backdrop-blur-lg cursor-pointer"
                     >
                         <ArrowLeft size={16} />
                         <span>Back to Store</span>
@@ -257,7 +258,7 @@ function GameDetails() {
                     <div className="flex flex-col lg:flex-row gap-8">
 
                         {/* Left Column - Game Info */}
-                        <div className="w-full lg:w-2/3 bg-black/0 border border-white/10 rounded-[40px]">
+                        <div className="w-full lg:w-2/3 bg-black/70 border border-white/10 rounded-[40px]">
                             <div className="p-6">
                                 <h3 className="text-xl font-bold mb-4">About This Game</h3>
                                 <div className=" py-5 mb-8">
@@ -268,7 +269,6 @@ function GameDetails() {
 
                                 {/* Game Info */}
                                 <h3 className="text-lg font-bold mb-4 flex items-center">
-                                    <Info size={18} className="mr-2 text-[#7C5DF9]" />
                                     Game Details
                                 </h3>
                                 <div className="p-6 rounded-xl mb-6">
@@ -292,19 +292,13 @@ function GameDetails() {
                                             </div>
                                         )}
 
-                                        {game.developer && (
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-gray-400 text-sm">Developer:</span>
-                                                <span className="text-white font-medium">{game.developer}</span>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Right Column - Purchase Panel */}
-                        <div className="w-full lg:w-1/3 border border-white/10 rounded-[40px]">
+                        <div className="w-full lg:w-1/3 border bg-black/70 border-white/10 rounded-[40px]">
                             <div className="lg:sticky lg:top-24 p-6">
                                 {/* Game Icon and Price */}
                                 <div className="flex items-center justify-between mb-6">

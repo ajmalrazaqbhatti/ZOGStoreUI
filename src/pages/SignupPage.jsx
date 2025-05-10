@@ -85,7 +85,7 @@ function SignupPage() {
         setApiError('');
 
         try {
-            const response = await fetch('http://localhost:3000/signup', {
+            const response = await fetch('http://localhost:3000/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ function SignupPage() {
 
             setSignupSuccess(true);
             console.log('Registration successful:', data);
-            // Redirect or show success message
+
 
         } catch (error) {
             console.error('Signup failed:', error);
@@ -182,7 +182,7 @@ function SignupPage() {
                             </div>
                             <h2 className="text-2xl font-bold text-white">Registration Successful!</h2>
                             <p className="text-gray-400">Your account has been created.</p>
-                            <a href="/login" className="mt-4 block w-full py-3 px-4 rounded-xl text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150 ease-in-out text-center">
+                            <a href="/" className="mt-4 block w-full py-3 px-4 rounded-xl text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150 ease-in-out text-center">
                                 Go to Login
                             </a>
                         </div>
@@ -320,7 +320,7 @@ function SignupPage() {
 
                             <div className="mt-8 text-center text-sm">
                                 <span className="text-gray-400">Already have an account?</span>
-                                <a href="/login" className="ml-1 font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
+                                <a href="/" className="ml-1 font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
                                     Sign in
                                 </a>
                             </div>
