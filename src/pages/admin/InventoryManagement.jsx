@@ -4,6 +4,7 @@ import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
 import AdminSidebar from '../../components/AdminSidebar';
 import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 function InventoryManagement() {
     useAuthCheck();
@@ -107,6 +108,11 @@ function InventoryManagement() {
                 setToast({ visible: false, message: '', type: 'success' });
             }, duration);
         }
+    };
+
+    // Add this function to close the toast
+    const closeToast = () => {
+        setToast(prev => ({ ...prev, visible: false }));
     };
 
     // Debounce function to prevent too many API calls
@@ -232,32 +238,17 @@ function InventoryManagement() {
             {/* Admin Sidebar */}
             <AdminSidebar />
 
+            {/* Toast Component */}
+            <Toast
+                visible={toast.visible}
+                message={toast.message}
+                type={toast.type}
+                onClose={closeToast}
+            />
+
             {/* Main Content */}
             <div className="lg:ml-64 transition-all duration-300">
                 <div className="p-4 md:p-8">
-                    {/* Toast Notification */}
-                    {toast.visible && (
-                        <div className={`fixed bottom-4 right-4 z-50 p-4 rounded-3xl shadow-2xl flex items-center gap-3 animate-fadeIn
-                            bg-black/80 backdrop-blur-md border max-w-md 
-                            ${toast.type === 'success' ? 'border-green-500/30' :
-                                toast.type === 'updating' ? 'border-[#7C5DF9]/30' : 'border-red-500/30'}`}>
-                            {toast.type === 'success' ? (
-                                <Check className="h-5 w-5 text-green-400" />
-                            ) : toast.type === 'updating' ? (
-                                <div className="h-5 w-5 border-2 border-[#7C5DF9] border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                                <AlertCircle className="h-5 w-5 text-red-400" />
-                            )}
-                            <span className="text-white text-sm">{toast.message}</span>
-                            <button
-                                onClick={() => setToast(prev => ({ ...prev, visible: false }))}
-                                className="ml-2 text-white/50 hover:text-white transition-colors cursor-pointer"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
-                    )}
-
                     {/* Header */}
                     <header className="mb-8">
                         <h1 className="text-2xl font-bold">Inventory Management</h1>

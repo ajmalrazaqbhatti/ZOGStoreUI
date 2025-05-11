@@ -6,6 +6,7 @@ import overlay from '../../assets/overlay.png';
 import Navbar from '../../components/Navbar';
 import useAuthCheck from '../../hooks/useAuthCheck';
 import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 function GameDetails() {
     // Check if the user is authenticated
@@ -21,6 +22,11 @@ function GameDetails() {
     const [addToCartSuccess, setAddToCartSuccess] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
+
+    // Add this function to close the toast
+    const closeToast = () => {
+        setToast(prev => ({ ...prev, visible: false }));
+    };
 
     // Fetch game data from API
     useEffect(() => {
@@ -74,7 +80,7 @@ function GameDetails() {
         }
     };
 
-    // Show toast notification
+    // Show toast notification - update the existing function
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
 
@@ -197,25 +203,12 @@ function GameDetails() {
                 <Navbar cartCount={cartCount} />
 
                 {/* Toast Notification */}
-                {toast.visible && (
-                    <div className="fixed bottom-4 right-4 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-fadeIn
-                        bg-black/5 backdrop-blur-md border border-white/10 max-w-md">
-                        {toast.type === 'success' ? (
-                            <CheckCircle className="h-5 w-5 text-[#7C5DF9]" />
-                        ) : (
-                            <AlertCircle className="h-5 w-5 text-red-400" />
-                        )}
-                        <span className="text-white text-sm">{toast.message}</span>
-                        <button
-                            onClick={() => setToast(prev => ({ ...prev, visible: false }))}
-                            className="ml-2 text-white/50 hover:text-white transition-colors"
-                        >
-                            <X size={16} />
-                        </button>
-                    </div>
-                )}
-
-
+                <Toast
+                    visible={toast.visible}
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={closeToast}
+                />
 
                 {/* Main Content */}
                 <div className="relative z-20 px-4 md:px-12 pt-24 pb-8 max-w-7xl mx-auto" >

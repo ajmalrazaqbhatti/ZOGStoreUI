@@ -1,7 +1,6 @@
 import { Loader as LoaderIcon } from 'lucide-react';
 
 function Loader({ size = "default", }) {
-    // Size variants
     const sizeClasses = {
         small: "h-4 w-4",
         medium: "h-6 w-6",

@@ -4,6 +4,7 @@ import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
 import AdminSidebar from '../../components/AdminSidebar';
 import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 function UserManagement() {
     // Check if the user is authenticated and has admin role
@@ -102,6 +103,11 @@ function UserManagement() {
         setTimeout(() => {
             setToast({ visible: false, message: '', type: 'success' });
         }, 3000);
+    };
+
+    // Add this function to close the toast
+    const closeToast = () => {
+        setToast(prev => ({ ...prev, visible: false }));
     };
 
     // Format date
@@ -310,28 +316,17 @@ function UserManagement() {
             {/* Admin Sidebar */}
             <AdminSidebar />
 
+            {/* Toast Component */}
+            <Toast
+                visible={toast.visible}
+                message={toast.message}
+                type={toast.type}
+                onClose={closeToast}
+            />
+
             {/* Main Content */}
             <div className="lg:ml-64 transition-all duration-300">
                 <div className="p-4 md:p-8">
-                    {/* Toast Notification */}
-                    {toast.visible && (
-                        <div className="fixed bottom-4 right-4 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-fadeIn
-                            bg-black/80 backdrop-blur-md border border-white/10 max-w-md">
-                            {toast.type === 'success' ? (
-                                <Check className="h-5 w-5 text-[#7C5DF9]" />
-                            ) : (
-                                <AlertCircle className="h-5 w-5 text-red-400" />
-                            )}
-                            <span className="text-white text-sm">{toast.message}</span>
-                            <button
-                                onClick={() => setToast(prev => ({ ...prev, visible: false }))}
-                                className="ml-2 text-white/50 hover:text-white transition-colors cursor-pointer"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
-                    )}
-
                     {/* Delete Confirmation Modal */}
                     {deleteConfirm.show && (
                         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">

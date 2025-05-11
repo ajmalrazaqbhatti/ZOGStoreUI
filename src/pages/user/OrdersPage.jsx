@@ -9,6 +9,7 @@ import Navbar from '../../components/Navbar';
 import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
 import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 function OrdersPage() {
     // Check if the user is authenticated
@@ -121,6 +122,10 @@ function OrdersPage() {
                 </div>
             );
         }
+    };
+
+    const closeToast = () => {
+        setToast(prev => ({ ...prev, visible: false }));
     };
 
     return (
@@ -489,6 +494,12 @@ function OrdersPage() {
                     </>
                 )}
             </div>
+            <Toast
+                visible={toast.visible}
+                message={toast.message}
+                type={toast.type}
+                onClose={closeToast}
+            />
         </div>
     );
 }
