@@ -2,18 +2,17 @@
 @import "tailwindcss";
 
 body {
-  font-family: 'Product Sans', sans-serif;
+  font-family: "Product Sans", sans-serif;
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none; /* Chrome, Safari and Opera */
 }
-
 
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out forwards;
@@ -33,7 +32,10 @@ body {
 }
 
 /* Smoother transitions for all interactive elements */
-button, a, input, select, .transition-all {
+button,
+a,
+input,
+select,
+.transition-all {
   transition: all 0.2s ease-in-out !important;
 }
-

@@ -32,12 +32,14 @@ ZOGStore UI is a responsive web application that provides a seamless shopping ex
 ### Installation
 
 1. Clone the repository
+
    ```
    git clone https://github.com/yourusername/ZOGStore.git
    cd ZOGStoreUI
    ```
 
 2. Install dependencies
+
    ```
    npm install
    # or
@@ -45,6 +47,7 @@ ZOGStore UI is a responsive web application that provides a seamless shopping ex
    ```
 
 3. Start the development server
+
    ```
    npm run dev
    # or
