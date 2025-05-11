@@ -7,7 +7,12 @@ import useAuthCheck from '../../hooks/useAuthCheck';
 import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 
+/********************************************************
+ * CartPage Component
+ * Displays cart items and handles checkout process
+ ********************************************************/
 function CartPage() {
+    // State and navigation setup
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,14 +22,17 @@ function CartPage() {
     const [cartTotal, setCartTotal] = useState(0);
     const [itemCount, setItemCount] = useState(0);
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
-    // New states for checkout process
+    // Checkout process states
     const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart', 'payment', 'confirmation'
     const [paymentMethod, setPaymentMethod] = useState('Credit Card');
 
-    // Check if the user is authenticated
+    // Authentication check
     useAuthCheck();
 
-    // Show toast notification
+    /********************************************************
+     * Toast Notification Functions
+     ********************************************************/
+    // Display notification to user
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
 
@@ -34,12 +42,15 @@ function CartPage() {
         }, 3000);
     };
 
-    // Add this function to close the toast
+    // Hide toast notification
     const closeToast = () => {
         setToast(prev => ({ ...prev, visible: false }));
     };
 
-    // Calculate the actual total from cart items
+    /********************************************************
+     * Cart Calculation Functions
+     ********************************************************/
+    // Calculate total price of all items
     const calculateCartTotal = (items) => {
         return items.reduce((sum, item) => {
             const itemPrice = parseFloat(item.price) || 0;
@@ -48,7 +59,10 @@ function CartPage() {
         }, 0);
     };
 
-    // Fetch cart items
+    /********************************************************
+     * Data Fetching
+     ********************************************************/
+    // Load cart items from API
     useEffect(() => {
         const fetchCartItems = async () => {
             setLoading(true);
@@ -81,7 +95,10 @@ function CartPage() {
         fetchCartItems();
     }, []);
 
-    // Update item quantity
+    /********************************************************
+     * Cart Item Management
+     ********************************************************/
+    // Update item quantity in cart
     const updateQuantity = async (itemId, newQuantity) => {
         if (newQuantity < 1) return;
 
@@ -183,28 +200,31 @@ function CartPage() {
         }
     };
 
-    // Calculate subtotal - now using our corrected cartTotal value
+    // Calculate cart subtotal
     const calculateSubtotal = () => {
         return cartTotal ? cartTotal.toFixed(2) : "0.00";
     };
 
-    // Start checkout process - show payment selection
+    /********************************************************
+     * Checkout Process
+     ********************************************************/
+    // Start checkout process
     const startCheckout = () => {
         if (cartItems.length === 0) return;
         setCheckoutStep('payment');
     };
 
-    // Handle payment method selection
+    // Select payment method
     const selectPaymentMethod = (method) => {
         setPaymentMethod(method);
     };
 
-    // Cancel payment and return to cart
+    // Return to cart from payment screen
     const cancelPayment = () => {
         setCheckoutStep('cart');
     };
 
-    // Handle checkout
+    // Complete checkout and create order
     const handleCheckout = async () => {
         if (cartItems.length === 0) return;
 
@@ -255,7 +275,7 @@ function CartPage() {
         }
     };
 
-    // Loading state
+    // Show loading indicator
     if (loading) {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"

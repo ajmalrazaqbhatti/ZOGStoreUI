@@ -1,41 +1,56 @@
+/********************************************************
+ * SignupPage Component
+ * Multi-step registration form for new users
+ ********************************************************/
 import { useState } from "react";
 import logo from "../assets/logo.svg";
 import overlay from "../assets/overlay.png";
 import { Loader } from 'lucide-react';
 
 function SignupPage() {
+    // Form state
     const [formData, setFormData] = useState({
         username: '',
         email: '',
         password: ''
     });
 
+    // Validation errors
     const [errors, setErrors] = useState({
         username: '',
         email: '',
         password: ''
     });
 
-    // Add state to track current signup step
+    // Multi-step form tracking
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 3;
 
-    // Add loading, success, and API error states
+    // UI state
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState('');
     const [signupSuccess, setSignupSuccess] = useState(false);
 
+    /********************************************************
+     * Validation Functions
+     ********************************************************/
+    // Email format validation
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
+    // Password requirements check
     const validatePassword = (password) => {
         // Minimum 8 characters, at least one uppercase, one lowercase, one number, one special character
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return passwordRegex.test(password);
     };
 
+    /********************************************************
+     * Form Handlers
+     ********************************************************/
+    // Update form data on input change
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -50,6 +65,7 @@ function SignupPage() {
         });
     };
 
+    // Validate current step fields
     const validateCurrentStep = () => {
         let isValid = true;
         let newErrors = { ...errors };
@@ -71,16 +87,19 @@ function SignupPage() {
         return isValid;
     };
 
+    // Move to next form step
     const goToNextStep = () => {
         if (validateCurrentStep()) {
             setCurrentStep(Math.min(currentStep + 1, totalSteps));
         }
     };
 
+    // Move to previous form step
     const goToPreviousStep = () => {
         setCurrentStep(Math.max(currentStep - 1, 1));
     };
 
+    // Submit registration to API
     const signupUser = async () => {
         setIsLoading(true);
         setApiError('');
@@ -112,6 +131,7 @@ function SignupPage() {
         }
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -129,6 +149,10 @@ function SignupPage() {
         await signupUser();
     };
 
+    /********************************************************
+     * UI Components
+     ********************************************************/
+    // Step indicator/progress bar
     const renderStepIndicator = () => {
         return (
             <div className="flex justify-center mb-6 w-full">
@@ -148,6 +172,7 @@ function SignupPage() {
         );
     };
 
+    // Get title for current step
     const getStepTitle = () => {
         switch (currentStep) {
             case 1: return "Choose Username";
@@ -157,6 +182,7 @@ function SignupPage() {
         }
     };
 
+    // Get description for current step
     const getStepDescription = () => {
         switch (currentStep) {
             case 1: return "Enter a unique username for your account";

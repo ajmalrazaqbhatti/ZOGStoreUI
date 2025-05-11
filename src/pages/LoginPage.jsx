@@ -1,3 +1,7 @@
+/********************************************************
+ * LoginPage Component
+ * User authentication form with client-side validation
+ ********************************************************/
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.svg";
@@ -5,6 +9,7 @@ import overlay from "../assets/overlay.png";
 import { Loader } from 'lucide-react';
 
 function LoginPage() {
+    // Navigation and state
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
@@ -13,6 +18,7 @@ function LoginPage() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    // Update form state on input change
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -20,6 +26,7 @@ function LoginPage() {
         });
     };
 
+    // Process login form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');

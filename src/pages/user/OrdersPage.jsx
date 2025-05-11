@@ -11,10 +11,15 @@ import useAuthCheck from '../../hooks/useAuthCheck';
 import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 
+/********************************************************
+ * OrdersPage Component
+ * Displays user's order history with filtering options
+ ********************************************************/
 function OrdersPage() {
     // Check if the user is authenticated
     useAuthCheck();
 
+    // State management for orders and UI elements
     const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [statusCounts, setStatusCounts] = useState({});
@@ -60,17 +65,18 @@ function OrdersPage() {
         fetchOrders();
     }, [activeFilter]);
 
+    // Expand/collapse order details
     const toggleOrderExpand = (orderId) => {
         setExpandedOrder(expandedOrder === orderId ? null : orderId);
     };
 
-    // Format date
+    // Helper function to format date strings
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
-    // Get status icon based on status
+    // Get appropriate icon based on order status
     const getStatusIcon = (status) => {
         // Handle undefined or null status
         if (!status) return <Clock size={16} />;
@@ -91,7 +97,7 @@ function OrdersPage() {
         }
     };
 
-    // Get status badge styling
+    // Get CSS classes for status badges
     const getStatusBadge = (status) => {
         // Handle undefined or null status
         if (!status) return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
@@ -112,7 +118,7 @@ function OrdersPage() {
         }
     };
 
-    // Render skeleton loaders during loading state
+    // Display skeleton loaders during data fetching
     const renderSkeletonLoaders = () => {
         if (loading) {
             return (
@@ -124,6 +130,7 @@ function OrdersPage() {
         }
     };
 
+    // Hide toast notification
     const closeToast = () => {
         setToast(prev => ({ ...prev, visible: false }));
     };

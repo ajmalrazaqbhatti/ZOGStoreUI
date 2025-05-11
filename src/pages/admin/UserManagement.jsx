@@ -1,3 +1,7 @@
+/********************************************************
+ * UserManagement Component
+ * Admin interface for managing user accounts
+ ********************************************************/
 import { useState, useEffect } from 'react';
 import { Search, RefreshCw, Edit, AlertCircle, Check, X, User, Trash2, Save } from 'lucide-react';
 import overlay from '../../assets/overlay.png';
@@ -7,9 +11,10 @@ import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 
 function UserManagement() {
-    // Check if the user is authenticated and has admin role
+    // Check admin authentication
     useAuthCheck();
 
+    // State management
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -18,7 +23,7 @@ function UserManagement() {
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
     const [deleteConfirm, setDeleteConfirm] = useState({ show: false, userId: null, username: '' });
 
-    // States for user edit modal
+    // User edit modal states
     const [showUserEdit, setShowUserEdit] = useState(false);
     const [editUser, setEditUser] = useState(null);
     const [editForm, setEditForm] = useState({
@@ -31,7 +36,10 @@ function UserManagement() {
     const [formErrors, setFormErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
 
-    // Fetch users
+    /********************************************************
+     * Data Fetching Functions
+     ********************************************************/
+    // Load users on component mount
     useEffect(() => {
         fetchUsers();
     }, []);
@@ -49,6 +57,7 @@ function UserManagement() {
         return () => clearTimeout(delayDebounceFn);
     }, [searchTerm]);
 
+    // Get all users
     const fetchUsers = async () => {
         setLoading(true);
         setError(null);
@@ -72,6 +81,7 @@ function UserManagement() {
         }
     };
 
+    // Search users by query
     const searchUsers = async (query) => {
         if (!query.trim()) return;
 
@@ -98,6 +108,10 @@ function UserManagement() {
         }
     };
 
+    /********************************************************
+     * Notification Functions
+     ********************************************************/
+    // Show toast notification
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
         setTimeout(() => {
@@ -105,12 +119,12 @@ function UserManagement() {
         }, 3000);
     };
 
-    // Add this function to close the toast
+    // Hide toast notification
     const closeToast = () => {
         setToast(prev => ({ ...prev, visible: false }));
     };
 
-    // Format date
+    // Format date for display
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
         return new Date(dateString).toLocaleDateString(undefined, {
@@ -120,7 +134,10 @@ function UserManagement() {
         });
     };
 
-    // Delete user confirmation
+    /********************************************************
+     * User Management Functions
+     ********************************************************/
+    // Show delete confirmation modal
     const confirmDeleteUser = (userId, username) => {
         setDeleteConfirm({
             show: true,
@@ -129,6 +146,7 @@ function UserManagement() {
         });
     };
 
+    // Cancel user deletion
     const cancelDelete = () => {
         setDeleteConfirm({
             show: false,
@@ -137,7 +155,7 @@ function UserManagement() {
         });
     };
 
-    // Delete user
+    // Delete user account
     const deleteUser = async () => {
         if (!deleteConfirm.userId) return;
 
@@ -167,7 +185,7 @@ function UserManagement() {
         }
     };
 
-    // Open user edit modal
+    // Open user edit form
     const openUserEdit = (user) => {
         setEditUser(user);
         setEditForm({
@@ -181,7 +199,7 @@ function UserManagement() {
         setShowUserEdit(true);
     };
 
-    // Close user edit modal
+    // Close user edit form
     const closeUserEdit = () => {
         setShowUserEdit(false);
         setEditUser(null);
@@ -195,7 +213,7 @@ function UserManagement() {
         setFormErrors({});
     };
 
-    // Handle edit form changes
+    // Handle edit form input changes
     const handleEditChange = (e) => {
         const { name, value } = e.target;
         setEditForm(prev => ({
@@ -212,7 +230,7 @@ function UserManagement() {
         }
     };
 
-    // Validate edit form
+    // Validate user edit form
     const validateEditForm = () => {
         const errors = {};
 
@@ -245,7 +263,7 @@ function UserManagement() {
         return Object.keys(errors).length === 0;
     };
 
-    // Submit edit form
+    // Submit user edit form
     const handleEditSubmit = async (e) => {
         e.preventDefault();
 

@@ -1,3 +1,7 @@
+/********************************************************
+ * AdminSidebar Component
+ * Navigation sidebar for admin section
+ ********************************************************/
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -15,23 +19,27 @@ import logo from '../assets/logo.svg';
 import overlay from '../assets/overlay.png';
 
 function AdminSidebar() {
+    // Router and state
     const location = useLocation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [userData, setUserData] = useState(null);
 
+    /********************************************************
+     * Effects and Initialization
+     ********************************************************/
     useEffect(() => {
-        // Get user data from localStorage
+        // Load user data from storage
         const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
         if (storedUser) {
             setUserData(storedUser);
         }
 
-        // Close mobile menu when route changes
+        // Close mobile menu on route change
         setIsMobileMenuOpen(false);
 
-        // Check window size for responsiveness
+        // Handle responsive behavior
         const handleResize = () => {
             if (window.innerWidth < 1024) {
                 setIsOpen(false);
@@ -48,10 +56,12 @@ function AdminSidebar() {
         };
     }, [location.pathname]);
 
+    // Check if a path is currently active
     const isActive = (path) => {
         return location.pathname === path;
     };
 
+    // Handle user logout
     const handleLogout = async () => {
         try {
             await fetch('http://localhost:3000/auth/logout', {
@@ -68,6 +78,7 @@ function AdminSidebar() {
         }
     };
 
+    // Navigation menu items
     const menuItems = [
         {
             name: 'Dashboard',

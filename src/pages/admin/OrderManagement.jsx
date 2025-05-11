@@ -1,3 +1,7 @@
+/********************************************************
+ * OrderManagement Component
+ * Admin interface for viewing and managing customer orders
+ ********************************************************/
 import React, { useState, useEffect } from 'react';
 import {
     Search, RefreshCw, ShoppingBag, AlertCircle, Check, X,
@@ -12,9 +16,10 @@ import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 
 function OrderManagement() {
-    // Check if the user is authenticated and has admin role
+    // Check admin authentication
     useAuthCheck();
 
+    // State management
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -30,15 +35,18 @@ function OrderManagement() {
     const [showStatusModal, setShowStatusModal] = useState(false);
     const [newStatus, setNewStatus] = useState('');
 
-    // Valid order statuses
+    // Order status options
     const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'canceled'];
 
-    // Fetch orders
+    /********************************************************
+     * Data Loading and Filtering
+     ********************************************************/
+    // Load orders on component mount
     useEffect(() => {
         fetchOrders();
     }, []);
 
-    // Filter orders based on status
+    // Apply filters to orders
     useEffect(() => {
         if (!orders.length) return;
 
@@ -65,6 +73,7 @@ function OrderManagement() {
         setFilteredOrders(filtered);
     }, [searchTerm, statusFilter, orders]);
 
+    // Fetch all orders
     const fetchOrders = async () => {
         setLoading(true);
         setError(null);
@@ -89,6 +98,9 @@ function OrderManagement() {
         }
     };
 
+    /********************************************************
+     * UI Helper Functions
+     ********************************************************/
     // Show toast notification
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
@@ -97,12 +109,12 @@ function OrderManagement() {
         }, 3000);
     };
 
-    // Add this function to close the toast
+    // Hide toast notification
     const closeToast = () => {
         setToast(prev => ({ ...prev, visible: false }));
     };
 
-    // Format date
+    // Format date for display
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleString(undefined, {
             year: 'numeric',
@@ -113,7 +125,7 @@ function OrderManagement() {
         });
     };
 
-    // Format currency
+    // Format currency for display
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -121,7 +133,7 @@ function OrderManagement() {
         }).format(amount);
     };
 
-    // Get status badge styling
+    // Get CSS class for status badge
     const getStatusBadge = (status) => {
         switch (status?.toLowerCase()) {
             case 'pending':
@@ -139,7 +151,7 @@ function OrderManagement() {
         }
     };
 
-    // Get status icon
+    // Get icon for order status
     const getStatusIcon = (status) => {
         switch (status?.toLowerCase()) {
             case 'pending':
@@ -157,13 +169,16 @@ function OrderManagement() {
         }
     };
 
-    // Prepare to delete an order
+    /********************************************************
+     * Order Management Functions
+     ********************************************************/
+    // Show delete confirmation
     const confirmDelete = (order) => {
         setOrderToDelete(order);
         setShowDeleteModal(true);
     };
 
-    // Handle order deletion
+    // Delete an order
     const handleDeleteConfirm = async () => {
         if (!orderToDelete) return;
 
@@ -195,14 +210,14 @@ function OrderManagement() {
         }
     };
 
-    // Open status change modal
+    // Show status change modal
     const openStatusChangeModal = (order) => {
         setStatusChangeOrder(order);
         setNewStatus(order.status.toLowerCase());
         setShowStatusModal(true);
     };
 
-    // Handle status change
+    // Update order status
     const handleStatusChange = async () => {
         if (!statusChangeOrder || !newStatus) return;
 
@@ -244,7 +259,7 @@ function OrderManagement() {
         }
     };
 
-    // Toggle order details view
+    // Expand/collapse order details
     const toggleOrderDetails = (orderId) => {
         setShowOrderDetails(showOrderDetails === orderId ? null : orderId);
     };

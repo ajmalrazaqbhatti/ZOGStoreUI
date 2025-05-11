@@ -1,3 +1,7 @@
+/********************************************************
+ * InventoryManagement Component
+ * Admin interface for managing game stock levels
+ ********************************************************/
 import { useState, useEffect } from 'react';
 import { Search, RefreshCw, Package, AlertCircle, Check, X, Plus, Minus } from 'lucide-react';
 import overlay from '../../assets/overlay.png';
@@ -7,8 +11,10 @@ import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 
 function InventoryManagement() {
+    // Check admin authentication
     useAuthCheck();
 
+    // State management
     const [inventory, setInventory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,12 +26,15 @@ function InventoryManagement() {
     const [debounceTimers, setDebounceTimers] = useState({});
     const [searchTimer, setSearchTimer] = useState(null);
 
-    // Fetch inventory
+    /********************************************************
+     * Data Loading and Searching
+     ********************************************************/
+    // Load inventory on component mount
     useEffect(() => {
         fetchInventory();
     }, []);
 
-    // Handle search debouncing
+    // Debounced search processing
     useEffect(() => {
         if (searchTimer) {
             clearTimeout(searchTimer);
@@ -49,6 +58,7 @@ function InventoryManagement() {
         };
     }, [searchTerm]);
 
+    // Get all inventory items
     const fetchInventory = async () => {
         setLoading(true);
         setError(null);
@@ -73,6 +83,7 @@ function InventoryManagement() {
         }
     };
 
+    // Search inventory by game title
     const fetchInventoryBySearch = async (title) => {
         if (!title.trim()) return;
 
@@ -99,6 +110,10 @@ function InventoryManagement() {
         }
     };
 
+    /********************************************************
+     * Notification Functions
+     ********************************************************/
+    // Show toast notification
     const showToast = (message, type = 'success', duration = 3000) => {
         setToast({ visible: true, message, type });
 
@@ -110,12 +125,15 @@ function InventoryManagement() {
         }
     };
 
-    // Add this function to close the toast
+    // Hide toast notification
     const closeToast = () => {
         setToast(prev => ({ ...prev, visible: false }));
     };
 
-    // Debounce function to prevent too many API calls
+    /********************************************************
+     * Inventory Management Functions
+     ********************************************************/
+    // Debounce stock updates to prevent API flooding
     const debounceStockUpdate = (gameId, stockQuantity) => {
         // Cancel any existing timer for this gameId
         if (debounceTimers[gameId]) {
@@ -168,7 +186,7 @@ function InventoryManagement() {
         debounceStockUpdate(gameId, newValue);
     };
 
-    // Handle direct input of stock quantity
+    // Direct input for stock quantity
     const handleStockInputChange = (gameId, value) => {
         const numericValue = Math.max(0, parseInt(value) || 0);
 
@@ -183,12 +201,12 @@ function InventoryManagement() {
         debounceStockUpdate(gameId, numericValue);
     };
 
-    // Get current stock quantity (actual or changed)
+    // Get current stock value (from local state or original)
     const getCurrentStock = (gameId, defaultStock) => {
         return stockChanges[gameId] !== undefined ? stockChanges[gameId] : defaultStock;
     };
 
-    // Update stock quantity in the database
+    // Update stock quantity in database
     const updateStockQuantity = async (gameId, stockQuantity) => {
         try {
             const response = await fetch(`http://localhost:3000/admin/inventory/${gameId}`, {

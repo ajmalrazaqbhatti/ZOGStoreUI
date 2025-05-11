@@ -1,10 +1,17 @@
+/********************************************************
+ * ESLint Configuration
+ * Code quality and style rules for the project
+ ********************************************************/
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
+  // Ignore built files
   { ignores: ['dist'] },
+  
+  // Rules for JavaScript/JSX files
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -16,10 +23,12 @@ export default [
         sourceType: 'module',
       },
     },
+    // Required plugins
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
+    // Linting rules
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,

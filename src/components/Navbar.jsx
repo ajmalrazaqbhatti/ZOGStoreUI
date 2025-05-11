@@ -1,9 +1,14 @@
+/********************************************************
+ * Navbar Component
+ * Main navigation bar with search and user controls
+ ********************************************************/
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.svg';
 import { Search, User, ShoppingCart, X, Package, LogOut } from 'lucide-react';
 
 function Navbar({ cartCount = 0 }) {
+    // State management
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
     const searchInputRef = useRef(null);
@@ -16,6 +21,9 @@ function Navbar({ cartCount = 0 }) {
         return location.pathname === path;
     };
 
+    /********************************************************
+     * Event Handlers and Effects
+     ********************************************************/
     // Close menus when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
@@ -30,7 +38,7 @@ function Navbar({ cartCount = 0 }) {
         };
     }, []);
 
-    // Handle logout
+    // Handle user logout
     const handleLogout = async () => {
         try {
             const response = await fetch('http://localhost:3000/auth/logout', {
@@ -52,7 +60,7 @@ function Navbar({ cartCount = 0 }) {
         }
     };
 
-    // Handle search
+    // Process search form submission
     const handleSearch = (e) => {
         e.preventDefault();
         if (!searchTerm.trim()) return;
@@ -62,7 +70,7 @@ function Navbar({ cartCount = 0 }) {
         setIsSearchPopupOpen(false);
     };
 
-    // Toggle search popup
+    // Toggle mobile search popup
     const toggleSearchPopup = () => {
         setIsSearchPopupOpen(!isSearchPopupOpen);
         if (!isSearchPopupOpen) {
@@ -74,7 +82,7 @@ function Navbar({ cartCount = 0 }) {
         }
     };
 
-    // Function to clear search and return to all games
+    // Clear search and reset results
     const clearSearch = () => {
         setSearchTerm('')
         navigate('/?reset=true', { replace: true });

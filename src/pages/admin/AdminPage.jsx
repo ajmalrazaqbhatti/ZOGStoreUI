@@ -1,3 +1,7 @@
+/********************************************************
+ * AdminPage Component
+ * Dashboard with stats and overview for administrators
+ ********************************************************/
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import overlay from '../../assets/overlay.png';
@@ -7,14 +11,16 @@ import { Users, ShoppingBag, Package, Layers, DollarSign, Activity, CreditCard, 
 import Loader from '../../components/Loader';
 
 function AdminPage() {
-    // Check if the user is authenticated and has admin role
+    // Check admin authentication
     useAuthCheck();
 
+    // State management
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState(null);
     const [topGames, setTopGames] = useState([]);
     const [dashboardError, setDashboardError] = useState(null);
 
+    // Load dashboard data on mount
     useEffect(() => {
         // Fetch all dashboard data
         Promise.all([
@@ -26,7 +32,10 @@ function AdminPage() {
             });
     }, []);
 
-    // Fetch dashboard statistics
+    /********************************************************
+     * Data Fetching Functions
+     ********************************************************/
+    // Get dashboard statistics
     const fetchDashboardStats = async () => {
         try {
             const response = await fetch('http://localhost:3000/dashboard/stats', {
@@ -45,7 +54,7 @@ function AdminPage() {
         }
     };
 
-    // Fetch top selling games
+    // Get top selling games
     const fetchTopGames = async () => {
         try {
             const response = await fetch('http://localhost:3000/dashboard/top-games', {
@@ -63,7 +72,10 @@ function AdminPage() {
         }
     };
 
-    // Format currency
+    /********************************************************
+     * Formatting Functions
+     ********************************************************/
+    // Format currency for display
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -71,7 +83,7 @@ function AdminPage() {
         }).format(amount || 0);
     };
 
-    // Format date
+    // Format date for display
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString(undefined, {
             year: 'numeric',
@@ -80,6 +92,7 @@ function AdminPage() {
         });
     };
 
+    // Show loading indicator while data loads
     if (loading) {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"

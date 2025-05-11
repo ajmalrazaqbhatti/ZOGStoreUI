@@ -6,7 +6,12 @@ import Navbar from '../../components/Navbar'
 import useAuthCheck from '../../hooks/useAuthCheck'
 import Loader from '../../components/Loader';
 
+/********************************************************
+ * HomePage Component
+ * Main landing page showing game catalog with search and filtering
+ ********************************************************/
 function HomePage() {
+    // State for UI interactions and data
     const [hoveredCard, setHoveredCard] = useState(null);
     const [recentGames, setRecentGames] = useState([]);
     const [allGames, setAllGames] = useState([]);
@@ -21,10 +26,10 @@ function HomePage() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Check if the user is authenticated
+    // Authentication check
     useAuthCheck();
 
-    // Function to fetch cart count
+    // Get current cart item count
     const fetchCartCount = async () => {
         try {
             const response = await fetch('http://localhost:3000/cart/count', {
@@ -40,17 +45,17 @@ function HomePage() {
         }
     };
 
-    // Fetch cart count when component mounts
+    // Update cart count on component mount
     useEffect(() => {
         fetchCartCount();
     }, []);
 
-    // Function to navigate to game details page
+    // Handle game card click to show details
     const navigateToGameDetails = (game) => {
         navigate(`/game/${game.game_id}`, { state: { game } });
     };
 
-    // Parse search query from URL and handle reset parameter
+    // Process URL search parameters
     useEffect(() => {
         const query = new URLSearchParams(location.search);
         const search = query.get('search');
@@ -89,7 +94,7 @@ function HomePage() {
         }
     }, [location.search]);
 
-    // Fetch genres
+    // Load available game genres
     useEffect(() => {
         const fetchGenres = async () => {
             try {
@@ -109,7 +114,7 @@ function HomePage() {
         fetchGenres();
     }, []);
 
-    // Function to filter games by genre
+    // Apply genre filter to game list
     const filterGamesByGenre = async (genre) => {
         setLoading(true);
         setActiveGenre(genre);
@@ -140,7 +145,7 @@ function HomePage() {
         }
     };
 
-    // Fetch games data from API
+    // Initial data loading
     useEffect(() => {
         const fetchGames = async () => {
             try {
@@ -164,7 +169,7 @@ function HomePage() {
         fetchGames();
     }, []);
 
-    // Function to handle search with a specific term
+    // Search functionality
     const handleSearchWithTerm = async (term) => {
         if (!term.trim()) return;
 
@@ -194,7 +199,7 @@ function HomePage() {
         }
     };
 
-    // Function to clear search and restore all games
+    // Reset search to show all games
     const clearSearch = async () => {
         setSearchTerm('');
         setIsSearching(false);
@@ -223,6 +228,7 @@ function HomePage() {
         }
     };
 
+    // Show loading indicator while data is being fetched
     if (loading) {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"

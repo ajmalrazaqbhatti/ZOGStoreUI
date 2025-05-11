@@ -8,10 +8,15 @@ import useAuthCheck from '../../hooks/useAuthCheck';
 import Loader from '../../components/Loader';
 import Toast from '../../components/Toast';
 
+/********************************************************
+ * GameDetails Component
+ * Displays detailed information about a specific game
+ ********************************************************/
 function GameDetails() {
-    // Check if the user is authenticated
+    // Authentication check
     useAuthCheck();
 
+    // State and router hooks
     const navigate = useNavigate();
     const { gameId } = useParams();
     const [game, setGame] = useState(null);
@@ -23,12 +28,12 @@ function GameDetails() {
     const [cartCount, setCartCount] = useState(0);
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
 
-    // Add this function to close the toast
+    // Hide toast notification
     const closeToast = () => {
         setToast(prev => ({ ...prev, visible: false }));
     };
 
-    // Fetch game data from API
+    // Load game data by ID
     useEffect(() => {
         const fetchGameData = async () => {
             if (gameId) {
@@ -59,12 +64,12 @@ function GameDetails() {
         fetchCartCount();
     }, [gameId]);
 
-    // Fetch cart count when component mounts
+    // Update cart count when component mounts
     useEffect(() => {
         fetchCartCount();
     }, []);
 
-    // Function to fetch cart count
+    // Get current cart item count
     const fetchCartCount = async () => {
         try {
             const response = await fetch('http://localhost:3000/cart/count', {
@@ -80,7 +85,7 @@ function GameDetails() {
         }
     };
 
-    // Show toast notification - update the existing function
+    // Display notification to user
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
 
@@ -90,12 +95,12 @@ function GameDetails() {
         }, 3000);
     };
 
-    // Handle back navigation
+    // Navigate to previous page
     const handleBack = () => {
         navigate('/home');
     };
 
-    // Handle quantity change
+    // Quantity control functions
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
@@ -109,7 +114,7 @@ function GameDetails() {
         }
     };
 
-    // Handle adding to cart
+    // Add current game to shopping cart
     const handleAddToCart = async () => {
         if (!game || !game.stock_quantity || game.stock_quantity <= 0) return;
 
@@ -150,7 +155,7 @@ function GameDetails() {
         }
     };
 
-    // Loading state
+    // Show loading state while fetching data
     if (loading) {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
@@ -160,7 +165,7 @@ function GameDetails() {
         );
     }
 
-    // Error state
+    // Show error message if game can't be loaded
     if (error || !game) {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"

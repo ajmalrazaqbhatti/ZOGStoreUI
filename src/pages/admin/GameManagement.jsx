@@ -1,3 +1,7 @@
+/********************************************************
+ * GameManagement Component
+ * Admin interface for adding, editing and removing games
+ ********************************************************/
 import { useState, useEffect, useCallback } from 'react';
 import { Search, Plus, Edit, Trash2, Filter, RefreshCw, AlertCircle, Check, X, Save } from 'lucide-react';
 import overlay from '../../assets/overlay.png';
@@ -8,9 +12,10 @@ import { Loader as LoaderIcon } from 'lucide-react';
 import Toast from '../../components/Toast';
 
 function GameManagement() {
-    // Check if the user is authenticated and has admin role
+    // Check admin authentication
     useAuthCheck();
 
+    // Game data state
     const [games, setGames] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -51,7 +56,10 @@ function GameManagement() {
     const [addFormErrors, setAddFormErrors] = useState({});
     const [addingGame, setAddingGame] = useState(false);
 
-    // Fetch games
+    /********************************************************
+     * Data Loading and Initialization
+     ********************************************************/
+    // Load games and genres on component mount
     useEffect(() => {
         fetchGames();
         fetchGenres();
@@ -82,7 +90,7 @@ function GameManagement() {
         setSearchTimeout(timeout);
     }, [selectedGenre, searchTimeout]);
 
-    // Filter games based on search term and genre
+    // Handle search and filtering
     useEffect(() => {
         if (searchTerm) {
             performSearch(searchTerm);
@@ -93,6 +101,7 @@ function GameManagement() {
         }
     }, [searchTerm, selectedGenre, performSearch]);
 
+    // Fetch all games
     const fetchGames = async () => {
         setLoading(true);
         setError(null);
@@ -117,6 +126,7 @@ function GameManagement() {
         }
     };
 
+    // Fetch games by genre
     const fetchGamesByGenre = async (genre) => {
         setLoading(true);
         setError(null);
@@ -141,6 +151,7 @@ function GameManagement() {
         }
     };
 
+    // Search games by title
     const fetchGamesBySearch = async (title) => {
         if (!title.trim()) return;
 
@@ -167,6 +178,7 @@ function GameManagement() {
         }
     };
 
+    // Get available genres
     const fetchGenres = async () => {
         try {
             const response = await fetch('http://localhost:3000/games/genres', {
@@ -184,6 +196,10 @@ function GameManagement() {
         }
     };
 
+    /********************************************************
+     * Game Management Functions
+     ********************************************************/
+    // Delete a game
     const handleDeleteConfirm = async () => {
         if (!gameToDelete) return;
 
@@ -211,11 +227,13 @@ function GameManagement() {
         }
     };
 
+    // Show delete confirmation
     const confirmDelete = (game) => {
         setGameToDelete(game);
         setShowDeleteModal(true);
     };
 
+    // Show notification
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
         setTimeout(() => {
@@ -223,22 +241,25 @@ function GameManagement() {
         }, 3000);
     };
 
-    // Add this function to close the toast
+    // Hide notification
     const closeToast = () => {
         setToast(prev => ({ ...prev, visible: false }));
     };
 
-    // Format price
+    // Format price for display
     const formatPrice = (price) => {
         return price === "0.00" ? "Free" : `$${parseFloat(price).toFixed(2)}`;
     };
 
-    // Format date
+    // Format date for display
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();
     };
 
-    // Initialize edit modal
+    /********************************************************
+     * Game Edit Functions
+     ********************************************************/
+    // Open edit game modal
     const openEditModal = (game) => {
         setGameToEdit(game);
         setEditForm({
@@ -253,7 +274,7 @@ function GameManagement() {
         setShowEditModal(true);
     };
 
-    // Close edit modal
+    // Close edit game modal
     const closeEditModal = () => {
         setShowEditModal(false);
         setGameToEdit(null);
@@ -268,7 +289,7 @@ function GameManagement() {
         setEditFormErrors({});
     };
 
-    // Handle edit form changes
+    // Handle edit form input changes
     const handleEditChange = (e) => {
         const { name, value } = e.target;
         setEditForm(prev => ({
@@ -311,7 +332,7 @@ function GameManagement() {
         return Object.keys(errors).length === 0;
     };
 
-    // Submit edit form
+    // Submit game edit
     const handleEditSubmit = async (e) => {
         e.preventDefault();
 
@@ -367,7 +388,10 @@ function GameManagement() {
         }
     };
 
-    // Initialize add modal
+    /********************************************************
+     * Add Game Functions
+     ********************************************************/
+    // Open add game modal
     const openAddModal = () => {
         setAddForm({
             title: '',
@@ -381,7 +405,7 @@ function GameManagement() {
         setShowAddModal(true);
     };
 
-    // Close add modal
+    // Close add game modal
     const closeAddModal = () => {
         setShowAddModal(false);
         setAddForm({
@@ -395,7 +419,7 @@ function GameManagement() {
         setAddFormErrors({});
     };
 
-    // Handle add form changes
+    // Handle add form input changes
     const handleAddChange = (e) => {
         const { name, value } = e.target;
         setAddForm(prev => ({
@@ -438,7 +462,7 @@ function GameManagement() {
         return Object.keys(errors).length === 0;
     };
 
-    // Submit add form
+    // Submit new game
     const handleAddSubmit = async (e) => {
         e.preventDefault();
 
