@@ -4,6 +4,7 @@ import overlay from '../../assets/overlay.png'
 import { Eye, ChevronRight, Gamepad2, X } from 'lucide-react'
 import Navbar from '../../components/Navbar'
 import useAuthCheck from '../../hooks/useAuthCheck'
+import Loader from '../../components/Loader';
 
 function HomePage() {
     const [hoveredCard, setHoveredCard] = useState(null);
@@ -222,6 +223,15 @@ function HomePage() {
         }
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
+                style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}>
+                <Loader />
+            </div>
+        );
+    }
+
     return (
         <div className="bg-[#0A0A0B] min-h-screen text-white font-['Product_Sans',sans-serif] overflow-hidden pt-20"
             style={{
@@ -281,7 +291,7 @@ function HomePage() {
                                                 <img
                                                     src={game.gameicon}
                                                     alt={`${game.title} icon`}
-                                                    className="h-14 w-14 sm:h-16 sm:w-16 object-contain rounded-3xl bg-[#121214]"
+                                                    className="h-14 w-14 sm:h-16 sm:w-16 object-contain rounded-2xl bg-[#121214]"
                                                 />
                                             ) : (
                                                 <div className="p-0.5 rounded-2xl bg-gradient-to-br from-[#7C5DF9] to-[#2f00ff]">

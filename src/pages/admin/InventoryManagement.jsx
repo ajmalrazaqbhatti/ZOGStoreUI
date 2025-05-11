@@ -3,6 +3,7 @@ import { Search, RefreshCw, Package, AlertCircle, Check, X, Plus, Minus } from '
 import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
 import AdminSidebar from '../../components/AdminSidebar';
+import Loader from '../../components/Loader';
 
 function InventoryManagement() {
     useAuthCheck();
@@ -318,7 +319,7 @@ function InventoryManagement() {
                     {/* Loading Indicator */}
                     {loading && (
                         <div className="flex justify-center items-center h-64">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C5DF9]"></div>
+                            <Loader size="large" logoSize="small" />
                         </div>
                     )}
 

@@ -5,6 +5,7 @@ import logo from '../../assets/logo.svg';
 import overlay from '../../assets/overlay.png';
 import Navbar from '../../components/Navbar';
 import useAuthCheck from '../../hooks/useAuthCheck';
+import Loader from '../../components/Loader';
 
 function GameDetails() {
     // Check if the user is authenticated
@@ -148,13 +149,7 @@ function GameDetails() {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
                 style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}>
-                <img src={logo} alt="ZOG Store Logo" className="h-16 mb-8 animate-pulse" />
-                <div className="relative h-20 w-20">
-                    <div className="absolute inset-0 rounded-full border-t-2 border-[#7C5DF9] animate-spin"></div>
-                    <div className="absolute inset-2 rounded-full border-t-2 border-[#7C5DF9]/60 animate-spin" style={{ animationDuration: '1.5s' }}></div>
-                    <div className="absolute inset-4 rounded-full border-t-2 border-[#7C5DF9]/30 animate-spin" style={{ animationDuration: '2s' }}></div>
-                </div>
-                <p className="mt-6 text-white/70 text-sm animate-pulse">Loading game details...</p>
+                <Loader />
             </div>
         );
     }
@@ -228,7 +223,7 @@ function GameDetails() {
                     {/* Back Button */}
                     <button
                         onClick={handleBack}
-                        className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 transition-colors py-2 rounded-lg b backdrop-blur-lg cursor-pointer"
+                        className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 cursor-pointer"
                     >
                         <ArrowLeft size={16} />
                         <span>Back to Store</span>

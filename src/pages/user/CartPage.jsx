@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Trash2, Minus, Plus, ArrowLeft, ShoppingBag, X, CheckCircle, AlertCircle, CreditCard, Wallet, Gift } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import overlay from '../../assets/overlay.png';
-import logo from '../../assets/logo.svg';
 import useAuthCheck from '../../hooks/useAuthCheck';
+import Loader from '../../components/Loader';
 
 function CartPage() {
     const navigate = useNavigate();
@@ -254,13 +254,7 @@ function CartPage() {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
                 style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}>
-                <img src={logo} alt="ZOG Store Logo" className="h-16 mb-8 animate-pulse" />
-                <div className="relative h-20 w-20">
-                    <div className="absolute inset-0 rounded-full border-t-2 border-[#7C5DF9] animate-spin"></div>
-                    <div className="absolute inset-2 rounded-full border-t-2 border-[#7C5DF9]/60 animate-spin" style={{ animationDuration: '1.5s' }}></div>
-                    <div className="absolute inset-4 rounded-full border-t-2 border-[#7C5DF9]/30 animate-spin" style={{ animationDuration: '2s' }}></div>
-                </div>
-                <p className="mt-6 text-white/70 text-sm animate-pulse">Loading your cart...</p>
+                <Loader />
             </div>
         );
     }
@@ -360,7 +354,7 @@ function CartPage() {
                                                 <div className="flex gap-4 flex-1">
                                                     {/* Game Icon */}
                                                     <div
-                                                        className="h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden"
+                                                        className="h-20 w-20 flex-shrink-0 rounded-2xl overflow-hidden"
                                                         onClick={() => navigate(`/game/${item.game_id}`)}
                                                     >
                                                         <img

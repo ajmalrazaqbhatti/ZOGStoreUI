@@ -3,6 +3,8 @@ import { Search, Plus, Edit, Trash2, Filter, RefreshCw, AlertCircle, Check, X, S
 import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
 import AdminSidebar from '../../components/AdminSidebar';
+import Loader from '../../components/Loader';
+import { Loader as LoaderIcon } from 'lucide-react';
 
 function GameManagement() {
     // Check if the user is authenticated and has admin role
@@ -869,7 +871,7 @@ function GameManagement() {
                             <div className="relative flex-grow">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     {isSearching ? (
-                                        <div className="h-4 w-4 border-2 border-gray-400/20 border-t-gray-400 rounded-full animate-spin"></div>
+                                        <LoaderIcon size={16} className="text-gray-400 animate-spin" />
                                     ) : (
                                         <Search size={16} className="text-gray-400" />
                                     )}
@@ -956,7 +958,7 @@ function GameManagement() {
                     {/* Loading Indicator */}
                     {loading && !isSearching && (
                         <div className="flex justify-center items-center h-64">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C5DF9]"></div>
+                            <Loader size="large" logoSize="small" />
                         </div>
                     )}
 

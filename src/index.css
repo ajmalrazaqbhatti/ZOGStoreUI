@@ -37,8 +37,3 @@ button, a, input, select, .transition-all {
   transition: all 0.2s ease-in-out !important;
 }
 
-/* Removed transitions for grid and flex items */
-
-/* Removed transitions for navbar badges */
-
-/* Removed transitions for card hover */

@@ -8,6 +8,7 @@ import {
 import Navbar from '../../components/Navbar';
 import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
+import Loader from '../../components/Loader';
 
 function OrdersPage() {
     // Check if the user is authenticated
@@ -110,30 +111,16 @@ function OrdersPage() {
         }
     };
 
-
-
     // Render skeleton loaders during loading state
     const renderSkeletonLoaders = () => {
-        return Array(3).fill().map((_, index) => (
-            <div key={`skeleton-${index}`} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden animate-pulse">
-                <div className="p-6 border-b border-white/10">
-                    <div className="flex flex-col sm:flex-row justify-between gap-4">
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="h-6 w-32 bg-white/10 rounded-md"></div>
-                                <div className="h-6 w-20 bg-white/10 rounded-full"></div>
-                            </div>
-                            <div className="h-4 w-48 bg-white/10 rounded-md"></div>
-                        </div>
-                        <div className="flex flex-col sm:items-end">
-                            <div className="h-6 w-20 bg-white/10 rounded-md mb-2"></div>
-                            <div className="h-4 w-16 bg-white/10 rounded-md"></div>
-                        </div>
-                    </div>
-                    <div className="mt-4 h-10 w-full bg-white/10 rounded-lg"></div>
+        if (loading) {
+            return (
+                <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
+                    style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}>
+                    <Loader />
                 </div>
-            </div>
-        ));
+            );
+        }
     };
 
     return (

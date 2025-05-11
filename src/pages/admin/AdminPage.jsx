@@ -4,6 +4,7 @@ import overlay from '../../assets/overlay.png';
 import useAuthCheck from '../../hooks/useAuthCheck';
 import AdminSidebar from '../../components/AdminSidebar';
 import { Users, ShoppingBag, Package, Layers, DollarSign, Activity, CreditCard, BarChart3, AlertCircle } from 'lucide-react';
+import Loader from '../../components/Loader';
 
 function AdminPage() {
     // Check if the user is authenticated and has admin role
@@ -83,12 +84,7 @@ function AdminPage() {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
                 style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}>
-                <div className="relative h-20 w-20">
-                    <div className="absolute inset-0 rounded-full border-t-2 border-[#7C5DF9] animate-spin"></div>
-                    <div className="absolute inset-2 rounded-full border-t-2 border-[#7C5DF9]/60 animate-spin" style={{ animationDuration: '1.5s' }}></div>
-                    <div className="absolute inset-4 rounded-full border-t-2 border-[#7C5DF9]/30 animate-spin" style={{ animationDuration: '2s' }}></div>
-                </div>
-                <p className="mt-6 text-white/70 text-sm animate-pulse">Loading dashboard...</p>
+                <Loader text="Loading dashboard..." />
             </div>
         );
     }

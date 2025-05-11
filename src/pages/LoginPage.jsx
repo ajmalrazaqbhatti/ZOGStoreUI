@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import overlay from "../assets/overlay.png";
+import { Loader } from 'lucide-react';
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -137,7 +138,14 @@ function LoginPage() {
                                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                                 transition-all duration-150 ease-in-out disabled:bg-indigo-400 disabled:cursor-not-allowed"
                             >
-                                {isLoading ? 'Signing in...' : 'Sign in'}
+                                {isLoading ? (
+                                    <div className="flex items-center">
+                                        <Loader className="animate-spin h-4 w-4 mr-2 text-white" />
+                                        <span>Signing in...</span>
+                                    </div>
+                                ) : (
+                                    'Sign in'
+                                )}
                             </button>
                         </div>
                     </form>
