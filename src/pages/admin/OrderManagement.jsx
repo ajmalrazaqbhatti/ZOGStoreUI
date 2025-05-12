@@ -27,6 +27,7 @@ import {
 import overlay from "../../assets/overlay.png";
 import useAuthCheck from "../../hooks/useAuthCheck";
 import AdminSidebar from "../../components/AdminSidebar";
+import MobileAdminRedirect from "../../components/MobileAdminRedirect";
 import Loader from "../../components/Loader";
 import Toast from "../../components/Toast";
 
@@ -71,9 +72,54 @@ function OrderManagement() {
     fetchOrders();
   }, []);
 
+  // Search for orders by ID
+  const searchOrderById = async (orderId) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/admin/orders/search?orderId=${orderId}`,
+        {
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setFilteredOrders([]);
+          setLoading(false);
+          return;
+        }
+        throw new Error("Failed to search for order");
+      }
+
+      const data = await response.json();
+
+      // The API now returns an object with an order property instead of an array
+      if (data.order) {
+        setFilteredOrders([data.order]); // Wrap in array to maintain component compatibility
+      } else {
+        setFilteredOrders([]);
+      }
+    } catch (error) {
+      console.error("Error searching order:", error);
+      setError("Failed to search for order. Please try again.");
+      setFilteredOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Apply filters to orders
   useEffect(() => {
     if (!orders.length) return;
+
+    // If searching by ID with numeric-only search term, use the API
+    if (searchTerm && /^\d+$/.test(searchTerm.trim())) {
+      searchOrderById(searchTerm.trim());
+      return;
+    }
 
     let filtered = [...orders];
 
@@ -84,15 +130,15 @@ function OrderManagement() {
       );
     }
 
-    // Apply search filter
+    // Apply client-side search if not numeric-only
     if (searchTerm) {
-      const search = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (order) =>
-          order.order_id.toString().includes(search) ||
-          order.username.toLowerCase().includes(search) ||
-          order.email.toLowerCase().includes(search) ||
-          order.status.toLowerCase().includes(search),
+          order.order_id.toString().includes(searchTerm) ||
+          (order.username &&
+            order.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (order.email &&
+            order.email.toLowerCase().includes(searchTerm.toLowerCase())),
       );
     }
 
@@ -211,22 +257,40 @@ function OrderManagement() {
     setProcessingOrder(orderToDelete.order_id);
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/orders/${orderToDelete.order_id}`,
+        `http://localhost:3000/admin/orders?orderId=${orderToDelete.order_id}`,
         {
           method: "DELETE",
           credentials: "include",
         },
       );
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || "Failed to delete order");
+        if (response.status === 404) {
+          throw new Error("Order not found. It may have been deleted already.");
+        }
+        throw new Error("Failed to delete order");
+      }
+
+      // Process the response if needed
+      try {
+        // We parse the JSON but don't need to use it since we're just
+        // confirming the deletion was successful
+        await response.json();
+      } catch (parseError) {
+        console.warn("Could not parse JSON response:", parseError);
+        // Continue execution since the delete operation was successful
       }
 
       // Remove the deleted order from state
       setOrders(
         orders.filter((order) => order.order_id !== orderToDelete.order_id),
+      );
+
+      // Also update filtered orders
+      setFilteredOrders(
+        filteredOrders.filter(
+          (order) => order.order_id !== orderToDelete.order_id,
+        ),
       );
 
       // Show success toast
@@ -258,7 +322,7 @@ function OrderManagement() {
     setProcessingOrder(statusChangeOrder.order_id);
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/orders/${statusChangeOrder.order_id}/status`,
+        `http://localhost:3000/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
         {
           method: "PUT",
           credentials: "include",
@@ -271,9 +335,8 @@ function OrderManagement() {
         },
       );
 
-      const data = await response.json();
-
       if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.message || "Failed to update order status");
       }
 
@@ -315,6 +378,9 @@ function OrderManagement() {
         backgroundPosition: "center",
       }}
     >
+      {/* Mobile Redirect */}
+      <MobileAdminRedirect />
+
       {/* Admin Sidebar */}
       <AdminSidebar />
 
@@ -451,21 +517,24 @@ function OrderManagement() {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Search size={16} className="text-gray-400" />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Search by order ID, customer name or email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Search by order ID or customer info"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                  />
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchTerm("")}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Status Filter Dropdown */}
@@ -535,7 +604,7 @@ function OrderManagement() {
                   <h3 className="text-xl font-medium mb-2">No orders found</h3>
                   <p className="text-gray-400 mb-4">
                     {searchTerm
-                      ? `No orders match your search for "${searchTerm}"`
+                      ? `No orders match your search for order ID "${searchTerm}"`
                       : statusFilter !== "All"
                         ? `No orders with status "${statusFilter}" found`
                         : "There are no orders in the database"}
@@ -582,7 +651,11 @@ function OrderManagement() {
                       {filteredOrders.map((order) => (
                         <React.Fragment key={order.order_id}>
                           <tr
-                            className={`hover:bg-white/5 transition-colors ${showOrderDetails === order.order_id ? "bg-[#7C5DF9]/5" : ""}`}
+                            className={`hover:bg-white/5 transition-colors ${
+                              showOrderDetails === order.order_id
+                                ? "bg-[#7C5DF9]/5"
+                                : ""
+                            }`}
                           >
                             <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
                               #{order.order_id}
@@ -602,7 +675,9 @@ function OrderManagement() {
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
                               <span
-                                className={`px-2 py-1 text-xs rounded-full border flex items-center gap-1.5 w-fit ${getStatusBadge(order.status)}`}
+                                className={`px-2 py-1 text-xs rounded-xl border flex items-center gap-1.5 w-fit ${getStatusBadge(
+                                  order.status,
+                                )}`}
                               >
                                 {getStatusIcon(order.status)}
                                 {order.status.charAt(0).toUpperCase() +
@@ -685,7 +760,9 @@ function OrderManagement() {
                                         <div className="flex justify-between">
                                           <span>Status:</span>
                                           <span
-                                            className={`px-2 py-0.5 text-xs rounded-full border ${getStatusBadge(order.status)}`}
+                                            className={`px-2 py-0.5 text-xs rounded-xl border ${getStatusBadge(
+                                              order.status,
+                                            )}`}
                                           >
                                             {order.status
                                               .charAt(0)

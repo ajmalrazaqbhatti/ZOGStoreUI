@@ -452,7 +452,11 @@ function CartPage() {
                                 item.quantity <= 1 ||
                                 processingItem === item.cart_id
                               }
-                              className={`p-2 rounded-l-lg cursor-pointer ${item.quantity <= 1 ? "bg-gray-800 text-gray-500 cursor-not-allowed" : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"}`}
+                              className={`p-2 rounded-l-lg cursor-pointer ${
+                                item.quantity <= 1
+                                  ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                                  : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"
+                              }`}
                             >
                               <Minus size={16} />
                             </button>
@@ -523,7 +527,7 @@ function CartPage() {
                       </button>
 
                       <button
-                        onClick={() => navigate("/")}
+                        onClick={() => navigate("/home")}
                         className="w-full mt-3 bg-transparent border border-white/30 hover:border-white/50 transition-all py-3 rounded-xl font-medium cursor-pointer"
                       >
                         Continue Shopping

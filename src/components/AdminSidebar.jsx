@@ -109,22 +109,6 @@ function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[#0A0A0B]/80 backdrop-blur-md border border-white/10 text-white"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      >
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* Sidebar Overlay (Mobile) */}
-      {isMobileMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-md z-40"
-          onClick={() => setIsMobileMenuOpen(false)}
-        ></div>
-      )}
-
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-64  backdrop-blur-md text-white transform transition-transform duration-300 ease-in-out ${

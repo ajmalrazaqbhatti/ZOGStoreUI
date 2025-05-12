@@ -1,11 +1,11 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// Vite configuration for the ZOG Store UI application
+// Get the repository name from package.json or environment variables
+const repoName = 'ZOGStoreUI';
+
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(), // React support
-    tailwindcss(), // TailwindCSS integration
-  ],
+  plugins: [react()],
+  base: import.meta.env.MODE === 'production' ? `/${repoName}/` : '/',
 });

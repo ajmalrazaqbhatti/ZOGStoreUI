@@ -64,12 +64,39 @@ function Navbar({ cartCount = 0 }) {
   };
 
   // Process search form submission
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
 
-    // Navigate to home with search query
-    navigate(`/?search=${encodeURIComponent(searchTerm)}`);
+    try {
+      // Call the search API
+      const response = await fetch(
+        `http://localhost:3000/games/search?title=${encodeURIComponent(
+          searchTerm,
+        )}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.ok) {
+        const searchResults = await response.json();
+        // Navigate to search results page with the data
+        navigate("/home", {
+          state: { searchResults, searchTerm },
+          search: `?search=${encodeURIComponent(searchTerm)}`,
+        });
+      } else {
+        console.error("Search request failed");
+      }
+    } catch (error) {
+      console.error("Error during search:", error);
+    }
+
     setIsSearchPopupOpen(false);
   };
 
@@ -88,7 +115,7 @@ function Navbar({ cartCount = 0 }) {
   // Clear search and reset results
   const clearSearch = () => {
     setSearchTerm("");
-    navigate("/?reset=true", { replace: true });
+    navigate("/home?reset=true", { replace: true });
   };
 
   return (

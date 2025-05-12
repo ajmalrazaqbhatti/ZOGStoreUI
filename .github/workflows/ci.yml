@@ -1,0 +1,41 @@
+name: Code Quality Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Check code format with Prettier
+        run: npm run format:check
+        
+      - name: Check code with ESLint
+        run: npm run lint
+        
+      - name: Format code with Prettier
+        if: github.event_name == 'push'
+        run: |
+          npm run format
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git diff --staged --quiet || git commit -m "Apply automatic formatting"
+          git push

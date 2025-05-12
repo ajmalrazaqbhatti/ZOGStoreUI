@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import overlay from "../../assets/overlay.png";
 import useAuthCheck from "../../hooks/useAuthCheck";
 import AdminSidebar from "../../components/AdminSidebar";
+import MobileAdminRedirect from "../../components/MobileAdminRedirect";
 import {
   Users,
   ShoppingBag,
@@ -122,6 +123,9 @@ function AdminPage() {
         backgroundPosition: "center",
       }}
     >
+      {/* Mobile Redirect */}
+      <MobileAdminRedirect />
+
       {/* Admin Sidebar */}
       <AdminSidebar />
 

@@ -61,7 +61,19 @@ function HomePage() {
     const search = query.get("search");
     const reset = query.get("reset");
 
-    if (search) {
+    // Check if search results were passed in the location state
+    if (location.state?.searchResults && location.state?.searchTerm) {
+      // Use the search results and term that were passed via navigation state
+      setSearchTerm(location.state.searchTerm);
+      setSearchResults(location.state.searchResults);
+      setAllGames(location.state.searchResults);
+      setActiveGenre("Search Results");
+      setIsSearching(false);
+      setLoading(false);
+
+      // Clear the state to prevent re-using the same results on page refresh
+      window.history.replaceState({}, document.title);
+    } else if (search) {
       setSearchTerm(search);
       setIsSearching(true);
       handleSearchWithTerm(search);
@@ -92,7 +104,7 @@ function HomePage() {
           setLoading(false);
         });
     }
-  }, [location.search]);
+  }, [location.search, location.state]);
 
   // Load available game genres
   useEffect(() => {
@@ -130,7 +142,7 @@ function HomePage() {
           `http://localhost:3000/games/filter?genre=${genre}`,
           {
             credentials: "include",
-          },
+          }
         );
       }
 
@@ -184,7 +196,7 @@ function HomePage() {
         `http://localhost:3000/games/search?title=${encodeURIComponent(term)}`,
         {
           credentials: "include",
-        },
+        }
       );
 
       if (!response.ok) {
@@ -305,14 +317,14 @@ function HomePage() {
                                   group-hover:bg-[#9b5ffb]/20 transition-all duration-500 overflow-visible"
                 ></div>
 
-                <div className="p-4 sm:p-6 md:p-8 relative">
+                <div className="p-6 md:p-8 relative">
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0 mb-4 sm:mb-6">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
                       {game.gameicon ? (
                         <img
                           src={game.gameicon}
                           alt={`${game.title} icon`}
-                          className="h-14 w-14 sm:h-16 sm:w-16 object-contain rounded-2xl bg-[#121214]"
+                          className="h-20 w-20 object-contain rounded-2xl bg-[#121214]"
                         />
                       ) : (
                         <div className="p-0.5 rounded-2xl bg-gradient-to-br from-[#7C5DF9] to-[#2f00ff]">
@@ -384,8 +396,8 @@ function HomePage() {
             {activeGenre === "All"
               ? "All Games"
               : activeGenre === "Search Results"
-                ? `Search Results for "${searchTerm}"`
-                : `${activeGenre} Games`}
+              ? `Search Results for "${searchTerm}"`
+              : `${activeGenre} Games`}
           </h2>
           {isSearching && searchResults.length > 0 && (
             <button
@@ -395,21 +407,13 @@ function HomePage() {
               Clear search <X className="h-4 w-4 ml-1" />
             </button>
           )}
-          {!isSearching && (
-            <Link
-              to="/all-games"
-              className="hidden md:flex items-center text-[#7C5DF9] hover:text-[#9B82FC] transition-colors"
-            >
-              View all <ChevronRight className="h-4 w-4 ml-1" />
-            </Link>
-          )}
         </div>
         <p className="text-white/60 mb-8 text-lg">
           {activeGenre === "All"
             ? "Browse our complete collection of games across all genres."
             : activeGenre === "Search Results"
-              ? "Games matching your search criteria."
-              : `Explore our selection of ${activeGenre.toLowerCase()} titles curated just for you.`}
+            ? "Games matching your search criteria."
+            : `Explore our selection of ${activeGenre.toLowerCase()} titles curated just for you.`}
         </p>
 
         {/* Genre Tabs - New Addition */}
@@ -463,12 +467,16 @@ function HomePage() {
             {allGames.map((game) => (
               <div
                 key={game.game_id}
-                className={`group relative rounded-3xl overflow-hidden  ${hoveredCard === `all-game-${game.game_id}` ? "ring-2 ring-[#7C5DF9] shadow shadow-[#7C5DF9]/20" : "ring-1 ring-white/10 hover:ring-[#7C5DF9]/30 hover:bg-[#1A1A1A]"} transition-all duration-300 min-h-[200px] h-full flex flex-col cursor-pointer`}
+                className={`group relative rounded-3xl overflow-hidden  ${
+                  hoveredCard === `all-game-${game.game_id}`
+                    ? "ring-2 ring-[#7C5DF9] shadow shadow-[#7C5DF9]/20"
+                    : "ring-1 ring-white/10 hover:ring-[#7C5DF9]/30 hover:bg-[#1A1A1A]"
+                } transition-all duration-300 h-full flex flex-col cursor-pointer`}
                 onMouseEnter={() => setHoveredCard(`all-game-${game.game_id}`)}
                 onMouseLeave={() => setHoveredCard(null)}
                 onClick={() => navigateToGameDetails(game)}
               >
-                <div className="p-3 sm:p-4 flex flex-col flex-grow">
+                <div className="p-4 flex flex-col flex-grow">
                   <div className="flex justify-between items-start mb-2 sm:mb-3">
                     {game.gameicon ? (
                       <img
@@ -488,7 +496,7 @@ function HomePage() {
                     {game.title}
                   </h3>
 
-                  <div className="flex flex-wrap gap-1 sm:gap-2 mt-auto">
+                  <div className="flex flex-wrap gap-1 sm:gap-2">
                     <span className="text-xs bg-white/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
                       {game.genre}
                     </span>

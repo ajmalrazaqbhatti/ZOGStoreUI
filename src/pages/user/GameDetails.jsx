@@ -57,15 +57,20 @@ function GameDetails() {
         try {
           setLoading(true);
           const response = await fetch(
-            `http://localhost:3000/games/${gameId}`,
+            `http://localhost:3000/games/game?gameId=${encodeURIComponent(
+              gameId,
+            )}`,
             {
               credentials: "include",
             },
           );
 
           if (!response.ok) {
+            if (response.status === 404) {
+              throw new Error("Game not found");
+            }
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || "Game not found");
+            throw new Error(errorData.error || "Failed to load game details");
           }
 
           const data = await response.json();
@@ -402,7 +407,11 @@ function GameDetails() {
                       <button
                         onClick={decreaseQuantity}
                         disabled={quantity <= 1}
-                        className={`p-2 rounded-l-lg ${quantity <= 1 ? "bg-gray-800 text-gray-500 cursor-not-allowed" : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"}`}
+                        className={`p-2 rounded-l-lg ${
+                          quantity <= 1
+                            ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                            : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"
+                        }`}
                       >
                         <Minus size={16} />
                       </button>
@@ -426,7 +435,11 @@ function GameDetails() {
                       <button
                         onClick={increaseQuantity}
                         disabled={quantity >= game.stock_quantity}
-                        className={`p-2 rounded-r-lg ${quantity >= game.stock_quantity ? "bg-gray-800 text-gray-500 cursor-not-allowed" : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"}`}
+                        className={`p-2 rounded-r-lg ${
+                          quantity >= game.stock_quantity
+                            ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                            : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"
+                        }`}
                       >
                         <Plus size={16} />
                       </button>
@@ -485,7 +498,9 @@ function GameDetails() {
                             : "Get Free"
                           : !game.stock_quantity || game.stock_quantity <= 0
                             ? "Out of Stock"
-                            : `Add to Cart${quantity > 1 ? ` (${quantity})` : ""}`}
+                            : `Add to Cart${
+                                quantity > 1 ? ` (${quantity})` : ""
+                              }`}
                       </>
                     )}
                   </button>

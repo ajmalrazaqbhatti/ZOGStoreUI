@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   ShoppingBag,
   Package,
@@ -34,6 +34,10 @@ function OrdersPage() {
   // Check if the user is authenticated
   useAuthCheck();
 
+  // Get location and navigate for URL handling
+  const location = useLocation();
+  const navigate = useNavigate();
+
   // State management for orders and UI elements
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
@@ -49,43 +53,201 @@ function OrdersPage() {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const navigate = useNavigate();
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [searchResults, setSearchResults] = useState(null);
 
-  // Fetch orders from API
+  // Check for URL query parameters
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        let queryString = "";
-        if (activeFilter !== "All") {
-          queryString = `?status=${activeFilter}`;
-        }
+    const params = new URLSearchParams(location.search);
+    const orderId = params.get("orderId");
 
-        const response = await fetch(
-          `http://localhost:3000/orders${queryString}`,
-          {
-            credentials: "include",
-          },
-        );
+    if (orderId) {
+      setSearchTerm(orderId);
+    }
+  }, [location.search]);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch orders");
-        }
-
-        const data = await response.json();
-        setOrders(data.orders);
-        setFilteredOrders(data.orders);
-        setStatusCounts(data.statusCounts || {});
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError("Failed to load your orders. Please try again.");
-        setLoading(false);
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      let queryString = "";
+      if (activeFilter !== "All") {
+        queryString = `?status=${activeFilter}`;
       }
-    };
 
+      const response = await fetch(
+        `http://localhost:3000/orders${queryString}`,
+        {
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch orders");
+      }
+
+      const data = await response.json();
+      setOrders(data.orders);
+      setFilteredOrders(data.orders);
+      setStatusCounts(data.statusCounts || {});
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError("Failed to load your orders. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  // Load orders on component mount and filter changes
+  useEffect(() => {
     fetchOrders();
   }, [activeFilter]);
+
+  // Function to search orders by ID through API
+  const searchOrderById = async (orderId) => {
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/orders/search?orderId=${orderId}`,
+        {
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setSearchResults([]);
+          setFilteredOrders([]);
+        } else {
+          throw new Error("Failed to search order");
+        }
+        return;
+      }
+
+      const data = await response.json();
+      // API returns a single order object
+      if (data.order) {
+        setSearchResults([data.order]);
+        setFilteredOrders([data.order]);
+        setExpandedOrder(data.order.order_id);
+      } else {
+        setSearchResults([]);
+        setFilteredOrders([]);
+      }
+    } catch (err) {
+      console.error("Error searching order:", err);
+      setToast({
+        visible: true,
+        message: "Failed to search for order. Please try again.",
+        type: "error",
+      });
+      setSearchResults([]);
+      setFilteredOrders([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Clear search and reset state
+  const clearSearch = () => {
+    setSearchTerm("");
+    setIsSearching(false);
+    setSearchResults(null);
+
+    // Apply active filter to show relevant orders
+    setFilteredOrders(
+      activeFilter === "All"
+        ? orders
+        : orders.filter(
+            (order) =>
+              order.order_status &&
+              order.order_status.toLowerCase() === activeFilter.toLowerCase(),
+          ),
+    );
+  };
+
+  // Handle search with debounce
+  useEffect(() => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    // Skip empty searches
+    if (!searchTerm.trim()) {
+      // Reset filtered orders to show all orders with active filter
+      setFilteredOrders(
+        activeFilter === "All"
+          ? orders
+          : orders.filter(
+              (order) =>
+                order.order_status &&
+                order.order_status.toLowerCase() === activeFilter.toLowerCase(),
+            ),
+      );
+      setIsSearching(false);
+      setSearchResults(null);
+      return;
+    }
+
+    // Set searching state
+    setIsSearching(true);
+
+    // Apply debounced search
+    const timeout = setTimeout(() => {
+      // Use the API search when the user is looking for an order ID
+      if (/^\d+$/.test(searchTerm.trim())) {
+        searchOrderById(searchTerm.trim());
+      } else {
+        // For non-numeric searches, do client-side filtering
+        const results = orders.filter((order) =>
+          order.order_id.toString().includes(searchTerm.trim()),
+        );
+
+        // Apply active filter to search results
+        const filteredResults =
+          activeFilter === "All"
+            ? results
+            : results.filter(
+                (order) =>
+                  order.order_status &&
+                  order.order_status.toLowerCase() ===
+                    activeFilter.toLowerCase(),
+              );
+
+        setFilteredOrders(filteredResults);
+        setIsSearching(false);
+        setSearchResults(null);
+
+        // Auto-expand if only one result
+        if (filteredResults.length === 1) {
+          setExpandedOrder(filteredResults[0].order_id);
+        }
+      }
+    }, 300);
+
+    setSearchTimeout(timeout);
+
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTerm, orders, activeFilter]);
+
+  // Update filtered orders when activeFilter changes (only if not searching)
+  useEffect(() => {
+    if (!searchTerm && !searchResults) {
+      setFilteredOrders(
+        activeFilter === "All"
+          ? orders
+          : orders.filter(
+              (order) =>
+                order.order_status &&
+                order.order_status.toLowerCase() === activeFilter.toLowerCase(),
+            ),
+      );
+    }
+  }, [activeFilter, orders, searchTerm, searchResults]);
 
   // Expand/collapse order details
   const toggleOrderExpand = (orderId) => {
@@ -261,8 +423,8 @@ function OrdersPage() {
             <div className="flex flex-wrap gap-3 justify-center">
               {searchTerm && (
                 <button
-                  onClick={() => setSearchTerm("")}
-                  className="bg-white/10 hover:bg-white/15 transition-colors px-6 py-3 rounded-3xl font-medium flex items-center gap-2 cursor-pointer"
+                  onClick={clearSearch}
+                  className="bg-white/10 hover:bg-white/15 transition-colors px-6 py-3 rounded-xl font-medium flex items-center gap-2 cursor-pointer"
                 >
                   <X size={18} />
                   Clear Search
@@ -299,23 +461,30 @@ function OrdersPage() {
                 {/* Search Bar */}
                 <div className="relative flex-grow">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search size={16} className="text-gray-400" />
+                    {isSearching ? (
+                      <div className="h-4 w-4 border-2 border-white/20 border-t-white/80 rounded-full animate-spin"></div>
+                    ) : (
+                      <Search size={16} className="text-gray-400" />
+                    )}
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Search by order ID or item name"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
-                  />
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm("")}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Search by order ID (numbers only)"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
+                    />
+                    {searchTerm && (
+                      <button
+                        type="button"
+                        onClick={clearSearch}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Filter Toggle Button for Mobile */}
@@ -371,13 +540,25 @@ function OrdersPage() {
               </div>
             </div>
 
+            {/* Searching indicator */}
+            {isSearching && (
+              <div className="bg-[#7C5DF9]/10 border border-[#7C5DF9]/30 rounded-3xl p-4 mb-6 flex items-center justify-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-[#7C5DF9]"></div>
+                <span className="text-[#7C5DF9]">Searching orders...</span>
+              </div>
+            )}
+
             {/* Orders List with enhanced styling */}
             <div className="space-y-6">
               {filteredOrders.map((order) => (
                 <div
                   key={order.order_id}
                   className={`bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden transition-all duration-300 shadow-lg 
-                                    ${expandedOrder === order.order_id ? "ring-2 ring-[#7C5DF9]/50" : "hover:border-white/20"}`}
+                                    ${
+                                      expandedOrder === order.order_id
+                                        ? "ring-2 ring-[#7C5DF9]/50"
+                                        : "hover:border-white/20"
+                                    }`}
                 >
                   {/* Order Header */}
                   <div className="p-4 sm:p-6 border-b border-white/10">
@@ -388,7 +569,9 @@ function OrdersPage() {
                             Order #{order.order_id}
                           </h3>
                           <span
-                            className={`px-3 py-1 text-xs rounded-full border ${getStatusBadge(order.order_status)} flex items-center gap-1.5`}
+                            className={`px-3 py-1 text-xs rounded-full border ${getStatusBadge(
+                              order.order_status,
+                            )} flex items-center gap-1.5`}
                           >
                             {getStatusIcon(order.order_status)}
                             {order.order_status || "Processing"}

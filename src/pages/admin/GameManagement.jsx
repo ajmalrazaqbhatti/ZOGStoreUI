@@ -18,6 +18,7 @@ import {
 import overlay from "../../assets/overlay.png";
 import useAuthCheck from "../../hooks/useAuthCheck";
 import AdminSidebar from "../../components/AdminSidebar";
+import MobileAdminRedirect from "../../components/MobileAdminRedirect";
 import Loader from "../../components/Loader";
 import { Loader as LoaderIcon } from "lucide-react";
 import Toast from "../../components/Toast";
@@ -105,7 +106,7 @@ function GameManagement() {
 
       setSearchTimeout(timeout);
     },
-    [selectedGenre, searchTimeout],
+    [selectedGenre],
   );
 
   // Handle search and filtering
@@ -229,7 +230,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/games/delete/${gameToDelete.game_id}`,
+        `http://localhost:3000/admin/games/delete?gameId=${gameToDelete.game_id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -371,7 +372,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/games/update/${gameToEdit.game_id}`,
+        `http://localhost:3000/admin/games/update?gameId=${gameToEdit.game_id}`,
         {
           method: "PUT",
           credentials: "include",
@@ -552,6 +553,9 @@ function GameManagement() {
         backgroundPosition: "center",
       }}
     >
+      {/* Mobile Redirect */}
+      <MobileAdminRedirect />
+
       {/* Admin Sidebar */}
       <AdminSidebar />
 
@@ -965,7 +969,7 @@ function GameManagement() {
                   placeholder="Search games by title, ID or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 cursor-pointer"
+                  className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
                 />
                 {searchTerm && (
                   <button

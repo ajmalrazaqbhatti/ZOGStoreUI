@@ -17,6 +17,7 @@ import {
 import overlay from "../../assets/overlay.png";
 import useAuthCheck from "../../hooks/useAuthCheck";
 import AdminSidebar from "../../components/AdminSidebar";
+import MobileAdminRedirect from "../../components/MobileAdminRedirect";
 import Loader from "../../components/Loader";
 import Toast from "../../components/Toast";
 
@@ -108,7 +109,9 @@ function UserManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/users/search?query=${encodeURIComponent(query)}`,
+        `http://localhost:3000/admin/users/search?query=${encodeURIComponent(
+          query,
+        )}`,
         {
           credentials: "include",
         },
@@ -182,7 +185,7 @@ function UserManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/users/${deleteConfirm.userId}`,
+        `http://localhost:3000/admin/users?userId=${deleteConfirm.userId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -298,46 +301,34 @@ function UserManagement() {
     setSubmitting(true);
 
     try {
-      // Update user info
-      const userData = {
-        username: editForm.username,
-        email: editForm.email,
-        role: editForm.role,
-      };
+      // Create the request body based on whether a password was provided
+      const requestBody = { ...editForm };
+      if (!requestBody.password) {
+        delete requestBody.password;
+        delete requestBody.confirmPassword;
+      } else {
+        delete requestBody.confirmPassword;
+      }
 
-      const response = await fetch(
-        `http://localhost:3000/admin/users/${editUser.user_id}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
+      // Determine if this is a password-specific update
+      let endpoint = `http://localhost:3000/admin/users?userId=${editUser.user_id}`;
+
+      // Use a different endpoint if password is being updated
+      if (requestBody.password) {
+        endpoint = `http://localhost:3000/admin/users/password?userId=${editUser.user_id}`;
+      }
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(requestBody),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update user information");
-      }
-
-      // If password is provided, update the password separately
-      if (editForm.password) {
-        const passwordResponse = await fetch(
-          `http://localhost:3000/admin/users/${editUser.user_id}/password`,
-          {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ newPassword: editForm.password }),
-          },
-        );
-
-        if (!passwordResponse.ok) {
-          throw new Error("Failed to update password");
-        }
       }
 
       // Update user in the list
@@ -373,6 +364,9 @@ function UserManagement() {
         backgroundPosition: "center",
       }}
     >
+      {/* Mobile Redirect */}
+      <MobileAdminRedirect />
+
       {/* Admin Sidebar */}
       <AdminSidebar />
 
@@ -704,7 +698,7 @@ function UserManagement() {
                         setSearchTerm("");
                         fetchUsers();
                       }}
-                      className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-3xl transition-colors cursor-pointer"
+                      className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-xl transition-colors cursor-pointer"
                     >
                       Clear Search
                     </button>
@@ -756,7 +750,7 @@ function UserManagement() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
-                              className={`px-2 py-1 text-xs rounded-full ${
+                              className={`px-2 py-1 text-xs rounded-lg ${
                                 user.role === "admin"
                                   ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
                                   : "bg-blue-500/20 text-blue-400 border border-blue-500/30"

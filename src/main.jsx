@@ -16,6 +16,7 @@ import OrderManagement from "./pages/admin/OrderManagement";
 import GameManagement from "./pages/admin/GameManagement";
 import InventoryManagement from "./pages/admin/InventoryManagement";
 import UserManagement from "./pages/admin/UserManagement";
+import NotFoundPage from "./pages/NotFoundPage";
 import "./index.css";
 
 // Render the application with routing
@@ -39,6 +40,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/admin/games" element={<GameManagement />} />
         <Route path="/admin/inventory" element={<InventoryManagement />} />
         <Route path="/admin/orders" element={<OrderManagement />} />
+
+        {/* 404 Route - must be last */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   </React.StrictMode>,

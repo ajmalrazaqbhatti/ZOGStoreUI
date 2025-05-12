@@ -16,6 +16,7 @@ import {
 import overlay from "../../assets/overlay.png";
 import useAuthCheck from "../../hooks/useAuthCheck";
 import AdminSidebar from "../../components/AdminSidebar";
+import MobileAdminRedirect from "../../components/MobileAdminRedirect";
 import Loader from "../../components/Loader";
 import Toast from "../../components/Toast";
 
@@ -69,7 +70,7 @@ function InventoryManagement() {
     return () => {
       if (searchTimer) clearTimeout(searchTimer);
     };
-  }, [searchTerm, searchTimer]);
+  }, [searchTerm]);
 
   // Get all inventory items
   const fetchInventory = async () => {
@@ -231,7 +232,7 @@ function InventoryManagement() {
   const updateStockQuantity = async (gameId, stockQuantity) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/inventory/${gameId}`,
+        `http://localhost:3000/admin/inventory?gameId=${gameId}`,
         {
           method: "PUT",
           credentials: "include",
@@ -284,6 +285,9 @@ function InventoryManagement() {
         backgroundPosition: "center",
       }}
     >
+      {/* Mobile Redirect */}
+      <MobileAdminRedirect />
+
       {/* Admin Sidebar */}
       <AdminSidebar />
 
@@ -382,7 +386,7 @@ function InventoryManagement() {
                   {searchTerm && (
                     <button
                       onClick={() => setSearchTerm("")}
-                      className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-3xl transition-colors cursor-pointer"
+                      className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-xl transition-colors cursor-pointer"
                     >
                       Clear Search
                     </button>
@@ -408,7 +412,11 @@ function InventoryManagement() {
                       {filteredInventory.map((item) => (
                         <tr
                           key={item.inventory_id}
-                          className={`hover:bg-white/5 ${updatingItem === item.game_id ? "bg-[#7C5DF9]/5" : ""}`}
+                          className={`hover:bg-white/5 ${
+                            updatingItem === item.game_id
+                              ? "bg-[#7C5DF9]/5"
+                              : ""
+                          }`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                             {item.game_id}
@@ -437,7 +445,11 @@ function InventoryManagement() {
                                 onClick={() =>
                                   handleStockChange(item.game_id, "decrease")
                                 }
-                                className={`p-1.5 bg-white/10 hover:bg-white/20 rounded-l-lg transition-colors ${updatingItem === item.game_id ? "opacity-50" : "cursor-pointer"}`}
+                                className={`p-1.5 bg-white/10 hover:bg-white/20 rounded-l-lg transition-colors ${
+                                  updatingItem === item.game_id
+                                    ? "opacity-50"
+                                    : "cursor-pointer"
+                                }`}
                                 disabled={updatingItem === item.game_id}
                               >
                                 <Minus size={16} />
@@ -456,14 +468,23 @@ function InventoryManagement() {
                                   )
                                 }
                                 className={`w-16 text-center bg-black/30 py-1 focus:outline-none focus:ring-0 
-                                                                ${updatingItem === item.game_id ? "text-[#7C5DF9] animate-pulse cursor-not-allowed" : "text-white cursor-text"}`}
+                                                                ${
+                                                                  updatingItem ===
+                                                                  item.game_id
+                                                                    ? "text-[#7C5DF9] animate-pulse cursor-not-allowed"
+                                                                    : "text-white cursor-text"
+                                                                }`}
                                 disabled={updatingItem === item.game_id}
                               />
                               <button
                                 onClick={() =>
                                   handleStockChange(item.game_id, "increase")
                                 }
-                                className={`p-1.5 bg-white/10 hover:bg-white/20 rounded-r-lg transition-colors ${updatingItem === item.game_id ? "opacity-50" : "cursor-pointer"}`}
+                                className={`p-1.5 bg-white/10 hover:bg-white/20 rounded-r-lg transition-colors ${
+                                  updatingItem === item.game_id
+                                    ? "opacity-50"
+                                    : "cursor-pointer"
+                                }`}
                                 disabled={updatingItem === item.game_id}
                               >
                                 <Plus size={16} />

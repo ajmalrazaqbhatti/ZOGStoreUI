@@ -2,7 +2,7 @@
  * LoginPage Component
  * User authentication form with client-side validation
  ********************************************************/
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import overlay from "../assets/overlay.png";
@@ -17,6 +17,36 @@ function LoginPage() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/auth/status", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // If already authenticated, redirect to appropriate page
+          if (data.isAuthenticated) {
+            if (data.user.role === "admin") {
+              navigate("/admin");
+            } else {
+              navigate("/home");
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+        // If error, we stay on login page
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   // Update form state on input change
   const handleChange = (e) => {
