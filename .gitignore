@@ -25,13 +25,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Deployment related
-.netlify
-.vercel
-.firebase
-**/.firebase
-.github
-build/
-**/build
-public/deploy-status
-**/public/deploy-status
