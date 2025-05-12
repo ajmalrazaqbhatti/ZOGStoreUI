@@ -34,7 +34,7 @@ ZOGStore UI is a responsive web application that provides a seamless shopping ex
 1. Clone the repository
 
    ```
-   git clone https://github.com/yourusername/ZOGStore.git
+   git clone https://github.com/ajmalrazaqbhatti/ZOGStore.git
    cd ZOGStoreUI
    ```
 
