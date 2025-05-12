@@ -2,14 +2,14 @@
  * Navbar Component
  * Main navigation bar with search and user controls
  ********************************************************/
-import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import logo from "../assets/logo.svg";
-import { Search, ShoppingCart, X, Package, LogOut } from "lucide-react";
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import logo from '../assets/logo.svg';
+import { Search, ShoppingCart, X, Package, LogOut } from 'lucide-react';
 
 function Navbar({ cartCount = 0 }) {
   // State management
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
   const searchInputRef = useRef(null);
   const searchPopupRef = useRef(null);
@@ -27,39 +27,36 @@ function Navbar({ cartCount = 0 }) {
   // Close menus when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        searchPopupRef.current &&
-        !searchPopupRef.current.contains(event.target)
-      ) {
+      if (searchPopupRef.current && !searchPopupRef.current.contains(event.target)) {
         setIsSearchPopupOpen(false);
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   // Handle user logout
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:3000/auth/logout", {
-        method: "GET",
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/auth/logout', {
+        method: 'GET',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       if (response.ok) {
-        console.log("User logged out successfully");
-        navigate("/");
+        console.log('User logged out successfully');
+        navigate('/');
       } else {
-        console.error("Logout failed");
+        console.error('Logout failed');
       }
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error('Error during logout:', error);
     }
   };
 
@@ -71,30 +68,28 @@ function Navbar({ cartCount = 0 }) {
     try {
       // Call the search API
       const response = await fetch(
-        `http://localhost:3000/games/search?title=${encodeURIComponent(
-          searchTerm,
-        )}`,
+        `http://localhost:3000/games/search?title=${encodeURIComponent(searchTerm)}`,
         {
-          method: "GET",
-          credentials: "include",
+          method: 'GET',
+          credentials: 'include',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-        },
+        }
       );
 
       if (response.ok) {
         const searchResults = await response.json();
         // Navigate to search results page with the data
-        navigate("/home", {
+        navigate('/home', {
           state: { searchResults, searchTerm },
           search: `?search=${encodeURIComponent(searchTerm)}`,
         });
       } else {
-        console.error("Search request failed");
+        console.error('Search request failed');
       }
     } catch (error) {
-      console.error("Error during search:", error);
+      console.error('Error during search:', error);
     }
 
     setIsSearchPopupOpen(false);
@@ -114,8 +109,8 @@ function Navbar({ cartCount = 0 }) {
 
   // Clear search and reset results
   const clearSearch = () => {
-    setSearchTerm("");
-    navigate("/home?reset=true", { replace: true });
+    setSearchTerm('');
+    navigate('/home?reset=true', { replace: true });
   };
 
   return (
@@ -143,7 +138,7 @@ function Navbar({ cartCount = 0 }) {
               placeholder="Search games..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch(e)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
               className="w-64 md:w-72 pl-10 px-4 h-10 bg-white/8 border border-white/10 rounded-xl 
                             placeholder-white/50 text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 focus:border-[#7C5DF9]
                             transition-all duration-300 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none
@@ -173,9 +168,9 @@ function Navbar({ cartCount = 0 }) {
           <Link
             to="/orders"
             className={`h-10 w-10 flex items-center justify-center rounded-xl border transition-colors cursor-pointer ${
-              isActive("/orders")
-                ? "bg-[#7C5DF9]/20 border-[#7C5DF9] text-[#7C5DF9]"
-                : "bg-white/5 border-white/10 hover:bg-white/10 text-white"
+              isActive('/orders')
+                ? 'bg-[#7C5DF9]/20 border-[#7C5DF9] text-[#7C5DF9]'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-white'
             }`}
             title="My Orders"
           >
@@ -186,15 +181,15 @@ function Navbar({ cartCount = 0 }) {
           <Link
             to="/cart"
             className={`relative h-10 w-10 flex items-center justify-center rounded-xl border transition-all duration-300 cursor-pointer ${
-              isActive("/cart")
-                ? "bg-[#7C5DF9]/20 border-[#7C5DF9] text-[#7C5DF9]"
-                : "bg-white/5 border-white/10 hover:bg-white/10 text-white"
+              isActive('/cart')
+                ? 'bg-[#7C5DF9]/20 border-[#7C5DF9] text-[#7C5DF9]'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-white'
             }`}
           >
             <ShoppingCart className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform transition-all duration-300 animate-fadeIn">
-                {cartCount > 9 ? "9+" : cartCount}
+                {cartCount > 9 ? '9+' : cartCount}
               </span>
             )}
           </Link>
@@ -240,7 +235,7 @@ function Navbar({ cartCount = 0 }) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     handleSearch(e);
                     setIsSearchPopupOpen(false);
                   }

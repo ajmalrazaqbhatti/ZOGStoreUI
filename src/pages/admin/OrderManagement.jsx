@@ -2,7 +2,7 @@
  * OrderManagement Component
  * Admin interface for viewing and managing customer orders
  ********************************************************/
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Search,
   RefreshCw,
@@ -23,13 +23,13 @@ import {
   ChevronUp,
   Package,
   ShoppingCart,
-} from "lucide-react";
-import overlay from "../../assets/overlay.png";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import AdminSidebar from "../../components/AdminSidebar";
-import MobileAdminRedirect from "../../components/MobileAdminRedirect";
-import Loader from "../../components/Loader";
-import Toast from "../../components/Toast";
+} from 'lucide-react';
+import overlay from '../../assets/overlay.png';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import AdminSidebar from '../../components/AdminSidebar';
+import MobileAdminRedirect from '../../components/MobileAdminRedirect';
+import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 function OrderManagement() {
   // Check admin authentication
@@ -39,13 +39,13 @@ function OrderManagement() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState('All');
   const [toast, setToast] = useState({
     visible: false,
-    message: "",
-    type: "success",
+    message: '',
+    type: 'success',
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
@@ -53,16 +53,10 @@ function OrderManagement() {
   const [showOrderDetails, setShowOrderDetails] = useState(null);
   const [statusChangeOrder, setStatusChangeOrder] = useState(null);
   const [showStatusModal, setShowStatusModal] = useState(false);
-  const [newStatus, setNewStatus] = useState("");
+  const [newStatus, setNewStatus] = useState('');
 
   // Order status options
-  const validStatuses = [
-    "pending",
-    "processing",
-    "shipped",
-    "delivered",
-    "canceled",
-  ];
+  const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'canceled'];
 
   /********************************************************
    * Data Loading and Filtering
@@ -78,12 +72,9 @@ function OrderManagement() {
     setError(null);
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/admin/orders/search?orderId=${orderId}`,
-        {
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`http://localhost:3000/admin/orders/search?orderId=${orderId}`, {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -91,7 +82,7 @@ function OrderManagement() {
           setLoading(false);
           return;
         }
-        throw new Error("Failed to search for order");
+        throw new Error('Failed to search for order');
       }
 
       const data = await response.json();
@@ -103,8 +94,8 @@ function OrderManagement() {
         setFilteredOrders([]);
       }
     } catch (error) {
-      console.error("Error searching order:", error);
-      setError("Failed to search for order. Please try again.");
+      console.error('Error searching order:', error);
+      setError('Failed to search for order. Please try again.');
       setFilteredOrders([]);
     } finally {
       setLoading(false);
@@ -124,9 +115,9 @@ function OrderManagement() {
     let filtered = [...orders];
 
     // Apply status filter
-    if (statusFilter !== "All") {
+    if (statusFilter !== 'All') {
       filtered = filtered.filter(
-        (order) => order.status.toLowerCase() === statusFilter.toLowerCase(),
+        (order) => order.status.toLowerCase() === statusFilter.toLowerCase()
       );
     }
 
@@ -135,10 +126,8 @@ function OrderManagement() {
       filtered = filtered.filter(
         (order) =>
           order.order_id.toString().includes(searchTerm) ||
-          (order.username &&
-            order.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (order.email &&
-            order.email.toLowerCase().includes(searchTerm.toLowerCase())),
+          (order.username && order.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (order.email && order.email.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -151,20 +140,20 @@ function OrderManagement() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3000/admin/orders", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/admin/orders', {
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch orders");
+        throw new Error('Failed to fetch orders');
       }
 
       const data = await response.json();
       setOrders(data);
       setFilteredOrders(data);
     } catch (error) {
-      console.error("Error fetching orders:", error);
-      setError("Failed to load orders. Please try again.");
+      console.error('Error fetching orders:', error);
+      setError('Failed to load orders. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -174,10 +163,10 @@ function OrderManagement() {
    * UI Helper Functions
    ********************************************************/
   // Show toast notification
-  const showToast = (message, type = "success") => {
+  const showToast = (message, type = 'success') => {
     setToast({ visible: true, message, type });
     setTimeout(() => {
-      setToast({ visible: false, message: "", type: "success" });
+      setToast({ visible: false, message: '', type: 'success' });
     }, 3000);
   };
 
@@ -189,52 +178,52 @@ function OrderManagement() {
   // Format date for display
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   // Format currency for display
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount);
   };
 
   // Get CSS class for status badge
   const getStatusBadge = (status) => {
     switch (status?.toLowerCase()) {
-      case "pending":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "processing":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-      case "shipped":
-        return "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
-      case "delivered":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
-      case "canceled":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
+      case 'pending':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'processing':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'shipped':
+        return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30';
+      case 'delivered':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'canceled':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
       default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
   // Get icon for order status
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
-      case "pending":
+      case 'pending':
         return <Clock size={16} />;
-      case "processing":
+      case 'processing':
         return <RefreshCw size={16} />;
-      case "shipped":
+      case 'shipped':
         return <Truck size={16} />; // Changed from TruckDelivery to Truck
-      case "delivered":
+      case 'delivered':
         return <PackageCheck size={16} />;
-      case "canceled":
+      case 'canceled':
         return <XCircle size={16} />;
       default:
         return <Info size={16} />;
@@ -259,16 +248,16 @@ function OrderManagement() {
       const response = await fetch(
         `http://localhost:3000/admin/orders?orderId=${orderToDelete.order_id}`,
         {
-          method: "DELETE",
-          credentials: "include",
-        },
+          method: 'DELETE',
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error("Order not found. It may have been deleted already.");
+          throw new Error('Order not found. It may have been deleted already.');
         }
-        throw new Error("Failed to delete order");
+        throw new Error('Failed to delete order');
       }
 
       // Process the response if needed
@@ -277,30 +266,23 @@ function OrderManagement() {
         // confirming the deletion was successful
         await response.json();
       } catch (parseError) {
-        console.warn("Could not parse JSON response:", parseError);
+        console.warn('Could not parse JSON response:', parseError);
         // Continue execution since the delete operation was successful
       }
 
       // Remove the deleted order from state
-      setOrders(
-        orders.filter((order) => order.order_id !== orderToDelete.order_id),
-      );
+      setOrders(orders.filter((order) => order.order_id !== orderToDelete.order_id));
 
       // Also update filtered orders
       setFilteredOrders(
-        filteredOrders.filter(
-          (order) => order.order_id !== orderToDelete.order_id,
-        ),
+        filteredOrders.filter((order) => order.order_id !== orderToDelete.order_id)
       );
 
       // Show success toast
-      showToast(
-        `Order #${orderToDelete.order_id} was successfully deleted`,
-        "success",
-      );
+      showToast(`Order #${orderToDelete.order_id} was successfully deleted`, 'success');
     } catch (error) {
-      console.error("Error deleting order:", error);
-      showToast(`Failed to delete order: ${error.message}`, "error");
+      console.error('Error deleting order:', error);
+      showToast(`Failed to delete order: ${error.message}`, 'error');
     } finally {
       setShowDeleteModal(false);
       setOrderToDelete(null);
@@ -324,39 +306,34 @@ function OrderManagement() {
       const response = await fetch(
         `http://localhost:3000/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
         {
-          method: "PUT",
-          credentials: "include",
+          method: 'PUT',
+          credentials: 'include',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             status: newStatus,
           }),
-        },
+        }
       );
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to update order status");
+        throw new Error(data.message || 'Failed to update order status');
       }
 
       // Update the order status in the state
       setOrders(
         orders.map((order) =>
-          order.order_id === statusChangeOrder.order_id
-            ? { ...order, status: newStatus }
-            : order,
-        ),
+          order.order_id === statusChangeOrder.order_id ? { ...order, status: newStatus } : order
+        )
       );
 
       // Show success toast
-      showToast(
-        `Order #${statusChangeOrder.order_id} status updated to ${newStatus}`,
-        "success",
-      );
+      showToast(`Order #${statusChangeOrder.order_id} status updated to ${newStatus}`, 'success');
     } catch (error) {
-      console.error("Error updating order status:", error);
-      showToast(`Failed to update order status: ${error.message}`, "error");
+      console.error('Error updating order status:', error);
+      showToast(`Failed to update order status: ${error.message}`, 'error');
     } finally {
       setShowStatusModal(false);
       setStatusChangeOrder(null);
@@ -374,8 +351,8 @@ function OrderManagement() {
       className="min-h-screen bg-[#0A0A0B] text-white"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       {/* Mobile Redirect */}
@@ -401,8 +378,8 @@ function OrderManagement() {
               <div className="bg-[#1A1A1C] rounded-xl p-5 max-w-sm w-full shadow-xl border border-white/10">
                 <h3 className="text-lg font-bold mb-2">Delete Order</h3>
                 <p className="text-gray-400 mb-4 text-sm">
-                  Are you sure you want to delete Order #
-                  {orderToDelete?.order_id}? This action cannot be undone.
+                  Are you sure you want to delete Order #{orderToDelete?.order_id}? This action
+                  cannot be undone.
                 </p>
                 <div className="flex gap-3 justify-end">
                   <button
@@ -444,10 +421,7 @@ function OrderManagement() {
                 </p>
 
                 <div className="mb-4">
-                  <label
-                    htmlFor="status"
-                    className="block text-sm font-medium text-gray-300 mb-2"
-                  >
+                  <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-2">
                     Status
                   </label>
                   <select
@@ -457,9 +431,9 @@ function OrderManagement() {
                     className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none text-sm"
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "right 10px center",
-                      backgroundSize: "16px",
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 10px center',
+                      backgroundSize: '16px',
                     }}
                   >
                     {validStatuses.map((status) => (
@@ -528,7 +502,7 @@ function OrderManagement() {
                   {searchTerm && (
                     <button
                       type="button"
-                      onClick={() => setSearchTerm("")}
+                      onClick={() => setSearchTerm('')}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
                     >
                       <X size={16} />
@@ -545,9 +519,9 @@ function OrderManagement() {
                   className="w-full px-3 py-2  bg-[#1A1A1C] rounded-xl border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "right 10px center",
-                    backgroundSize: "16px",
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 10px center',
+                    backgroundSize: '16px',
                   }}
                 >
                   <option value="All">All Statuses</option>
@@ -605,14 +579,14 @@ function OrderManagement() {
                   <p className="text-gray-400 mb-4">
                     {searchTerm
                       ? `No orders match your search for order ID "${searchTerm}"`
-                      : statusFilter !== "All"
+                      : statusFilter !== 'All'
                         ? `No orders with status "${statusFilter}" found`
-                        : "There are no orders in the database"}
+                        : 'There are no orders in the database'}
                   </p>
                   <button
                     onClick={() => {
-                      setSearchTerm("");
-                      setStatusFilter("All");
+                      setSearchTerm('');
+                      setStatusFilter('All');
                     }}
                     className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-lg transition-colors cursor-pointer"
                   >
@@ -652,9 +626,7 @@ function OrderManagement() {
                         <React.Fragment key={order.order_id}>
                           <tr
                             className={`hover:bg-white/5 transition-colors ${
-                              showOrderDetails === order.order_id
-                                ? "bg-[#7C5DF9]/5"
-                                : ""
+                              showOrderDetails === order.order_id ? 'bg-[#7C5DF9]/5' : ''
                             }`}
                           >
                             <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
@@ -662,12 +634,8 @@ function OrderManagement() {
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
                               <div className="flex flex-col">
-                                <div className="font-medium">
-                                  {order.username}
-                                </div>
-                                <div className="text-gray-400 text-xs">
-                                  {order.email}
-                                </div>
+                                <div className="font-medium">{order.username}</div>
+                                <div className="text-gray-400 text-xs">{order.email}</div>
                               </div>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
@@ -676,12 +644,11 @@ function OrderManagement() {
                             <td className="px-4 py-3 whitespace-nowrap">
                               <span
                                 className={`px-2 py-1 text-xs rounded-xl border flex items-center gap-1.5 w-fit ${getStatusBadge(
-                                  order.status,
+                                  order.status
                                 )}`}
                               >
                                 {getStatusIcon(order.status)}
-                                {order.status.charAt(0).toUpperCase() +
-                                  order.status.slice(1)}
+                                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                               </span>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap font-medium">
@@ -695,13 +662,11 @@ function OrderManagement() {
                             <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                               <div className="flex items-center justify-end space-x-2">
                                 <button
-                                  onClick={() =>
-                                    toggleOrderDetails(order.order_id)
-                                  }
+                                  onClick={() => toggleOrderDetails(order.order_id)}
                                   className={`p-1.5 transition-colors cursor-pointer ${
                                     showOrderDetails === order.order_id
-                                      ? "bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg"
-                                      : "bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30"
+                                      ? 'bg-[#7C5DF9]/20 text-[#7C5DF9] rounded-lg'
+                                      : 'bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30'
                                   }`}
                                   title="View Details"
                                 >
@@ -738,10 +703,7 @@ function OrderManagement() {
                                   <div className="grid grid-cols-1 md:grid-cols-1 gap-4 text-sm">
                                     <div className="bg-white/5 border border-white/10 rounded-3xl p-3">
                                       <h4 className="font-medium mb-2 flex items-center gap-1.5">
-                                        <Calendar
-                                          size={14}
-                                          className="text-[#7C5DF9]"
-                                        />
+                                        <Calendar size={14} className="text-[#7C5DF9]" />
                                         Order Details
                                       </h4>
                                       <div className="space-y-2 text-gray-300">
@@ -753,20 +715,16 @@ function OrderManagement() {
                                         </div>
                                         <div className="flex justify-between">
                                           <span>Date:</span>
-                                          <span>
-                                            {formatDate(order.order_date)}
-                                          </span>
+                                          <span>{formatDate(order.order_date)}</span>
                                         </div>
                                         <div className="flex justify-between">
                                           <span>Status:</span>
                                           <span
                                             className={`px-2 py-0.5 text-xs rounded-xl border ${getStatusBadge(
-                                              order.status,
+                                              order.status
                                             )}`}
                                           >
-                                            {order.status
-                                              .charAt(0)
-                                              .toUpperCase() +
+                                            {order.status.charAt(0).toUpperCase() +
                                               order.status.slice(1)}
                                           </span>
                                         </div>
@@ -784,10 +742,7 @@ function OrderManagement() {
                                   {order.items && order.items.length > 0 && (
                                     <div className="bg-white/5 border border-white/10 rounded-3xl p-4">
                                       <h4 className="font-medium mb-3 flex items-center gap-1.5">
-                                        <ShoppingCart
-                                          size={16}
-                                          className="text-[#7C5DF9]"
-                                        />
+                                        <ShoppingCart size={16} className="text-[#7C5DF9]" />
                                         Order Items
                                       </h4>
                                       <div className="overflow-x-auto">
@@ -810,10 +765,7 @@ function OrderManagement() {
                                           </thead>
                                           <tbody className="divide-y divide-white/10">
                                             {order.items.map((item) => (
-                                              <tr
-                                                key={item.item_id}
-                                                className="hover:bg-white/5"
-                                              >
+                                              <tr key={item.item_id} className="hover:bg-white/5">
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                   <div className="flex items-center">
                                                     {item.gameicon ? (
@@ -842,9 +794,7 @@ function OrderManagement() {
                                                   {formatCurrency(item.price)}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                                                  {formatCurrency(
-                                                    item.price * item.quantity,
-                                                  )}
+                                                  {formatCurrency(item.price * item.quantity)}
                                                 </td>
                                               </tr>
                                             ))}
@@ -858,9 +808,7 @@ function OrderManagement() {
                                                 Total:
                                               </td>
                                               <td className="px-4 py-2 text-right font-bold text-[#7C5DF9]">
-                                                {formatCurrency(
-                                                  order.total_amount,
-                                                )}
+                                                {formatCurrency(order.total_amount)}
                                               </td>
                                             </tr>
                                           </tfoot>

@@ -2,8 +2,8 @@
  * AdminSidebar Component
  * Navigation sidebar for admin section
  ********************************************************/
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Layers,
@@ -14,9 +14,9 @@ import {
   Menu,
   X,
   ChevronRight,
-} from "lucide-react";
-import logo from "../assets/logo.svg";
-import overlay from "../assets/overlay.png";
+} from 'lucide-react';
+import logo from '../assets/logo.svg';
+import overlay from '../assets/overlay.png';
 
 function AdminSidebar() {
   // Router and state
@@ -31,7 +31,7 @@ function AdminSidebar() {
    ********************************************************/
   useEffect(() => {
     // Load user data from storage
-    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
     if (storedUser) {
       setUserData(storedUser);
     }
@@ -49,10 +49,10 @@ function AdminSidebar() {
     };
 
     handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, [location.pathname]);
 
@@ -64,45 +64,45 @@ function AdminSidebar() {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/auth/logout", {
-        method: "GET",
-        credentials: "include",
+      await fetch('http://localhost:3000/auth/logout', {
+        method: 'GET',
+        credentials: 'include',
       });
 
-      localStorage.removeItem("user");
-      navigate("/");
+      localStorage.removeItem('user');
+      navigate('/');
     } catch (error) {
-      console.error("Logout failed:", error);
-      localStorage.removeItem("user");
-      navigate("/");
+      console.error('Logout failed:', error);
+      localStorage.removeItem('user');
+      navigate('/');
     }
   };
 
   // Navigation menu items
   const menuItems = [
     {
-      name: "Dashboard",
-      path: "/admin",
+      name: 'Dashboard',
+      path: '/admin',
       icon: <LayoutDashboard size={20} />,
     },
     {
-      name: "Games",
-      path: "/admin/games",
+      name: 'Games',
+      path: '/admin/games',
       icon: <Layers size={20} />,
     },
     {
-      name: "Users",
-      path: "/admin/users",
+      name: 'Users',
+      path: '/admin/users',
       icon: <Users size={20} />,
     },
     {
-      name: "Inventory",
-      path: "/admin/inventory",
+      name: 'Inventory',
+      path: '/admin/inventory',
       icon: <Package size={20} />,
     },
     {
-      name: "Orders",
-      path: "/admin/orders",
+      name: 'Orders',
+      path: '/admin/orders',
       icon: <ShoppingBag size={20} />,
     },
   ];
@@ -112,13 +112,13 @@ function AdminSidebar() {
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-64  backdrop-blur-md text-white transform transition-transform duration-300 ease-in-out ${
-          isOpen || isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen || isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 border-r border-white/10`}
         style={{
           backgroundImage: `url(${overlay})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundBlendMode: "overlay",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlendMode: 'overlay',
         }}
       >
         {/* Logo and Header */}
@@ -137,13 +137,11 @@ function AdminSidebar() {
         <div className="p-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#7C5DF9]/20 flex items-center justify-center text-[#7C5DF9] font-bold">
-              {userData?.username?.charAt(0).toUpperCase() || "A"}
+              {userData?.username?.charAt(0).toUpperCase() || 'A'}
             </div>
             <div>
-              <div className="font-medium">{userData?.username || "Admin"}</div>
-              <div className="text-xs text-white/60">
-                {userData?.email || "admin@example.com"}
-              </div>
+              <div className="font-medium">{userData?.username || 'Admin'}</div>
+              <div className="text-xs text-white/60">{userData?.email || 'admin@example.com'}</div>
             </div>
           </div>
         </div>
@@ -157,8 +155,8 @@ function AdminSidebar() {
                   to={item.path}
                   className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors ${
                     isActive(item.path)
-                      ? "bg-[#7C5DF9]/20 text-[#7C5DF9] border border-[#7C5DF9]/30 font-medium"
-                      : "text-white/70 hover:bg-white/5 hover:text-white border border-transparent"
+                      ? 'bg-[#7C5DF9]/20 text-[#7C5DF9] border border-[#7C5DF9]/30 font-medium'
+                      : 'text-white/70 hover:bg-white/5 hover:text-white border border-transparent'
                   }`}
                 >
                   {item.icon}

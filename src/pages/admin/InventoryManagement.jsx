@@ -2,23 +2,14 @@
  * InventoryManagement Component
  * Admin interface for managing game stock levels
  ********************************************************/
-import { useState, useEffect } from "react";
-import {
-  Search,
-  RefreshCw,
-  Package,
-  AlertCircle,
-  Check,
-  X,
-  Plus,
-  Minus,
-} from "lucide-react";
-import overlay from "../../assets/overlay.png";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import AdminSidebar from "../../components/AdminSidebar";
-import MobileAdminRedirect from "../../components/MobileAdminRedirect";
-import Loader from "../../components/Loader";
-import Toast from "../../components/Toast";
+import { useState, useEffect } from 'react';
+import { Search, RefreshCw, Package, AlertCircle, Check, X, Plus, Minus } from 'lucide-react';
+import overlay from '../../assets/overlay.png';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import AdminSidebar from '../../components/AdminSidebar';
+import MobileAdminRedirect from '../../components/MobileAdminRedirect';
+import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 function InventoryManagement() {
   // Check admin authentication
@@ -28,12 +19,12 @@ function InventoryManagement() {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState([]);
   const [toast, setToast] = useState({
     visible: false,
-    message: "",
-    type: "success",
+    message: '',
+    type: 'success',
   });
   const [updatingItem, setUpdatingItem] = useState(null);
   const [stockChanges, setStockChanges] = useState({});
@@ -78,20 +69,20 @@ function InventoryManagement() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3000/admin/inventory", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/admin/inventory', {
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch inventory");
+        throw new Error('Failed to fetch inventory');
       }
 
       const data = await response.json();
       setInventory(data);
       setFilteredInventory(data);
     } catch (error) {
-      console.error("Error fetching inventory:", error);
-      setError("Failed to load inventory. Please try again.");
+      console.error('Error fetching inventory:', error);
+      setError('Failed to load inventory. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -108,20 +99,20 @@ function InventoryManagement() {
       const response = await fetch(
         `http://localhost:3000/games/search?title=${encodeURIComponent(title)}`,
         {
-          credentials: "include",
-        },
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to search inventory");
+        throw new Error('Failed to search inventory');
       }
 
       const data = await response.json();
       setInventory(data);
       setFilteredInventory(data);
     } catch (error) {
-      console.error("Error searching inventory:", error);
-      setError("Failed to search inventory. Please try again.");
+      console.error('Error searching inventory:', error);
+      setError('Failed to search inventory. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -131,13 +122,13 @@ function InventoryManagement() {
    * Notification Functions
    ********************************************************/
   // Show toast notification
-  const showToast = (message, type = "success", duration = 3000) => {
+  const showToast = (message, type = 'success', duration = 3000) => {
     setToast({ visible: true, message, type });
 
     // Only set timeout to hide for success/error messages, not for "updating" messages
-    if (type !== "updating") {
+    if (type !== 'updating') {
       setTimeout(() => {
-        setToast({ visible: false, message: "", type: "success" });
+        setToast({ visible: false, message: '', type: 'success' });
       }, duration);
     }
   };
@@ -158,7 +149,7 @@ function InventoryManagement() {
     }
 
     // Show updating toast
-    showToast(`Updating stock for game #${gameId}...`, "updating");
+    showToast(`Updating stock for game #${gameId}...`, 'updating');
 
     // Set a new timer
     const timerId = setTimeout(() => {
@@ -183,15 +174,13 @@ function InventoryManagement() {
     // Find the current inventory item
     const inventoryItem = inventory.find((item) => item.game_id === gameId);
     const currentStock =
-      stockChanges[gameId] !== undefined
-        ? stockChanges[gameId]
-        : inventoryItem.stock_quantity;
+      stockChanges[gameId] !== undefined ? stockChanges[gameId] : inventoryItem.stock_quantity;
 
     let newValue = currentStock;
 
-    if (operation === "increase") {
+    if (operation === 'increase') {
       newValue = newValue + 1;
-    } else if (operation === "decrease") {
+    } else if (operation === 'decrease') {
       newValue = Math.max(0, newValue - 1);
     }
 
@@ -223,45 +212,38 @@ function InventoryManagement() {
 
   // Get current stock value (from local state or original)
   const getCurrentStock = (gameId, defaultStock) => {
-    return stockChanges[gameId] !== undefined
-      ? stockChanges[gameId]
-      : defaultStock;
+    return stockChanges[gameId] !== undefined ? stockChanges[gameId] : defaultStock;
   };
 
   // Update stock quantity in database
   const updateStockQuantity = async (gameId, stockQuantity) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/admin/inventory?gameId=${gameId}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            stockQuantity: stockQuantity,
-          }),
+      const response = await fetch(`http://localhost:3000/admin/inventory?gameId=${gameId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          stockQuantity: stockQuantity,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to update inventory");
+        throw new Error('Failed to update inventory');
       }
 
       // Update local inventory data
       setInventory(
         inventory.map((item) =>
-          item.game_id === gameId
-            ? { ...item, stock_quantity: stockQuantity }
-            : item,
-        ),
+          item.game_id === gameId ? { ...item, stock_quantity: stockQuantity } : item
+        )
       );
 
-      showToast("Inventory updated successfully", "success");
+      showToast('Inventory updated successfully', 'success');
     } catch (error) {
-      console.error("Error updating inventory:", error);
-      showToast(`Failed to update inventory: ${error.message}`, "error");
+      console.error('Error updating inventory:', error);
+      showToast(`Failed to update inventory: ${error.message}`, 'error');
 
       // Revert the change in the UI
       const inventoryItem = inventory.find((item) => item.game_id === gameId);
@@ -281,8 +263,8 @@ function InventoryManagement() {
       className="min-h-screen bg-[#0A0A0B] text-white"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       {/* Mobile Redirect */}
@@ -325,7 +307,7 @@ function InventoryManagement() {
                 />
                 {searchTerm && (
                   <button
-                    onClick={() => setSearchTerm("")}
+                    onClick={() => setSearchTerm('')}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
                   >
                     <X size={16} />
@@ -375,17 +357,15 @@ function InventoryManagement() {
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-[#7C5DF9]/20 rounded-full mb-4">
                     <Package size={24} className="text-[#7C5DF9]" />
                   </div>
-                  <h3 className="text-xl font-medium mb-2">
-                    No inventory found
-                  </h3>
+                  <h3 className="text-xl font-medium mb-2">No inventory found</h3>
                   <p className="text-gray-400 mb-4">
                     {searchTerm
                       ? `No inventory items match your search for "${searchTerm}"`
-                      : "There are no inventory items in the database"}
+                      : 'There are no inventory items in the database'}
                   </p>
                   {searchTerm && (
                     <button
-                      onClick={() => setSearchTerm("")}
+                      onClick={() => setSearchTerm('')}
                       className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-xl transition-colors cursor-pointer"
                     >
                       Clear Search
@@ -413,9 +393,7 @@ function InventoryManagement() {
                         <tr
                           key={item.inventory_id}
                           className={`hover:bg-white/5 ${
-                            updatingItem === item.game_id
-                              ? "bg-[#7C5DF9]/5"
-                              : ""
+                            updatingItem === item.game_id ? 'bg-[#7C5DF9]/5' : ''
                           }`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
@@ -431,9 +409,7 @@ function InventoryManagement() {
                                 />
                               ) : (
                                 <div className="h-10 w-10 rounded-3xl mr-3 bg-[#7C5DF9]/20 flex items-center justify-center">
-                                  <span className="text-[#7C5DF9]">
-                                    {item.title.charAt(0)}
-                                  </span>
+                                  <span className="text-[#7C5DF9]">{item.title.charAt(0)}</span>
                                 </div>
                               )}
                               <div className="font-medium">{item.title}</div>
@@ -442,13 +418,9 @@ function InventoryManagement() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <button
-                                onClick={() =>
-                                  handleStockChange(item.game_id, "decrease")
-                                }
+                                onClick={() => handleStockChange(item.game_id, 'decrease')}
                                 className={`p-1.5 bg-white/10 hover:bg-white/20 rounded-l-lg transition-colors ${
-                                  updatingItem === item.game_id
-                                    ? "opacity-50"
-                                    : "cursor-pointer"
+                                  updatingItem === item.game_id ? 'opacity-50' : 'cursor-pointer'
                                 }`}
                                 disabled={updatingItem === item.game_id}
                               >
@@ -457,33 +429,22 @@ function InventoryManagement() {
                               <input
                                 type="number"
                                 min="0"
-                                value={getCurrentStock(
-                                  item.game_id,
-                                  item.stock_quantity,
-                                )}
+                                value={getCurrentStock(item.game_id, item.stock_quantity)}
                                 onChange={(e) =>
-                                  handleStockInputChange(
-                                    item.game_id,
-                                    e.target.value,
-                                  )
+                                  handleStockInputChange(item.game_id, e.target.value)
                                 }
                                 className={`w-16 text-center bg-black/30 py-1 focus:outline-none focus:ring-0 
                                                                 ${
-                                                                  updatingItem ===
-                                                                  item.game_id
-                                                                    ? "text-[#7C5DF9] animate-pulse cursor-not-allowed"
-                                                                    : "text-white cursor-text"
+                                                                  updatingItem === item.game_id
+                                                                    ? 'text-[#7C5DF9] animate-pulse cursor-not-allowed'
+                                                                    : 'text-white cursor-text'
                                                                 }`}
                                 disabled={updatingItem === item.game_id}
                               />
                               <button
-                                onClick={() =>
-                                  handleStockChange(item.game_id, "increase")
-                                }
+                                onClick={() => handleStockChange(item.game_id, 'increase')}
                                 className={`p-1.5 bg-white/10 hover:bg-white/20 rounded-r-lg transition-colors ${
-                                  updatingItem === item.game_id
-                                    ? "opacity-50"
-                                    : "cursor-pointer"
+                                  updatingItem === item.game_id ? 'opacity-50' : 'cursor-pointer'
                                 }`}
                                 disabled={updatingItem === item.game_id}
                               >

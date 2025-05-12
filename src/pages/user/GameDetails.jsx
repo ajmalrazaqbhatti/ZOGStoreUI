@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   ShoppingCart,
   Heart,
@@ -13,13 +13,13 @@ import {
   X,
   CheckCircle,
   AlertCircle,
-} from "lucide-react";
-import logo from "../../assets/logo.svg";
-import overlay from "../../assets/overlay.png";
-import Navbar from "../../components/Navbar";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import Loader from "../../components/Loader";
-import Toast from "../../components/Toast";
+} from 'lucide-react';
+import logo from '../../assets/logo.svg';
+import overlay from '../../assets/overlay.png';
+import Navbar from '../../components/Navbar';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 /********************************************************
  * GameDetails Component
@@ -41,8 +41,8 @@ function GameDetails() {
   const [cartCount, setCartCount] = useState(0);
   const [toast, setToast] = useState({
     visible: false,
-    message: "",
-    type: "success",
+    message: '',
+    type: 'success',
   });
 
   // Hide toast notification
@@ -57,28 +57,26 @@ function GameDetails() {
         try {
           setLoading(true);
           const response = await fetch(
-            `http://localhost:3000/games/game?gameId=${encodeURIComponent(
-              gameId,
-            )}`,
+            `http://localhost:3000/games/game?gameId=${encodeURIComponent(gameId)}`,
             {
-              credentials: "include",
-            },
+              credentials: 'include',
+            }
           );
 
           if (!response.ok) {
             if (response.status === 404) {
-              throw new Error("Game not found");
+              throw new Error('Game not found');
             }
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || "Failed to load game details");
+            throw new Error(errorData.error || 'Failed to load game details');
           }
 
           const data = await response.json();
           setGame(data);
           setLoading(false);
         } catch (err) {
-          console.error("Error fetching game:", err);
-          setError(err.message || "Failed to load game details");
+          console.error('Error fetching game:', err);
+          setError(err.message || 'Failed to load game details');
           setLoading(false);
         }
       }
@@ -97,8 +95,8 @@ function GameDetails() {
   // Get current cart item count
   const fetchCartCount = async () => {
     try {
-      const response = await fetch("http://localhost:3000/cart/count", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/cart/count', {
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -106,12 +104,12 @@ function GameDetails() {
         setCartCount(data.itemCount);
       }
     } catch (error) {
-      console.error("Error fetching cart count:", error);
+      console.error('Error fetching cart count:', error);
     }
   };
 
   // Display notification to user
-  const showToast = (message, type = "success") => {
+  const showToast = (message, type = 'success') => {
     setToast({ visible: true, message, type });
 
     // Auto-hide toast after 3 seconds
@@ -122,7 +120,7 @@ function GameDetails() {
 
   // Navigate to previous page
   const handleBack = () => {
-    navigate("/home");
+    navigate('/home');
   };
 
   // Quantity control functions
@@ -145,11 +143,11 @@ function GameDetails() {
 
     setAddingToCart(true);
     try {
-      const response = await fetch("http://localhost:3000/cart/add", {
-        method: "POST",
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/cart/add', {
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           gameId: game.game_id,
@@ -159,7 +157,7 @@ function GameDetails() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add item to cart");
+        throw new Error(errorData.message || 'Failed to add item to cart');
       }
 
       await response.json();
@@ -169,14 +167,12 @@ function GameDetails() {
       await fetchCartCount();
 
       // Show success toast
-      showToast(
-        `${game.title} added to cart${quantity > 1 ? ` (${quantity})` : ""}`,
-      );
+      showToast(`${game.title} added to cart${quantity > 1 ? ` (${quantity})` : ''}`);
 
       setTimeout(() => setAddToCartSuccess(false), 3000);
     } catch (error) {
-      console.error("Error adding to cart:", error);
-      showToast(error.message || "Failed to add to cart", "error");
+      console.error('Error adding to cart:', error);
+      showToast(error.message || 'Failed to add to cart', 'error');
     } finally {
       setAddingToCart(false);
     }
@@ -187,7 +183,7 @@ function GameDetails() {
     return (
       <div
         className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
-        style={{ backgroundImage: `url(${overlay})`, backgroundSize: "cover" }}
+        style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}
       >
         <Loader />
       </div>
@@ -199,7 +195,7 @@ function GameDetails() {
     return (
       <div
         className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
-        style={{ backgroundImage: `url(${overlay})`, backgroundSize: "cover" }}
+        style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}
       >
         <img src={logo} alt="ZOG Store Logo" className="h-16 mb-6" />
         <div className="bg-black/5  backdrop-blur-md border border-white/10 rounded-2xl p-8 max-w-md text-center shadow-xl">
@@ -208,8 +204,7 @@ function GameDetails() {
           </div>
           <h1 className="text-2xl font-bold text-white mb-3">Game Not Found</h1>
           <p className="text-gray-400 mb-8">
-            {error ||
-              "The game you're looking for doesn't exist or couldn't be loaded."}
+            {error || "The game you're looking for doesn't exist or couldn't be loaded."}
           </p>
           <button
             onClick={handleBack}
@@ -228,12 +223,12 @@ function GameDetails() {
       className="min-h-screen bg-[#0A0A0B] text-white"
       style={{
         backgroundImage: `url(${game.gameicon})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backdropFilter: "blur(8px)",
-        WebkitBackdropFilter: "blur(8px)",
-        backgroundBlendMode: "luminosity",
-        position: "relative",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        backgroundBlendMode: 'luminosity',
+        position: 'relative',
       }}
     >
       {/* Add an additional blurred overlay for better effect */}
@@ -277,9 +272,7 @@ function GameDetails() {
               </span>
             )}
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-up">
-            {game.title}
-          </h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-up">{game.title}</h1>
           <div className="flex flex-wrap items-center gap-4 mb-6 animate-fade-up">
             {game.created_at && (
               <span className="text-sm text-gray-300 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center">
@@ -295,38 +288,29 @@ function GameDetails() {
                 <h3 className="text-xl font-bold mb-4">About This Game</h3>
                 <div className=" py-5 mb-8">
                   <p className="text-gray-300 leading-relaxed text-[15px]">
-                    {game.description ||
-                      "No description available for this game."}
+                    {game.description || 'No description available for this game.'}
                   </p>
                 </div>
 
                 {/* Game Info */}
-                <h3 className="text-lg font-bold mb-4 flex items-center">
-                  Game Details
-                </h3>
+                <h3 className="text-lg font-bold mb-4 flex items-center">Game Details</h3>
                 <div className="p-6 rounded-xl mb-6">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400 text-sm">Game ID:</span>
-                      <span className="text-white font-medium">
-                        {game.game_id}
-                      </span>
+                      <span className="text-white font-medium">{game.game_id}</span>
                     </div>
 
                     {game.platform && (
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400 text-sm">Platform:</span>
-                        <span className="text-white font-medium">
-                          {game.platform}
-                        </span>
+                        <span className="text-white font-medium">{game.platform}</span>
                       </div>
                     )}
 
                     {game.release_date && (
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-400 text-sm">
-                          Release Date:
-                        </span>
+                        <span className="text-gray-400 text-sm">Release Date:</span>
                         <span className="text-white font-medium">
                           {new Date(game.release_date).toLocaleDateString()}
                         </span>
@@ -376,7 +360,7 @@ function GameDetails() {
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <div className="text-3xl font-bold text-white">
-                      {game.price === "0.00" ? "Free" : `$${game.price}`}
+                      {game.price === '0.00' ? 'Free' : `$${game.price}`}
                     </div>
                     <div className="text-sm text-gray-300 mt-1">
                       {game.stock_quantity > 0 ? (
@@ -388,9 +372,7 @@ function GameDetails() {
                           </span>
                         )
                       ) : (
-                        <span className="text-red-400 font-medium">
-                          Out of Stock
-                        </span>
+                        <span className="text-red-400 font-medium">Out of Stock</span>
                       )}
                     </div>
                   </div>
@@ -398,19 +380,17 @@ function GameDetails() {
                 </div>
 
                 {/* Quantity Selector */}
-                {game.stock_quantity > 0 && game.price !== "0.00" && (
+                {game.stock_quantity > 0 && game.price !== '0.00' && (
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Quantity
-                    </label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
                     <div className="flex items-center">
                       <button
                         onClick={decreaseQuantity}
                         disabled={quantity <= 1}
                         className={`p-2 rounded-l-lg ${
                           quantity <= 1
-                            ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                            : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"
+                            ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                            : 'bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white'
                         }`}
                       >
                         <Minus size={16} />
@@ -420,11 +400,7 @@ function GameDetails() {
                         value={quantity}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
-                          if (
-                            !isNaN(val) &&
-                            val >= 1 &&
-                            val <= game.stock_quantity
-                          ) {
+                          if (!isNaN(val) && val >= 1 && val <= game.stock_quantity) {
                             setQuantity(val);
                           }
                         }}
@@ -437,8 +413,8 @@ function GameDetails() {
                         disabled={quantity >= game.stock_quantity}
                         className={`p-2 rounded-r-lg ${
                           quantity >= game.stock_quantity
-                            ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                            : "bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white"
+                            ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                            : 'bg-[#7C5DF9]/20 hover:bg-[#7C5DF9]/30 text-white'
                         }`}
                       >
                         <Plus size={16} />
@@ -453,18 +429,13 @@ function GameDetails() {
                     onClick={handleAddToCart}
                     className={`w-full flex items-center justify-center gap-2 py-3.5 cursor-pointer rounded-xl font-medium 
                                             ${
-                                              !game.stock_quantity ||
-                                              game.stock_quantity <= 0
-                                                ? "bg-gray-600 cursor-not-allowed"
+                                              !game.stock_quantity || game.stock_quantity <= 0
+                                                ? 'bg-gray-600 cursor-not-allowed'
                                                 : addToCartSuccess
-                                                  ? "bg-green-600 hover:bg-green-700"
-                                                  : "bg-[#7C5DF9] hover:bg-[#6A4FF0]"
+                                                  ? 'bg-green-600 hover:bg-green-700'
+                                                  : 'bg-[#7C5DF9] hover:bg-[#6A4FF0]'
                                             } transition-all relative overflow-hidden `}
-                    disabled={
-                      !game.stock_quantity ||
-                      game.stock_quantity <= 0 ||
-                      addingToCart
-                    }
+                    disabled={!game.stock_quantity || game.stock_quantity <= 0 || addingToCart}
                   >
                     {addingToCart ? (
                       <>
@@ -492,15 +463,13 @@ function GameDetails() {
                     ) : (
                       <>
                         <ShoppingCart size={18} />
-                        {game.price === "0.00"
+                        {game.price === '0.00'
                           ? !game.stock_quantity || game.stock_quantity <= 0
-                            ? "Out of Stock"
-                            : "Get Free"
+                            ? 'Out of Stock'
+                            : 'Get Free'
                           : !game.stock_quantity || game.stock_quantity <= 0
-                            ? "Out of Stock"
-                            : `Add to Cart${
-                                quantity > 1 ? ` (${quantity})` : ""
-                              }`}
+                            ? 'Out of Stock'
+                            : `Add to Cart${quantity > 1 ? ` (${quantity})` : ''}`}
                       </>
                     )}
                   </button>

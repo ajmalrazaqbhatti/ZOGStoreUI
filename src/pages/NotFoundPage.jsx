@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-import { FileQuestion, Home, ArrowLeft } from "lucide-react";
-import logo from "../assets/logo.svg";
-import overlay from "../assets/overlay.png";
+import { Link } from 'react-router-dom';
+import { FileQuestion, Home, ArrowLeft } from 'lucide-react';
+import logo from '../assets/logo.svg';
+import overlay from '../assets/overlay.png';
 
 function NotFoundPage() {
   return (
@@ -9,8 +9,8 @@ function NotFoundPage() {
       className="min-h-screen bg-[#0A0A0B] flex flex-col items-center justify-center p-4"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[40px] p-8 max-w-md text-center">

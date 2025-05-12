@@ -2,12 +2,12 @@
  * AdminPage Component
  * Dashboard with stats and overview for administrators
  ********************************************************/
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import overlay from "../../assets/overlay.png";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import AdminSidebar from "../../components/AdminSidebar";
-import MobileAdminRedirect from "../../components/MobileAdminRedirect";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import overlay from '../../assets/overlay.png';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import AdminSidebar from '../../components/AdminSidebar';
+import MobileAdminRedirect from '../../components/MobileAdminRedirect';
 import {
   Users,
   ShoppingBag,
@@ -18,8 +18,8 @@ import {
   CreditCard,
   BarChart3,
   AlertCircle,
-} from "lucide-react";
-import Loader from "../../components/Loader";
+} from 'lucide-react';
+import Loader from '../../components/Loader';
 
 function AdminPage() {
   // Check admin authentication
@@ -45,40 +45,37 @@ function AdminPage() {
   // Get dashboard statistics
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch("http://localhost:3000/dashboard/stats", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/dashboard/stats', {
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch dashboard statistics");
+        throw new Error('Failed to fetch dashboard statistics');
       }
 
       const data = await response.json();
       setStats(data);
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
-      setDashboardError("Failed to load dashboard statistics");
+      console.error('Error fetching dashboard stats:', error);
+      setDashboardError('Failed to load dashboard statistics');
     }
   };
 
   // Get top selling games
   const fetchTopGames = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:3000/dashboard/top-games",
-        {
-          credentials: "include",
-        },
-      );
+      const response = await fetch('http://localhost:3000/dashboard/top-games', {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch top games");
+        throw new Error('Failed to fetch top games');
       }
 
       const data = await response.json();
       setTopGames(data);
     } catch (error) {
-      console.error("Error fetching top games:", error);
+      console.error('Error fetching top games:', error);
     }
   };
 
@@ -87,18 +84,18 @@ function AdminPage() {
    ********************************************************/
   // Format currency for display
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount || 0);
   };
 
   // Format date for display
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
@@ -107,7 +104,7 @@ function AdminPage() {
     return (
       <div
         className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
-        style={{ backgroundImage: `url(${overlay})`, backgroundSize: "cover" }}
+        style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}
       >
         <Loader text="Loading dashboard..." />
       </div>
@@ -119,8 +116,8 @@ function AdminPage() {
       className="min-h-screen bg-[#0A0A0B] text-white"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       {/* Mobile Redirect */}
@@ -172,9 +169,7 @@ function AdminPage() {
               </div>
               <div>
                 <p className="text-gray-400 text-sm">Total Orders</p>
-                <h3 className="text-3xl font-bold">
-                  {stats?.totalOrders || 0}
-                </h3>
+                <h3 className="text-3xl font-bold">{stats?.totalOrders || 0}</h3>
               </div>
             </div>
 
@@ -184,9 +179,7 @@ function AdminPage() {
               </div>
               <div>
                 <p className="text-gray-400 text-sm">Total Sales</p>
-                <h3 className="text-3xl font-bold">
-                  {formatCurrency(stats?.totalSales)}
-                </h3>
+                <h3 className="text-3xl font-bold">{formatCurrency(stats?.totalSales)}</h3>
               </div>
             </div>
           </div>
@@ -216,28 +209,18 @@ function AdminPage() {
                       className="flex justify-between border-b border-white/10 pb-3 last:border-0"
                     >
                       <div>
-                        <div className="font-medium">
-                          Order #{order.order_id}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {order.username}
-                        </div>
+                        <div className="font-medium">Order #{order.order_id}</div>
+                        <div className="text-sm text-gray-400">{order.username}</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-medium">
-                          {formatCurrency(order.total_amount)}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {formatDate(order.order_date)}
-                        </div>
+                        <div className="font-medium">{formatCurrency(order.total_amount)}</div>
+                        <div className="text-sm text-gray-400">{formatDate(order.order_date)}</div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-6 text-gray-400">
-                  No recent orders found.
-                </div>
+                <div className="text-center py-6 text-gray-400">No recent orders found.</div>
               )}
             </div>
 
@@ -257,24 +240,16 @@ function AdminPage() {
                       key={index}
                       className="flex justify-between border-b border-white/10 pb-3 last:border-0"
                     >
-                      <div className="font-medium">
-                        {payment.payment_method}
-                      </div>
+                      <div className="font-medium">{payment.payment_method}</div>
                       <div className="text-right">
-                        <div className="font-medium">
-                          {formatCurrency(payment.total)}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {payment.count} orders
-                        </div>
+                        <div className="font-medium">{formatCurrency(payment.total)}</div>
+                        <div className="text-sm text-gray-400">{payment.count} orders</div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-6 text-gray-400">
-                  No payment data available.
-                </div>
+                <div className="text-center py-6 text-gray-400">No payment data available.</div>
               )}
             </div>
           </div>
@@ -312,16 +287,9 @@ function AdminPage() {
                   </thead>
                   <tbody className="divide-y divide-white/10">
                     {topGames.map((game) => (
-                      <tr
-                        key={game.game_id}
-                        className="hover:bg-white/5 transition-colors"
-                      >
-                        <td className="px-4 py-3 whitespace-nowrap font-medium">
-                          {game.title}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          {game.units_sold}
-                        </td>
+                      <tr key={game.game_id} className="hover:bg-white/5 transition-colors">
+                        <td className="px-4 py-3 whitespace-nowrap font-medium">{game.title}</td>
+                        <td className="px-4 py-3 whitespace-nowrap">{game.units_sold}</td>
                         <td className="px-4 py-3 whitespace-nowrap">
                           {formatCurrency(game.revenue)}
                         </td>

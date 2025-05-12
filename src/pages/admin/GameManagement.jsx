@@ -2,7 +2,7 @@
  * GameManagement Component
  * Admin interface for adding, editing and removing games
  ********************************************************/
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from 'react';
 import {
   Search,
   Plus,
@@ -14,14 +14,14 @@ import {
   Check,
   X,
   Save,
-} from "lucide-react";
-import overlay from "../../assets/overlay.png";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import AdminSidebar from "../../components/AdminSidebar";
-import MobileAdminRedirect from "../../components/MobileAdminRedirect";
-import Loader from "../../components/Loader";
-import { Loader as LoaderIcon } from "lucide-react";
-import Toast from "../../components/Toast";
+} from 'lucide-react';
+import overlay from '../../assets/overlay.png';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import AdminSidebar from '../../components/AdminSidebar';
+import MobileAdminRedirect from '../../components/MobileAdminRedirect';
+import Loader from '../../components/Loader';
+import { Loader as LoaderIcon } from 'lucide-react';
+import Toast from '../../components/Toast';
 
 function GameManagement() {
   // Check admin authentication
@@ -31,16 +31,16 @@ function GameManagement() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filteredGames, setFilteredGames] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState("All");
+  const [selectedGenre, setSelectedGenre] = useState('All');
   const [genres, setGenres] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState(null);
   const [toast, setToast] = useState({
     visible: false,
-    message: "",
-    type: "success",
+    message: '',
+    type: 'success',
   });
   const [isSearching, setIsSearching] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
@@ -49,12 +49,12 @@ function GameManagement() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [gameToEdit, setGameToEdit] = useState(null);
   const [editForm, setEditForm] = useState({
-    title: "",
-    description: "",
-    price: "",
-    platform: "",
-    genre: "",
-    gameicon: "",
+    title: '',
+    description: '',
+    price: '',
+    platform: '',
+    genre: '',
+    gameicon: '',
   });
   const [editFormErrors, setEditFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -62,12 +62,12 @@ function GameManagement() {
   // Add game modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [addForm, setAddForm] = useState({
-    title: "",
-    description: "",
-    price: "",
-    genre: "",
-    platform: "",
-    gameicon: "",
+    title: '',
+    description: '',
+    price: '',
+    genre: '',
+    platform: '',
+    gameicon: '',
   });
   const [addFormErrors, setAddFormErrors] = useState({});
   const [addingGame, setAddingGame] = useState(false);
@@ -91,7 +91,7 @@ function GameManagement() {
 
       // If search term is empty, just return to regular filtering
       if (!query.trim()) {
-        if (selectedGenre !== "All") {
+        if (selectedGenre !== 'All') {
           fetchGamesByGenre(selectedGenre);
         } else {
           fetchGames();
@@ -106,14 +106,14 @@ function GameManagement() {
 
       setSearchTimeout(timeout);
     },
-    [selectedGenre],
+    [selectedGenre]
   );
 
   // Handle search and filtering
   useEffect(() => {
     if (searchTerm) {
       performSearch(searchTerm);
-    } else if (selectedGenre !== "All") {
+    } else if (selectedGenre !== 'All') {
       fetchGamesByGenre(selectedGenre);
     } else {
       fetchGames();
@@ -126,20 +126,20 @@ function GameManagement() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3000/games", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/games', {
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch games");
+        throw new Error('Failed to fetch games');
       }
 
       const data = await response.json();
       setGames(data);
       setFilteredGames(data);
     } catch (error) {
-      console.error("Error fetching games:", error);
-      setError("Failed to load games. Please try again.");
+      console.error('Error fetching games:', error);
+      setError('Failed to load games. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -154,20 +154,20 @@ function GameManagement() {
       const response = await fetch(
         `http://localhost:3000/games/filter?genre=${encodeURIComponent(genre)}`,
         {
-          credentials: "include",
-        },
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch games by genre");
+        throw new Error('Failed to fetch games by genre');
       }
 
       const data = await response.json();
       setGames(data);
       setFilteredGames(data);
     } catch (error) {
-      console.error("Error fetching games by genre:", error);
-      setError("Failed to filter games. Please try again.");
+      console.error('Error fetching games by genre:', error);
+      setError('Failed to filter games. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -184,20 +184,20 @@ function GameManagement() {
       const response = await fetch(
         `http://localhost:3000/games/search?title=${encodeURIComponent(title)}`,
         {
-          credentials: "include",
-        },
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to search games");
+        throw new Error('Failed to search games');
       }
 
       const data = await response.json();
       setGames(data);
       setFilteredGames(data);
     } catch (error) {
-      console.error("Error searching games:", error);
-      setError("Failed to search games. Please try again.");
+      console.error('Error searching games:', error);
+      setError('Failed to search games. Please try again.');
     } finally {
       setIsSearching(false);
     }
@@ -206,18 +206,18 @@ function GameManagement() {
   // Get available genres
   const fetchGenres = async () => {
     try {
-      const response = await fetch("http://localhost:3000/games/genres", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/games/genres', {
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch genres");
+        throw new Error('Failed to fetch genres');
       }
 
       const data = await response.json();
       setGenres(data);
     } catch (error) {
-      console.error("Error fetching genres:", error);
+      console.error('Error fetching genres:', error);
     }
   };
 
@@ -232,23 +232,23 @@ function GameManagement() {
       const response = await fetch(
         `http://localhost:3000/admin/games/delete?gameId=${gameToDelete.game_id}`,
         {
-          method: "DELETE",
-          credentials: "include",
-        },
+          method: 'DELETE',
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete game");
+        throw new Error('Failed to delete game');
       }
 
       // Remove the deleted game from state
       setGames(games.filter((game) => game.game_id !== gameToDelete.game_id));
 
       // Show success toast
-      showToast(`"${gameToDelete.title}" was successfully deleted`, "success");
+      showToast(`"${gameToDelete.title}" was successfully deleted`, 'success');
     } catch (error) {
-      console.error("Error deleting game:", error);
-      showToast(`Failed to delete game: ${error.message}`, "error");
+      console.error('Error deleting game:', error);
+      showToast(`Failed to delete game: ${error.message}`, 'error');
     } finally {
       setShowDeleteModal(false);
       setGameToDelete(null);
@@ -262,10 +262,10 @@ function GameManagement() {
   };
 
   // Show notification
-  const showToast = (message, type = "success") => {
+  const showToast = (message, type = 'success') => {
     setToast({ visible: true, message, type });
     setTimeout(() => {
-      setToast({ visible: false, message: "", type: "success" });
+      setToast({ visible: false, message: '', type: 'success' });
     }, 3000);
   };
 
@@ -276,7 +276,7 @@ function GameManagement() {
 
   // Format price for display
   const formatPrice = (price) => {
-    return price === "0.00" ? "Free" : `$${parseFloat(price).toFixed(2)}`;
+    return price === '0.00' ? 'Free' : `$${parseFloat(price).toFixed(2)}`;
   };
 
   // Format date for display
@@ -291,12 +291,12 @@ function GameManagement() {
   const openEditModal = (game) => {
     setGameToEdit(game);
     setEditForm({
-      title: game.title || "",
-      description: game.description || "",
-      price: game.price || "",
-      genre: game.genre || "",
-      platform: game.platform || "",
-      gameicon: game.gameicon || "",
+      title: game.title || '',
+      description: game.description || '',
+      price: game.price || '',
+      genre: game.genre || '',
+      platform: game.platform || '',
+      gameicon: game.gameicon || '',
     });
     setEditFormErrors({});
     setShowEditModal(true);
@@ -307,12 +307,12 @@ function GameManagement() {
     setShowEditModal(false);
     setGameToEdit(null);
     setEditForm({
-      title: "",
-      description: "",
-      price: "",
-      genre: "",
-      platform: "",
-      gameicon: "",
+      title: '',
+      description: '',
+      price: '',
+      genre: '',
+      platform: '',
+      gameicon: '',
     });
     setEditFormErrors({});
   };
@@ -339,21 +339,21 @@ function GameManagement() {
     const errors = {};
 
     if (!editForm.title.trim()) {
-      errors.title = "Title is required";
+      errors.title = 'Title is required';
     }
 
     if (!editForm.genre.trim()) {
-      errors.genre = "Genre is required";
+      errors.genre = 'Genre is required';
     }
 
     if (!editForm.platform.trim()) {
-      errors.platform = "Platform is required";
+      errors.platform = 'Platform is required';
     }
 
     if (!editForm.price.trim()) {
-      errors.price = "Price is required";
+      errors.price = 'Price is required';
     } else if (isNaN(parseFloat(editForm.price))) {
-      errors.price = "Price must be a valid number";
+      errors.price = 'Price must be a valid number';
     }
 
     setEditFormErrors(errors);
@@ -374,10 +374,10 @@ function GameManagement() {
       const response = await fetch(
         `http://localhost:3000/admin/games/update?gameId=${gameToEdit.game_id}`,
         {
-          method: "PUT",
-          credentials: "include",
+          method: 'PUT',
+          credentials: 'include',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             title: editForm.title,
@@ -387,11 +387,11 @@ function GameManagement() {
             platform: editForm.platform,
             gameicon: editForm.gameicon,
           }),
-        },
+        }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update game");
+        throw new Error('Failed to update game');
       }
 
       // Update game in the list
@@ -407,15 +407,15 @@ function GameManagement() {
                 platform: editForm.platform,
                 gameicon: editForm.gameicon,
               }
-            : game,
-        ),
+            : game
+        )
       );
 
-      showToast(`"${editForm.title}" updated successfully`, "success");
+      showToast(`"${editForm.title}" updated successfully`, 'success');
       closeEditModal();
     } catch (error) {
-      console.error("Error updating game:", error);
-      showToast(`Failed to update game: ${error.message}`, "error");
+      console.error('Error updating game:', error);
+      showToast(`Failed to update game: ${error.message}`, 'error');
     } finally {
       setSubmitting(false);
     }
@@ -427,12 +427,12 @@ function GameManagement() {
   // Open add game modal
   const openAddModal = () => {
     setAddForm({
-      title: "",
-      description: "",
-      price: "",
-      genre: "",
-      platform: "",
-      gameicon: "",
+      title: '',
+      description: '',
+      price: '',
+      genre: '',
+      platform: '',
+      gameicon: '',
     });
     setAddFormErrors({});
     setShowAddModal(true);
@@ -442,12 +442,12 @@ function GameManagement() {
   const closeAddModal = () => {
     setShowAddModal(false);
     setAddForm({
-      title: "",
-      description: "",
-      price: "",
-      genre: "",
-      platform: "",
-      gameicon: "",
+      title: '',
+      description: '',
+      price: '',
+      genre: '',
+      platform: '',
+      gameicon: '',
     });
     setAddFormErrors({});
   };
@@ -474,21 +474,21 @@ function GameManagement() {
     const errors = {};
 
     if (!addForm.title.trim()) {
-      errors.title = "Title is required";
+      errors.title = 'Title is required';
     }
 
     if (!addForm.genre.trim()) {
-      errors.genre = "Genre is required";
+      errors.genre = 'Genre is required';
     }
 
     if (!addForm.platform.trim()) {
-      errors.platform = "Platform is required";
+      errors.platform = 'Platform is required';
     }
 
     if (!addForm.price.trim()) {
-      errors.price = "Price is required";
+      errors.price = 'Price is required';
     } else if (isNaN(parseFloat(addForm.price))) {
-      errors.price = "Price must be a valid number";
+      errors.price = 'Price must be a valid number';
     }
 
     setAddFormErrors(errors);
@@ -507,10 +507,10 @@ function GameManagement() {
 
     try {
       const response = await fetch(`http://localhost:3000/admin/games/insert`, {
-        method: "POST",
-        credentials: "include",
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title: addForm.title,
@@ -523,7 +523,7 @@ function GameManagement() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add game");
+        throw new Error('Failed to add game');
       }
 
       const newGame = await response.json();
@@ -531,14 +531,14 @@ function GameManagement() {
       // Add the new game to the list
       setGames((prevGames) => [newGame, ...prevGames]);
 
-      showToast(`"${addForm.title}" added successfully`, "success");
+      showToast(`"${addForm.title}" added successfully`, 'success');
       closeAddModal();
 
       // Refresh games list to ensure we have the latest data
       fetchGames();
     } catch (error) {
-      console.error("Error adding game:", error);
-      showToast(`Failed to add game: ${error.message}`, "error");
+      console.error('Error adding game:', error);
+      showToast(`Failed to add game: ${error.message}`, 'error');
     } finally {
       setAddingGame(false);
     }
@@ -549,8 +549,8 @@ function GameManagement() {
       className="min-h-screen bg-[#0A0A0B] text-white"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       {/* Mobile Redirect */}
@@ -576,8 +576,8 @@ function GameManagement() {
               <div className="bg-[#1A1A1C] rounded-3xl p-5 max-w-sm w-full shadow-3xl border border-white/10">
                 <h3 className="text-lg font-bold mb-2">Delete Game</h3>
                 <p className="text-gray-400 mb-4 text-sm">
-                  Are you sure you want to delete "{gameToDelete?.title}"? This
-                  action cannot be undone.
+                  Are you sure you want to delete "{gameToDelete?.title}"? This action cannot be
+                  undone.
                 </p>
                 <div className="flex gap-3 justify-end">
                   <button
@@ -625,14 +625,12 @@ function GameManagement() {
                         onChange={handleEditChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           editFormErrors.title
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       />
                       {editFormErrors.title && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {editFormErrors.title}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{editFormErrors.title}</p>
                       )}
                     </div>
 
@@ -646,8 +644,8 @@ function GameManagement() {
                         onChange={handleEditChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           editFormErrors.genre
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       >
                         <option value="">Select Genre</option>
@@ -658,9 +656,7 @@ function GameManagement() {
                         ))}
                       </select>
                       {editFormErrors.genre && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {editFormErrors.genre}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{editFormErrors.genre}</p>
                       )}
                     </div>
 
@@ -675,14 +671,12 @@ function GameManagement() {
                         onChange={handleEditChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           editFormErrors.platform
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       />
                       {editFormErrors.platform && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {editFormErrors.platform}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{editFormErrors.platform}</p>
                       )}
                     </div>
 
@@ -697,14 +691,12 @@ function GameManagement() {
                         onChange={handleEditChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           editFormErrors.price
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       />
                       {editFormErrors.price && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {editFormErrors.price}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{editFormErrors.price}</p>
                       )}
                     </div>
 
@@ -793,14 +785,12 @@ function GameManagement() {
                         onChange={handleAddChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           addFormErrors.title
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       />
                       {addFormErrors.title && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {addFormErrors.title}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{addFormErrors.title}</p>
                       )}
                     </div>
 
@@ -814,8 +804,8 @@ function GameManagement() {
                         onChange={handleAddChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           addFormErrors.genre
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       >
                         <option value="">Select Genre</option>
@@ -826,9 +816,7 @@ function GameManagement() {
                         ))}
                       </select>
                       {addFormErrors.genre && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {addFormErrors.genre}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{addFormErrors.genre}</p>
                       )}
                     </div>
 
@@ -843,14 +831,12 @@ function GameManagement() {
                         onChange={handleAddChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           addFormErrors.platform
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       />
                       {addFormErrors.platform && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {addFormErrors.platform}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{addFormErrors.platform}</p>
                       )}
                     </div>
 
@@ -865,14 +851,12 @@ function GameManagement() {
                         onChange={handleAddChange}
                         className={`w-full px-4 py-2 bg-black/30 border rounded-lg focus:outline-none focus:ring-2 ${
                           addFormErrors.price
-                            ? "border-red-500/50 focus:ring-red-500/30"
-                            : "border-white/10 focus:ring-[#7C5DF9]/50"
+                            ? 'border-red-500/50 focus:ring-red-500/30'
+                            : 'border-white/10 focus:ring-[#7C5DF9]/50'
                         } cursor-pointer`}
                       />
                       {addFormErrors.price && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {addFormErrors.price}
-                        </p>
+                        <p className="mt-1 text-sm text-red-400">{addFormErrors.price}</p>
                       )}
                     </div>
 
@@ -956,10 +940,7 @@ function GameManagement() {
               <div className="relative flex-grow">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   {isSearching ? (
-                    <LoaderIcon
-                      size={16}
-                      className="text-gray-400 animate-spin"
-                    />
+                    <LoaderIcon size={16} className="text-gray-400 animate-spin" />
                   ) : (
                     <Search size={16} className="text-gray-400" />
                   )}
@@ -973,7 +954,7 @@ function GameManagement() {
                 />
                 {searchTerm && (
                   <button
-                    onClick={() => setSearchTerm("")}
+                    onClick={() => setSearchTerm('')}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
                   >
                     <X size={16} />
@@ -989,9 +970,9 @@ function GameManagement() {
                   className="w-full px-3 py-2 bg-[#1A1A1C] border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50 appearance-none cursor-pointer"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "right 10px center",
-                    backgroundSize: "16px",
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 10px center',
+                    backgroundSize: '16px',
                   }}
                 >
                   <option value="All">All Genres</option>
@@ -1036,9 +1017,7 @@ function GameManagement() {
               </p>
               <button
                 className="mt-2 text-sm text-white/80 hover:text-white underline cursor-pointer"
-                onClick={
-                  searchTerm ? () => performSearch(searchTerm) : fetchGames
-                }
+                onClick={searchTerm ? () => performSearch(searchTerm) : fetchGames}
               >
                 Try Again
               </button>
@@ -1064,14 +1043,14 @@ function GameManagement() {
                   <p className="text-gray-400 mb-4">
                     {searchTerm
                       ? `No games match your search for "${searchTerm}"`
-                      : selectedGenre !== "All"
+                      : selectedGenre !== 'All'
                         ? `No games found in the "${selectedGenre}" genre`
-                        : "There are no games in the database"}
+                        : 'There are no games in the database'}
                   </p>
                   <button
                     onClick={() => {
-                      setSearchTerm("");
-                      setSelectedGenre("All");
+                      setSearchTerm('');
+                      setSelectedGenre('All');
                     }}
                     className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-lg transition-colors cursor-pointer"
                   >
@@ -1119,17 +1098,13 @@ function GameManagement() {
                                 />
                               ) : (
                                 <div className="h-10 w-10 rounded-lg mr-3 bg-[#7C5DF9]/20 flex items-center justify-center">
-                                  <span className="text-[#7C5DF9]">
-                                    {game.title.charAt(0)}
-                                  </span>
+                                  <span className="text-[#7C5DF9]">{game.title.charAt(0)}</span>
                                 </div>
                               )}
                               <div className="font-medium">{game.title}</div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {game.genre}
-                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">{game.genre}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             {formatPrice(game.price)}
                           </td>

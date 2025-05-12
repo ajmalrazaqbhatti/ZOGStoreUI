@@ -2,10 +2,10 @@
  * Toast Component
  * Displays notification messages to users
  ********************************************************/
-import React from "react";
-import { AlertCircle, Check, X } from "lucide-react";
+import React from 'react';
+import { AlertCircle, Check, X } from 'lucide-react';
 
-const Toast = ({ visible, message, type = "success", onClose }) => {
+const Toast = ({ visible, message, type = 'success', onClose }) => {
   // Don't render anything if toast is not visible
   if (!visible) return null;
 
@@ -15,9 +15,9 @@ const Toast = ({ visible, message, type = "success", onClose }) => {
       bg-black/80 backdrop-blur-md border border-white/10 max-w-md"
     >
       {/* Icon based on toast type */}
-      {type === "success" ? (
+      {type === 'success' ? (
         <Check className="h-5 w-5 text-[#7C5DF9]" />
-      ) : type === "updating" ? (
+      ) : type === 'updating' ? (
         <div className="h-5 w-5 border-2 border-[#7C5DF9] border-t-transparent rounded-full animate-spin"></div>
       ) : (
         <AlertCircle className="h-5 w-5 text-red-400" />

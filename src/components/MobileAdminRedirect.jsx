@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Monitor, LogOut, ExternalLink } from "lucide-react";
-import logo from "../assets/logo.svg";
-import overlay from "../assets/overlay.png";
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Monitor, LogOut, ExternalLink } from 'lucide-react';
+import logo from '../assets/logo.svg';
+import overlay from '../assets/overlay.png';
 
 function MobileAdminRedirect() {
   const [isMobile, setIsMobile] = useState(false);
@@ -17,22 +17,22 @@ function MobileAdminRedirect() {
     checkScreenSize();
 
     // Check on resize
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:3000/auth/logout", {
-        method: "GET",
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/auth/logout', {
+        method: 'GET',
+        credentials: 'include',
       });
 
       if (response.ok) {
-        navigate("/");
+        navigate('/');
       }
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error('Logout failed:', error);
     }
   };
 
@@ -43,8 +43,8 @@ function MobileAdminRedirect() {
       className="fixed inset-0 z-50 bg-[#0A0A0B] flex flex-col items-center justify-center p-6 text-white"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 max-w-md text-center">
@@ -57,9 +57,8 @@ function MobileAdminRedirect() {
         </div>
         <h1 className="text-2xl font-bold mb-3">Desktop View Required</h1>
         <p className="text-gray-400 mb-6">
-          The admin interface is optimized for desktop screens. Please switch to
-          a desktop device or increase your window size to access these
-          features.
+          The admin interface is optimized for desktop screens. Please switch to a desktop device or
+          increase your window size to access these features.
         </p>
         <div className="flex flex-col space-y-2">
           <button

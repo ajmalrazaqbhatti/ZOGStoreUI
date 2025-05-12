@@ -2,29 +2,29 @@
  * LoginPage Component
  * User authentication form with client-side validation
  ********************************************************/
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.svg";
-import overlay from "../assets/overlay.png";
-import { Loader } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.svg';
+import overlay from '../assets/overlay.png';
+import { Loader } from 'lucide-react';
 
 function LoginPage() {
   // Navigation and state
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if user is already authenticated
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("http://localhost:3000/auth/status", {
-          method: "GET",
-          credentials: "include",
+        const response = await fetch('http://localhost:3000/auth/status', {
+          method: 'GET',
+          credentials: 'include',
         });
 
         if (response.ok) {
@@ -32,15 +32,15 @@ function LoginPage() {
 
           // If already authenticated, redirect to appropriate page
           if (data.isAuthenticated) {
-            if (data.user.role === "admin") {
-              navigate("/admin");
+            if (data.user.role === 'admin') {
+              navigate('/admin');
             } else {
-              navigate("/home");
+              navigate('/home');
             }
           }
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        console.error('Auth check error:', error);
         // If error, we stay on login page
       }
     };
@@ -59,15 +59,15 @@ function LoginPage() {
   // Process login form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
@@ -75,21 +75,21 @@ function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || 'Login failed');
       }
 
       // Store user data in localStorage or context if needed
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem('user', JSON.stringify(data.user));
 
       // Check user role and redirect accordingly
-      if (data.user.role === "admin") {
-        navigate("/admin");
+      if (data.user.role === 'admin') {
+        navigate('/admin');
       } else {
-        navigate("/home");
+        navigate('/home');
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setError(error.message || "Failed to login. Please try again.");
+      console.error('Login error:', error);
+      setError(error.message || 'Failed to login. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -100,8 +100,8 @@ function LoginPage() {
       className="bg-black  min-h-screen flex items-center justify-center p-4 font-['Product_Sans']"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       <div className="w-96 bg-white/5  rounded-[40px] overflow-hidden flex flex-col justify-center items-center h-fit p-5  border border-white/10">
@@ -115,16 +115,11 @@ function LoginPage() {
 
         <div className="flex flex-col justify-center items-center w-full">
           <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-gray-400 mb-8 text-base">
-            Sign in to continue to ZOG Store
-          </p>
+          <p className="text-gray-400 mb-8 text-base">Sign in to continue to ZOG Store</p>
 
           <form onSubmit={handleSubmit} className="space-y-6 w-full">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-300 mb-2"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -159,10 +154,7 @@ function LoginPage() {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-300 mb-2"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -196,9 +188,7 @@ function LoginPage() {
               </div>
             </div>
 
-            {error && (
-              <div className="text-red-500 text-sm text-center">{error}</div>
-            )}
+            {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
             <div>
               <button
@@ -215,7 +205,7 @@ function LoginPage() {
                     <span>Signing in...</span>
                   </div>
                 ) : (
-                  "Sign in"
+                  'Sign in'
                 )}
               </button>
             </div>

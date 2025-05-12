@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import overlay from "../../assets/overlay.png";
-import { Eye, ChevronRight, Gamepad2, X } from "lucide-react";
-import Navbar from "../../components/Navbar";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import Loader from "../../components/Loader";
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import overlay from '../../assets/overlay.png';
+import { Eye, ChevronRight, Gamepad2, X } from 'lucide-react';
+import Navbar from '../../components/Navbar';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import Loader from '../../components/Loader';
 
 /********************************************************
  * HomePage Component
@@ -18,8 +18,8 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [genres, setGenres] = useState([]);
-  const [activeGenre, setActiveGenre] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [activeGenre, setActiveGenre] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [cartCount, setCartCount] = useState(0);
@@ -32,8 +32,8 @@ function HomePage() {
   // Get current cart item count
   const fetchCartCount = async () => {
     try {
-      const response = await fetch("http://localhost:3000/cart/count", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/cart/count', {
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -41,7 +41,7 @@ function HomePage() {
         setCartCount(data.itemCount); // Changed from data.count to data.itemCount
       }
     } catch (error) {
-      console.error("Error fetching cart count:", error);
+      console.error('Error fetching cart count:', error);
     }
   };
 
@@ -58,8 +58,8 @@ function HomePage() {
   // Process URL search parameters
   useEffect(() => {
     const query = new URLSearchParams(location.search);
-    const search = query.get("search");
-    const reset = query.get("reset");
+    const search = query.get('search');
+    const reset = query.get('reset');
 
     // Check if search results were passed in the location state
     if (location.state?.searchResults && location.state?.searchTerm) {
@@ -67,7 +67,7 @@ function HomePage() {
       setSearchTerm(location.state.searchTerm);
       setSearchResults(location.state.searchResults);
       setAllGames(location.state.searchResults);
-      setActiveGenre("Search Results");
+      setActiveGenre('Search Results');
       setIsSearching(false);
       setLoading(false);
 
@@ -77,20 +77,20 @@ function HomePage() {
       setSearchTerm(search);
       setIsSearching(true);
       handleSearchWithTerm(search);
-    } else if (reset === "true") {
+    } else if (reset === 'true') {
       // Reset the game state to show all games
-      setSearchTerm("");
+      setSearchTerm('');
       setIsSearching(false);
-      setActiveGenre("All");
+      setActiveGenre('All');
 
       // Fetch all games
       setLoading(true);
-      fetch("http://localhost:3000/games", {
-        credentials: "include",
+      fetch('http://localhost:3000/games', {
+        credentials: 'include',
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error('Network response was not ok');
           }
           return response.json();
         })
@@ -99,8 +99,8 @@ function HomePage() {
           setLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching games:", error);
-          setError("Failed to load games. Please try again later.");
+          console.error('Error fetching games:', error);
+          setError('Failed to load games. Please try again later.');
           setLoading(false);
         });
     }
@@ -110,16 +110,16 @@ function HomePage() {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await fetch("http://localhost:3000/games/genres", {
-          credentials: "include",
+        const response = await fetch('http://localhost:3000/games/genres', {
+          credentials: 'include',
         });
         if (!response.ok) {
-          throw new Error("Failed to fetch genres");
+          throw new Error('Failed to fetch genres');
         }
         const data = await response.json();
         setGenres(data);
       } catch (error) {
-        console.error("Error fetching genres:", error);
+        console.error('Error fetching genres:', error);
       }
     };
 
@@ -133,29 +133,26 @@ function HomePage() {
 
     try {
       let response;
-      if (genre === "All") {
-        response = await fetch("http://localhost:3000/games", {
-          credentials: "include",
+      if (genre === 'All') {
+        response = await fetch('http://localhost:3000/games', {
+          credentials: 'include',
         });
       } else {
-        response = await fetch(
-          `http://localhost:3000/games/filter?genre=${genre}`,
-          {
-            credentials: "include",
-          }
-        );
+        response = await fetch(`http://localhost:3000/games/filter?genre=${genre}`, {
+          credentials: 'include',
+        });
       }
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
       setAllGames(data);
       setLoading(false);
     } catch (error) {
-      console.error("Error filtering games:", error);
-      setError("Failed to load filtered games. Please try again later.");
+      console.error('Error filtering games:', error);
+      setError('Failed to load filtered games. Please try again later.');
       setLoading(false);
     }
   };
@@ -164,19 +161,19 @@ function HomePage() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch("http://localhost:3000/games", {
-          credentials: "include",
+        const response = await fetch('http://localhost:3000/games', {
+          credentials: 'include',
         });
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error('Network response was not ok');
         }
         const data = await response.json();
         setRecentGames(data.slice(0, 2));
         setAllGames(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching games:", error);
-        setError("Failed to load games. Please try again later.");
+        console.error('Error fetching games:', error);
+        setError('Failed to load games. Please try again later.');
         setLoading(false);
       }
     };
@@ -195,22 +192,22 @@ function HomePage() {
       const response = await fetch(
         `http://localhost:3000/games/search?title=${encodeURIComponent(term)}`,
         {
-          credentials: "include",
+          credentials: 'include',
         }
       );
 
       if (!response.ok) {
-        throw new Error("Search request failed");
+        throw new Error('Search request failed');
       }
 
       const data = await response.json();
       setSearchResults(data);
       setAllGames(data);
-      setActiveGenre("Search Results");
+      setActiveGenre('Search Results');
       setLoading(false);
     } catch (error) {
-      console.error("Error searching games:", error);
-      setError("Failed to search games. Please try again.");
+      console.error('Error searching games:', error);
+      setError('Failed to search games. Please try again.');
       setLoading(false);
     } finally {
       setIsSearching(false);
@@ -219,29 +216,29 @@ function HomePage() {
 
   // Reset search to show all games
   const clearSearch = async () => {
-    setSearchTerm("");
+    setSearchTerm('');
     setIsSearching(false);
-    setActiveGenre("All");
+    setActiveGenre('All');
     setLoading(true);
 
     // Clear search parameter from URL
-    navigate("/", { replace: true });
+    navigate('/', { replace: true });
 
     try {
-      const response = await fetch("http://localhost:3000/games", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/games', {
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
       setAllGames(data);
       setLoading(false);
     } catch (error) {
-      console.error("Error restoring games:", error);
-      setError("Failed to restore games. Please try again.");
+      console.error('Error restoring games:', error);
+      setError('Failed to restore games. Please try again.');
       setLoading(false);
     }
   };
@@ -251,7 +248,7 @@ function HomePage() {
     return (
       <div
         className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
-        style={{ backgroundImage: `url(${overlay})`, backgroundSize: "cover" }}
+        style={{ backgroundImage: `url(${overlay})`, backgroundSize: 'cover' }}
       >
         <Loader />
       </div>
@@ -263,8 +260,8 @@ function HomePage() {
       className="bg-[#0A0A0B] min-h-screen text-white font-['Product_Sans',sans-serif] overflow-hidden pt-20"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       {/* Navbar with Cart Count - removed genre filter */}
@@ -278,14 +275,11 @@ function HomePage() {
 
         <div className="mb-6 flex justify-between items-end relative">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-2">
-              Recent Uploads
-            </h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-2">Recent Uploads</h1>
           </div>
         </div>
         <p className="text-white/70 mb-10 text-lg max-w-2xl backdrop-blur-sm">
-          Check out the latest games added to our collection, fresh and ready
-          for your discovery.
+          Check out the latest games added to our collection, fresh and ready for your discovery.
         </p>
 
         {loading ? (
@@ -338,7 +332,7 @@ function HomePage() {
                           <span className="bg-gradient-to-r from-[#7C5DF9] to-[#8528ff] px-3 py-1 rounded-full text-xs font-medium">
                             New Release
                           </span>
-                          {game.price === "0.00" ? (
+                          {game.price === '0.00' ? (
                             <span className="bg-gradient-to-r from-green-500 to-emerald-400 px-3 py-1 rounded-full text-xs font-medium">
                               Free
                             </span>
@@ -393,11 +387,11 @@ function HomePage() {
       <section className="py-12 px-4 max-w-7xl mx-auto">
         <div className="mb-2 flex justify-between items-end">
           <h2 className="text-3xl font-bold">
-            {activeGenre === "All"
-              ? "All Games"
-              : activeGenre === "Search Results"
-              ? `Search Results for "${searchTerm}"`
-              : `${activeGenre} Games`}
+            {activeGenre === 'All'
+              ? 'All Games'
+              : activeGenre === 'Search Results'
+                ? `Search Results for "${searchTerm}"`
+                : `${activeGenre} Games`}
           </h2>
           {isSearching && searchResults.length > 0 && (
             <button
@@ -409,22 +403,22 @@ function HomePage() {
           )}
         </div>
         <p className="text-white/60 mb-8 text-lg">
-          {activeGenre === "All"
-            ? "Browse our complete collection of games across all genres."
-            : activeGenre === "Search Results"
-            ? "Games matching your search criteria."
-            : `Explore our selection of ${activeGenre.toLowerCase()} titles curated just for you.`}
+          {activeGenre === 'All'
+            ? 'Browse our complete collection of games across all genres.'
+            : activeGenre === 'Search Results'
+              ? 'Games matching your search criteria.'
+              : `Explore our selection of ${activeGenre.toLowerCase()} titles curated just for you.`}
         </p>
 
         {/* Genre Tabs - New Addition */}
         <div className="mb-8 overflow-x-auto no-scrollbar">
           <div className="flex space-x-2 min-w-max pb-2">
             <button
-              onClick={() => filterGamesByGenre("All")}
+              onClick={() => filterGamesByGenre('All')}
               className={`px-4 py-2 rounded-xl transition-all duration-200 ${
-                activeGenre === "All"
-                  ? "bg-gradient-to-r cursor-pointer from-[#7C5DF9]/20 to-[#7C5DF9]/10 text-[#7C5DF9] font-medium border border-[#7C5DF9]/30"
-                  : "bg-white/5 hover:bg-white/10 text-white/80 border border-white/10"
+                activeGenre === 'All'
+                  ? 'bg-gradient-to-r cursor-pointer from-[#7C5DF9]/20 to-[#7C5DF9]/10 text-[#7C5DF9] font-medium border border-[#7C5DF9]/30'
+                  : 'bg-white/5 hover:bg-white/10 text-white/80 border border-white/10'
               }`}
             >
               All Genres
@@ -436,8 +430,8 @@ function HomePage() {
                 onClick={() => filterGamesByGenre(genreObj.genre)}
                 className={`px-4 py-2 rounded-xl cursor-pointer transition-all duration-200 ${
                   activeGenre === genreObj.genre
-                    ? "bg-gradient-to-r from-[#7C5DF9]/20 to-[#7C5DF9]/10 text-[#7C5DF9] font-medium border border-[#7C5DF9]/30"
-                    : "bg-white/5 hover:bg-white/10 text-white/80 border border-white/10"
+                    ? 'bg-gradient-to-r from-[#7C5DF9]/20 to-[#7C5DF9]/10 text-[#7C5DF9] font-medium border border-[#7C5DF9]/30'
+                    : 'bg-white/5 hover:bg-white/10 text-white/80 border border-white/10'
                 }`}
               >
                 {genreObj.genre}
@@ -457,9 +451,9 @@ function HomePage() {
         ) : allGames.length === 0 ? (
           <div className="bg-white/5 border border-white/10 rounded-lg p-8 text-center">
             <p className="text-lg text-white/70">
-              {activeGenre === "Search Results"
+              {activeGenre === 'Search Results'
                 ? `No games found matching "${searchTerm}". Try a different search term.`
-                : "No games found in this category."}
+                : 'No games found in this category.'}
             </p>
           </div>
         ) : (
@@ -469,8 +463,8 @@ function HomePage() {
                 key={game.game_id}
                 className={`group relative rounded-3xl overflow-hidden  ${
                   hoveredCard === `all-game-${game.game_id}`
-                    ? "ring-2 ring-[#7C5DF9] shadow shadow-[#7C5DF9]/20"
-                    : "ring-1 ring-white/10 hover:ring-[#7C5DF9]/30 hover:bg-[#1A1A1A]"
+                    ? 'ring-2 ring-[#7C5DF9] shadow shadow-[#7C5DF9]/20'
+                    : 'ring-1 ring-white/10 hover:ring-[#7C5DF9]/30 hover:bg-[#1A1A1A]'
                 } transition-all duration-300 h-full flex flex-col cursor-pointer`}
                 onMouseEnter={() => setHoveredCard(`all-game-${game.game_id}`)}
                 onMouseLeave={() => setHoveredCard(null)}
@@ -488,7 +482,7 @@ function HomePage() {
                       <Gamepad2 className="h-16 w-16 sm:h-20 sm:w-20 text-[#7C5DF9]" />
                     )}
                     <div className="bg-white/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium">
-                      {game.price === "0.00" ? "Free" : `$${game.price}`}
+                      {game.price === '0.00' ? 'Free' : `$${game.price}`}
                     </div>
                   </div>
 
@@ -501,7 +495,7 @@ function HomePage() {
                       {game.genre}
                     </span>
                     <span className="text-xs bg-white/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
-                      {game.platform.split(", ")[0]}
+                      {game.platform.split(', ')[0]}
                     </span>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingBag,
   Package,
@@ -19,12 +19,12 @@ import {
   Inbox,
   RefreshCw,
   CreditCard,
-} from "lucide-react";
-import Navbar from "../../components/Navbar";
-import overlay from "../../assets/overlay.png";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import Loader from "../../components/Loader";
-import Toast from "../../components/Toast";
+} from 'lucide-react';
+import Navbar from '../../components/Navbar';
+import overlay from '../../assets/overlay.png';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 /********************************************************
  * OrdersPage Component
@@ -44,14 +44,14 @@ function OrdersPage() {
   const [statusCounts, setStatusCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilter, setActiveFilter] = useState('All');
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [toast, setToast] = useState({
     visible: false,
-    message: "",
-    type: "success",
+    message: '',
+    type: 'success',
   });
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
@@ -60,7 +60,7 @@ function OrdersPage() {
   // Check for URL query parameters
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const orderId = params.get("orderId");
+    const orderId = params.get('orderId');
 
     if (orderId) {
       setSearchTerm(orderId);
@@ -70,20 +70,17 @@ function OrdersPage() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      let queryString = "";
-      if (activeFilter !== "All") {
+      let queryString = '';
+      if (activeFilter !== 'All') {
         queryString = `?status=${activeFilter}`;
       }
 
-      const response = await fetch(
-        `http://localhost:3000/orders${queryString}`,
-        {
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`http://localhost:3000/orders${queryString}`, {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch orders");
+        throw new Error('Failed to fetch orders');
       }
 
       const data = await response.json();
@@ -92,8 +89,8 @@ function OrdersPage() {
       setStatusCounts(data.statusCounts || {});
       setLoading(false);
     } catch (err) {
-      console.error("Error fetching orders:", err);
-      setError("Failed to load your orders. Please try again.");
+      console.error('Error fetching orders:', err);
+      setError('Failed to load your orders. Please try again.');
       setLoading(false);
     }
   };
@@ -107,19 +104,16 @@ function OrdersPage() {
   const searchOrderById = async (orderId) => {
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `http://localhost:3000/orders/search?orderId=${orderId}`,
-        {
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`http://localhost:3000/orders/search?orderId=${orderId}`, {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         if (response.status === 404) {
           setSearchResults([]);
           setFilteredOrders([]);
         } else {
-          throw new Error("Failed to search order");
+          throw new Error('Failed to search order');
         }
         return;
       }
@@ -135,11 +129,11 @@ function OrdersPage() {
         setFilteredOrders([]);
       }
     } catch (err) {
-      console.error("Error searching order:", err);
+      console.error('Error searching order:', err);
       setToast({
         visible: true,
-        message: "Failed to search for order. Please try again.",
-        type: "error",
+        message: 'Failed to search for order. Please try again.',
+        type: 'error',
       });
       setSearchResults([]);
       setFilteredOrders([]);
@@ -150,19 +144,18 @@ function OrdersPage() {
 
   // Clear search and reset state
   const clearSearch = () => {
-    setSearchTerm("");
+    setSearchTerm('');
     setIsSearching(false);
     setSearchResults(null);
 
     // Apply active filter to show relevant orders
     setFilteredOrders(
-      activeFilter === "All"
+      activeFilter === 'All'
         ? orders
         : orders.filter(
             (order) =>
-              order.order_status &&
-              order.order_status.toLowerCase() === activeFilter.toLowerCase(),
-          ),
+              order.order_status && order.order_status.toLowerCase() === activeFilter.toLowerCase()
+          )
     );
   };
 
@@ -176,13 +169,13 @@ function OrdersPage() {
     if (!searchTerm.trim()) {
       // Reset filtered orders to show all orders with active filter
       setFilteredOrders(
-        activeFilter === "All"
+        activeFilter === 'All'
           ? orders
           : orders.filter(
               (order) =>
                 order.order_status &&
-                order.order_status.toLowerCase() === activeFilter.toLowerCase(),
-            ),
+                order.order_status.toLowerCase() === activeFilter.toLowerCase()
+            )
       );
       setIsSearching(false);
       setSearchResults(null);
@@ -200,18 +193,17 @@ function OrdersPage() {
       } else {
         // For non-numeric searches, do client-side filtering
         const results = orders.filter((order) =>
-          order.order_id.toString().includes(searchTerm.trim()),
+          order.order_id.toString().includes(searchTerm.trim())
         );
 
         // Apply active filter to search results
         const filteredResults =
-          activeFilter === "All"
+          activeFilter === 'All'
             ? results
             : results.filter(
                 (order) =>
                   order.order_status &&
-                  order.order_status.toLowerCase() ===
-                    activeFilter.toLowerCase(),
+                  order.order_status.toLowerCase() === activeFilter.toLowerCase()
               );
 
         setFilteredOrders(filteredResults);
@@ -238,13 +230,13 @@ function OrdersPage() {
   useEffect(() => {
     if (!searchTerm && !searchResults) {
       setFilteredOrders(
-        activeFilter === "All"
+        activeFilter === 'All'
           ? orders
           : orders.filter(
               (order) =>
                 order.order_status &&
-                order.order_status.toLowerCase() === activeFilter.toLowerCase(),
-            ),
+                order.order_status.toLowerCase() === activeFilter.toLowerCase()
+            )
       );
     }
   }, [activeFilter, orders, searchTerm, searchResults]);
@@ -257,11 +249,11 @@ function OrdersPage() {
   // Helper function to format date strings
   const formatDate = (dateString) => {
     const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
@@ -272,15 +264,15 @@ function OrdersPage() {
     if (!status) return <Clock size={16} />;
 
     switch (status.toLowerCase()) {
-      case "delivered":
+      case 'delivered':
         return <CheckCircle size={16} />;
-      case "processing":
+      case 'processing':
         return <RefreshCw size={16} />;
-      case "pending":
+      case 'pending':
         return <Clock size={16} />;
-      case "shipped":
+      case 'shipped':
         return <Truck size={16} />;
-      case "canceled":
+      case 'canceled':
         return <Ban size={16} />;
       default:
         return <Clock size={16} />;
@@ -290,21 +282,21 @@ function OrdersPage() {
   // Get CSS classes for status badges
   const getStatusBadge = (status) => {
     // Handle undefined or null status
-    if (!status) return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+    if (!status) return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
 
     switch (status.toLowerCase()) {
-      case "delivered":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
-      case "processing":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-      case "pending":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "shipped":
-        return "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
-      case "canceled":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
+      case 'delivered':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'processing':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'pending':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'shipped':
+        return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30';
+      case 'canceled':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
       default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
@@ -316,7 +308,7 @@ function OrdersPage() {
           className="min-h-screen bg-[#0A0A0B] flex flex-col justify-center items-center p-4"
           style={{
             backgroundImage: `url(${overlay})`,
-            backgroundSize: "cover",
+            backgroundSize: 'cover',
           }}
         >
           <Loader />
@@ -335,8 +327,8 @@ function OrdersPage() {
       className="min-h-screen bg-[#0A0A0B] text-white"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       {/* Toast Notification */}
@@ -345,7 +337,7 @@ function OrdersPage() {
           className="fixed bottom-4 right-4 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-fadeIn
                     bg-black/80 backdrop-blur-md border border-white/10 max-w-md"
         >
-          {toast.type === "success" ? (
+          {toast.type === 'success' ? (
             <CheckCircle className="h-5 w-5 text-[#7C5DF9]" />
           ) : (
             <AlertCircle className="h-5 w-5 text-red-400" />
@@ -368,7 +360,7 @@ function OrdersPage() {
         {/* Header Section with Back Button */}
         <div className="flex items-center gap-3 mb-8">
           <button
-            onClick={() => navigate("/home")}
+            onClick={() => navigate('/home')}
             className="bg-white/10 hover:bg-white/15 transition-colors p-2 rounded-full cursor-pointer"
           >
             <ArrowLeft size={20} />
@@ -407,15 +399,15 @@ function OrdersPage() {
             </div>
             <h2 className="text-2xl font-bold mb-3">
               {searchTerm
-                ? "No Orders Match Your Search"
-                : activeFilter !== "All"
+                ? 'No Orders Match Your Search'
+                : activeFilter !== 'All'
                   ? `No ${activeFilter} Orders Found`
-                  : "No Orders Found"}
+                  : 'No Orders Found'}
             </h2>
             <p className="text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
               {searchTerm
                 ? `We couldn't find any orders matching "${searchTerm}". Try a different search term or clear your filters.`
-                : activeFilter !== "All"
+                : activeFilter !== 'All'
                   ? `You don't have any orders with status "${activeFilter}". Try selecting a different status filter.`
                   : "You haven't placed any orders yet. Start shopping to see your order history here!"}
             </p>
@@ -431,9 +423,9 @@ function OrdersPage() {
                 </button>
               )}
 
-              {activeFilter !== "All" && (
+              {activeFilter !== 'All' && (
                 <button
-                  onClick={() => setActiveFilter("All")}
+                  onClick={() => setActiveFilter('All')}
                   className="bg-white/10 hover:bg-white/15 transition-colors px-6 py-3 rounded-xl font-medium flex items-center gap-2 cursor-pointer"
                 >
                   <Filter size={18} />
@@ -493,22 +485,20 @@ function OrdersPage() {
                   className="md:hidden flex items-center justify-center gap-2 px-4 py-2.5 bg-[#7C5DF9]/20 border border-[#7C5DF9]/30 rounded-lg text-[#7C5DF9] hover:bg-[#7C5DF9]/30 transition-colors cursor-pointer"
                 >
                   <Filter size={16} />
-                  {showFilters ? "Hide Filters" : "Show Filters"}
+                  {showFilters ? 'Hide Filters' : 'Show Filters'}
                 </button>
               </div>
 
               {/* Status Filters - Hidden on Mobile Unless Toggled */}
-              <div
-                className={`mt-4 md:block ${showFilters ? "block" : "hidden"}`}
-              >
+              <div className={`mt-4 md:block ${showFilters ? 'block' : 'hidden'}`}>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => setActiveFilter("All")}
+                    onClick={() => setActiveFilter('All')}
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer 
                                         ${
-                                          activeFilter === "All"
-                                            ? "bg-[#7C5DF9] text-white"
-                                            : "bg-white/10 text-white/70 hover:bg-white/20"
+                                          activeFilter === 'All'
+                                            ? 'bg-[#7C5DF9] text-white'
+                                            : 'bg-white/10 text-white/70 hover:bg-white/20'
                                         }`}
                   >
                     <Inbox size={14} />
@@ -525,8 +515,8 @@ function OrdersPage() {
                       className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer 
                                             ${
                                               activeFilter === status
-                                                ? "bg-[#7C5DF9] text-white"
-                                                : "bg-white/10 text-white/70 hover:bg-white/20"
+                                                ? 'bg-[#7C5DF9] text-white'
+                                                : 'bg-white/10 text-white/70 hover:bg-white/20'
                                             }`}
                     >
                       {getStatusIcon(status)}
@@ -556,8 +546,8 @@ function OrdersPage() {
                   className={`bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden transition-all duration-300 shadow-lg 
                                     ${
                                       expandedOrder === order.order_id
-                                        ? "ring-2 ring-[#7C5DF9]/50"
-                                        : "hover:border-white/20"
+                                        ? 'ring-2 ring-[#7C5DF9]/50'
+                                        : 'hover:border-white/20'
                                     }`}
                 >
                   {/* Order Header */}
@@ -565,16 +555,14 @@ function OrdersPage() {
                     <div className="flex flex-col sm:flex-row justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-semibold">
-                            Order #{order.order_id}
-                          </h3>
+                          <h3 className="text-lg font-semibold">Order #{order.order_id}</h3>
                           <span
                             className={`px-3 py-1 text-xs rounded-full border ${getStatusBadge(
-                              order.order_status,
+                              order.order_status
                             )} flex items-center gap-1.5`}
                           >
                             {getStatusIcon(order.order_status)}
-                            {order.order_status || "Processing"}
+                            {order.order_status || 'Processing'}
                           </span>
                         </div>
                         <p className="text-sm text-gray-400 flex items-center gap-1.5">
@@ -599,10 +587,9 @@ function OrdersPage() {
                         onClick={() => toggleOrderExpand(order.order_id)}
                         className={`flex-grow flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-lg text-sm transition-all cursor-pointer
                                                 ${
-                                                  expandedOrder ===
-                                                  order.order_id
-                                                    ? "bg-[#7C5DF9]/20 text-[#7C5DF9] border border-[#7C5DF9]/30"
-                                                    : "bg-white/10 hover:bg-white/15 text-white"
+                                                  expandedOrder === order.order_id
+                                                    ? 'bg-[#7C5DF9]/20 text-[#7C5DF9] border border-[#7C5DF9]/30'
+                                                    : 'bg-white/10 hover:bg-white/15 text-white'
                                                 }`}
                       >
                         {expandedOrder === order.order_id ? (
@@ -631,10 +618,7 @@ function OrdersPage() {
                           {order.items.length > 0 ? (
                             order.items.map((item) => (
                               <div
-                                key={
-                                  item?.order_item_id ||
-                                  `missing-item-${Math.random()}`
-                                }
+                                key={item?.order_item_id || `missing-item-${Math.random()}`}
                                 className="flex items-center justify-between py-3 border-b border-white/5 last:border-0"
                               >
                                 <div className="flex items-center gap-3">
@@ -644,9 +628,7 @@ function OrdersPage() {
                                   <div>
                                     <div className="font-medium">
                                       {item?.title || (
-                                        <span className="text-red-400">
-                                          Game Not Available
-                                        </span>
+                                        <span className="text-red-400">Game Not Available</span>
                                       )}
                                     </div>
                                     {item ? (
@@ -662,9 +644,7 @@ function OrdersPage() {
                                   </div>
                                 </div>
                                 <div className="font-medium">
-                                  {item
-                                    ? `$${parseFloat(item.subtotal).toFixed(2)}`
-                                    : "N/A"}
+                                  {item ? `$${parseFloat(item.subtotal).toFixed(2)}` : 'N/A'}
                                 </div>
                               </div>
                             ))
@@ -677,8 +657,7 @@ function OrdersPage() {
                                 Games Not Available or Deleted
                               </p>
                               <p className="text-sm text-gray-400 mt-1">
-                                The items in this order are no longer available
-                                in our system.
+                                The items in this order are no longer available in our system.
                               </p>
                             </div>
                           )}
@@ -713,9 +692,7 @@ function OrdersPage() {
                             <div className="space-y-3">
                               <div className="flex justify-between">
                                 <span className="text-gray-400">Subtotal</span>
-                                <span>
-                                  ${parseFloat(order.total_amount).toFixed(2)}
-                                </span>
+                                <span>${parseFloat(order.total_amount).toFixed(2)}</span>
                               </div>
 
                               <div className="border-t border-white/10 my-2 pt-2">

@@ -2,24 +2,14 @@
  * UserManagement Component
  * Admin interface for managing user accounts
  ********************************************************/
-import { useState, useEffect } from "react";
-import {
-  Search,
-  RefreshCw,
-  Edit,
-  AlertCircle,
-  Check,
-  X,
-  User,
-  Trash2,
-  Save,
-} from "lucide-react";
-import overlay from "../../assets/overlay.png";
-import useAuthCheck from "../../hooks/useAuthCheck";
-import AdminSidebar from "../../components/AdminSidebar";
-import MobileAdminRedirect from "../../components/MobileAdminRedirect";
-import Loader from "../../components/Loader";
-import Toast from "../../components/Toast";
+import { useState, useEffect } from 'react';
+import { Search, RefreshCw, Edit, AlertCircle, Check, X, User, Trash2, Save } from 'lucide-react';
+import overlay from '../../assets/overlay.png';
+import useAuthCheck from '../../hooks/useAuthCheck';
+import AdminSidebar from '../../components/AdminSidebar';
+import MobileAdminRedirect from '../../components/MobileAdminRedirect';
+import Loader from '../../components/Loader';
+import Toast from '../../components/Toast';
 
 function UserManagement() {
   // Check admin authentication
@@ -29,28 +19,28 @@ function UserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [searching, setSearching] = useState(false);
   const [toast, setToast] = useState({
     visible: false,
-    message: "",
-    type: "success",
+    message: '',
+    type: 'success',
   });
   const [deleteConfirm, setDeleteConfirm] = useState({
     show: false,
     userId: null,
-    username: "",
+    username: '',
   });
 
   // User edit modal states
   const [showUserEdit, setShowUserEdit] = useState(false);
   const [editUser, setEditUser] = useState(null);
   const [editForm, setEditForm] = useState({
-    username: "",
-    email: "",
-    role: "",
-    password: "",
-    confirmPassword: "",
+    username: '',
+    email: '',
+    role: '',
+    password: '',
+    confirmPassword: '',
   });
   const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -82,19 +72,19 @@ function UserManagement() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3000/admin/users", {
-        credentials: "include",
+      const response = await fetch('http://localhost:3000/admin/users', {
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch users");
+        throw new Error('Failed to fetch users');
       }
 
       const data = await response.json();
       setUsers(data);
     } catch (error) {
-      console.error("Error fetching users:", error);
-      setError("Failed to load users. Please try again.");
+      console.error('Error fetching users:', error);
+      setError('Failed to load users. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -109,23 +99,21 @@ function UserManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/users/search?query=${encodeURIComponent(
-          query,
-        )}`,
+        `http://localhost:3000/admin/users/search?query=${encodeURIComponent(query)}`,
         {
-          credentials: "include",
-        },
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Search failed");
+        throw new Error(errorData.message || 'Search failed');
       }
 
       const data = await response.json();
       setUsers(data);
     } catch (error) {
-      console.error("Error searching users:", error);
+      console.error('Error searching users:', error);
       setError(`Search failed: ${error.message}`);
     } finally {
       setSearching(false);
@@ -136,10 +124,10 @@ function UserManagement() {
    * Notification Functions
    ********************************************************/
   // Show toast notification
-  const showToast = (message, type = "success") => {
+  const showToast = (message, type = 'success') => {
     setToast({ visible: true, message, type });
     setTimeout(() => {
-      setToast({ visible: false, message: "", type: "success" });
+      setToast({ visible: false, message: '', type: 'success' });
     }, 3000);
   };
 
@@ -150,11 +138,11 @@ function UserManagement() {
 
   // Format date for display
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
@@ -175,7 +163,7 @@ function UserManagement() {
     setDeleteConfirm({
       show: false,
       userId: null,
-      username: "",
+      username: '',
     });
   };
 
@@ -187,27 +175,27 @@ function UserManagement() {
       const response = await fetch(
         `http://localhost:3000/admin/users?userId=${deleteConfirm.userId}`,
         {
-          method: "DELETE",
-          credentials: "include",
-        },
+          method: 'DELETE',
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to delete user");
+        throw new Error(errorData.message || 'Failed to delete user');
       }
 
       // Remove user from state
       setUsers(users.filter((user) => user.user_id !== deleteConfirm.userId));
-      showToast(`User deleted successfully`, "success");
+      showToast(`User deleted successfully`, 'success');
     } catch (error) {
-      console.error("Error deleting user:", error);
-      showToast(`Failed to delete user: ${error.message}`, "error");
+      console.error('Error deleting user:', error);
+      showToast(`Failed to delete user: ${error.message}`, 'error');
     } finally {
       setDeleteConfirm({
         show: false,
         userId: null,
-        username: "",
+        username: '',
       });
     }
   };
@@ -219,8 +207,8 @@ function UserManagement() {
       username: user.username,
       email: user.email,
       role: user.role,
-      password: "",
-      confirmPassword: "",
+      password: '',
+      confirmPassword: '',
     });
     setFormErrors({});
     setShowUserEdit(true);
@@ -231,11 +219,11 @@ function UserManagement() {
     setShowUserEdit(false);
     setEditUser(null);
     setEditForm({
-      username: "",
-      email: "",
-      role: "",
-      password: "",
-      confirmPassword: "",
+      username: '',
+      email: '',
+      role: '',
+      password: '',
+      confirmPassword: '',
     });
     setFormErrors({});
   };
@@ -262,27 +250,27 @@ function UserManagement() {
     const errors = {};
 
     if (!editForm.username.trim()) {
-      errors.username = "Username is required";
+      errors.username = 'Username is required';
     }
 
     if (!editForm.email.trim()) {
-      errors.email = "Email is required";
+      errors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(editForm.email)) {
-      errors.email = "Email is invalid";
+      errors.email = 'Email is invalid';
     }
 
     if (!editForm.role) {
-      errors.role = "Role is required";
+      errors.role = 'Role is required';
     }
 
     // Only validate password if it's provided
     if (editForm.password) {
       if (editForm.password.length < 6) {
-        errors.password = "Password must be at least 6 characters";
+        errors.password = 'Password must be at least 6 characters';
       }
 
       if (editForm.password !== editForm.confirmPassword) {
-        errors.confirmPassword = "Passwords do not match";
+        errors.confirmPassword = 'Passwords do not match';
       }
     }
 
@@ -319,16 +307,16 @@ function UserManagement() {
       }
 
       const response = await fetch(endpoint, {
-        method: "PUT",
-        credentials: "include",
+        method: 'PUT',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update user information");
+        throw new Error('Failed to update user information');
       }
 
       // Update user in the list
@@ -341,15 +329,15 @@ function UserManagement() {
                 email: editForm.email,
                 role: editForm.role,
               }
-            : user,
-        ),
+            : user
+        )
       );
 
-      showToast("User updated successfully", "success");
+      showToast('User updated successfully', 'success');
       closeUserEdit();
     } catch (error) {
-      console.error("Error updating user:", error);
-      showToast(`Failed to update user: ${error.message}`, "error");
+      console.error('Error updating user:', error);
+      showToast(`Failed to update user: ${error.message}`, 'error');
     } finally {
       setSubmitting(false);
     }
@@ -360,8 +348,8 @@ function UserManagement() {
       className="min-h-screen bg-[#0A0A0B] text-white"
       style={{
         backgroundImage: `url(${overlay})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       {/* Mobile Redirect */}
@@ -387,9 +375,9 @@ function UserManagement() {
               <div className="bg-[#1A1A1C] border border-white/10 rounded-3xl p-5 max-w-sm w-full mx-4">
                 <h3 className="text-lg font-bold mb-2">Delete User</h3>
                 <p className="text-gray-400 mb-4 text-sm">
-                  Are you sure you want to delete{" "}
-                  <span className="text-white">{deleteConfirm.username}</span>?
-                  This action cannot be undone.
+                  Are you sure you want to delete{' '}
+                  <span className="text-white">{deleteConfirm.username}</span>? This action cannot
+                  be undone.
                 </p>
 
                 <div className="flex justify-end gap-3 mt-4">
@@ -423,9 +411,7 @@ function UserManagement() {
                     </div>
                     <div>
                       <h3 className="text-sm font-bold">Edit User</h3>
-                      <p className="text-xs text-gray-400">
-                        ID: {editUser.user_id}
-                      </p>
+                      <p className="text-xs text-gray-400">ID: {editUser.user_id}</p>
                     </div>
                   </div>
                   <button
@@ -451,14 +437,12 @@ function UserManagement() {
                             onChange={handleEditChange}
                             className={`w-full px-3 py-1.5 text-sm bg-black/30 border rounded-lg focus:outline-none focus:ring-1 ${
                               formErrors.username
-                                ? "border-red-500/50 focus:ring-red-500/30"
-                                : "border-white/10 focus:ring-[#7C5DF9]/50"
+                                ? 'border-red-500/50 focus:ring-red-500/30'
+                                : 'border-white/10 focus:ring-[#7C5DF9]/50'
                             } cursor-pointer`}
                           />
                           {formErrors.username && (
-                            <p className="mt-1 text-xs text-red-400">
-                              {formErrors.username}
-                            </p>
+                            <p className="mt-1 text-xs text-red-400">{formErrors.username}</p>
                           )}
                         </div>
 
@@ -472,8 +456,8 @@ function UserManagement() {
                             onChange={handleEditChange}
                             className={`w-full px-3 py-1.5 text-sm bg-black/30 border rounded-lg focus:outline-none focus:ring-1 ${
                               formErrors.role
-                                ? "border-red-500/50 focus:ring-red-500/30"
-                                : "border-white/10 focus:ring-[#7C5DF9]/50"
+                                ? 'border-red-500/50 focus:ring-red-500/30'
+                                : 'border-white/10 focus:ring-[#7C5DF9]/50'
                             } cursor-pointer`}
                           >
                             <option value="">Select Role</option>
@@ -481,9 +465,7 @@ function UserManagement() {
                             <option value="admin">Admin</option>
                           </select>
                           {formErrors.role && (
-                            <p className="mt-1 text-xs text-red-400">
-                              {formErrors.role}
-                            </p>
+                            <p className="mt-1 text-xs text-red-400">{formErrors.role}</p>
                           )}
                         </div>
                       </div>
@@ -499,25 +481,19 @@ function UserManagement() {
                           onChange={handleEditChange}
                           className={`w-full px-3 py-1.5 text-sm bg-black/30 border rounded-lg focus:outline-none focus:ring-1 ${
                             formErrors.email
-                              ? "border-red-500/50 focus:ring-red-500/30"
-                              : "border-white/10 focus:ring-[#7C5DF9]/50"
+                              ? 'border-red-500/50 focus:ring-red-500/30'
+                              : 'border-white/10 focus:ring-[#7C5DF9]/50'
                           } cursor-pointer`}
                         />
                         {formErrors.email && (
-                          <p className="mt-1 text-xs text-red-400">
-                            {formErrors.email}
-                          </p>
+                          <p className="mt-1 text-xs text-red-400">{formErrors.email}</p>
                         )}
                       </div>
 
                       <div className="border-t border-white/10 pt-3 mt-3">
                         <div className="flex justify-between items-center mb-2">
-                          <h3 className="text-xs font-medium">
-                            Change Password
-                          </h3>
-                          <span className="text-gray-400 text-xs">
-                            Optional
-                          </span>
+                          <h3 className="text-xs font-medium">Change Password</h3>
+                          <span className="text-gray-400 text-xs">Optional</span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
@@ -532,14 +508,12 @@ function UserManagement() {
                               onChange={handleEditChange}
                               className={`w-full px-3 py-1.5 text-sm bg-black/30 border rounded-lg focus:outline-none focus:ring-1 ${
                                 formErrors.password
-                                  ? "border-red-500/50 focus:ring-red-500/30"
-                                  : "border-white/10 focus:ring-[#7C5DF9]/50"
+                                  ? 'border-red-500/50 focus:ring-red-500/30'
+                                  : 'border-white/10 focus:ring-[#7C5DF9]/50'
                               } cursor-pointer`}
                             />
                             {formErrors.password && (
-                              <p className="mt-1 text-xs text-red-400">
-                                {formErrors.password}
-                              </p>
+                              <p className="mt-1 text-xs text-red-400">{formErrors.password}</p>
                             )}
                           </div>
 
@@ -554,8 +528,8 @@ function UserManagement() {
                               onChange={handleEditChange}
                               className={`w-full px-3 py-1.5 text-sm bg-black/30 border rounded-lg focus:outline-none focus:ring-1 ${
                                 formErrors.confirmPassword
-                                  ? "border-red-500/50 focus:ring-red-500/30"
-                                  : "border-white/10 focus:ring-[#7C5DF9]/50"
+                                  ? 'border-red-500/50 focus:ring-red-500/30'
+                                  : 'border-white/10 focus:ring-[#7C5DF9]/50'
                               } cursor-pointer`}
                             />
                             {formErrors.confirmPassword && (
@@ -603,9 +577,7 @@ function UserManagement() {
           {/* Header */}
           <header className="mb-8">
             <h1 className="text-3xl font-bold">User Management</h1>
-            <p className="text-gray-400">
-              Manage user accounts and permissions
-            </p>
+            <p className="text-gray-400">Manage user accounts and permissions</p>
           </header>
 
           {/* Search Bar */}
@@ -626,7 +598,7 @@ function UserManagement() {
                 {searchTerm && (
                   <button
                     onClick={() => {
-                      setSearchTerm("");
+                      setSearchTerm('');
                       fetchUsers();
                     }}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
@@ -690,12 +662,12 @@ function UserManagement() {
                   <p className="text-gray-400 mb-4">
                     {searchTerm
                       ? `No users match your search for "${searchTerm}"`
-                      : "There are no users in the database"}
+                      : 'There are no users in the database'}
                   </p>
                   {searchTerm && (
                     <button
                       onClick={() => {
-                        setSearchTerm("");
+                        setSearchTerm('');
                         fetchUsers();
                       }}
                       className="px-4 py-2 bg-[#7C5DF9] hover:bg-[#6A4FF0] rounded-xl transition-colors cursor-pointer"
@@ -745,18 +717,16 @@ function UserManagement() {
                               <div className="font-medium">{user.username}</div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {user.email}
-                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">{user.email}</td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
                               className={`px-2 py-1 text-xs rounded-lg ${
-                                user.role === "admin"
-                                  ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                                  : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                                user.role === 'admin'
+                                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                                  : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                               }`}
                             >
-                              {user.role === "admin" ? "Admin" : "User"}
+                              {user.role === 'admin' ? 'Admin' : 'User'}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
@@ -772,9 +742,7 @@ function UserManagement() {
                                 <Edit size={16} />
                               </button>
                               <button
-                                onClick={() =>
-                                  confirmDeleteUser(user.user_id, user.username)
-                                }
+                                onClick={() => confirmDeleteUser(user.user_id, user.username)}
                                 className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors cursor-pointer"
                                 title="Delete User"
                               >
