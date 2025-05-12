@@ -85,7 +85,7 @@ function CartPage() {
       setLoading(true);
       try {
         // Make a real API call to fetch cart items
-        const response = await fetch('http://localhost:3000/cart', {
+        const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/cart', {
           credentials: 'include',
         });
 
@@ -122,7 +122,7 @@ function CartPage() {
     setProcessingItem(itemId);
     try {
       // Updated to use POST and the correct parameter name
-      const response = await fetch(`http://localhost:3000/cart/update`, {
+      const response = await fetch(`https://e31a-59-103-246-18.ngrok-free.app/cart/update`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -145,7 +145,7 @@ function CartPage() {
       }
 
       // Refresh cart data after update
-      const cartResponse = await fetch('http://localhost:3000/cart', {
+      const cartResponse = await fetch('https://e31a-59-103-246-18.ngrok-free.app/cart', {
         credentials: 'include',
       });
 
@@ -176,7 +176,7 @@ function CartPage() {
   const removeItem = async (itemId) => {
     setProcessingItem(itemId);
     try {
-      const response = await fetch(`http://localhost:3000/cart/remove`, {
+      const response = await fetch(`https://e31a-59-103-246-18.ngrok-free.app/cart/remove`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -192,7 +192,7 @@ function CartPage() {
       }
 
       // Refresh cart data after removal
-      const cartResponse = await fetch('http://localhost:3000/cart', {
+      const cartResponse = await fetch('https://e31a-59-103-246-18.ngrok-free.app/cart', {
         credentials: 'include',
       });
 
@@ -247,7 +247,7 @@ function CartPage() {
 
     setCheckingOut(true);
     try {
-      const response = await fetch(`http://localhost:3000/orders/create`, {
+      const response = await fetch(`https://e31a-59-103-246-18.ngrok-free.app/orders/create`, {
         method: 'POST',
         credentials: 'include',
         headers: {

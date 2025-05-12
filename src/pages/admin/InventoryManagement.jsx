@@ -69,7 +69,7 @@ function InventoryManagement() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3000/admin/inventory', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/admin/inventory', {
         credentials: 'include',
       });
 
@@ -97,7 +97,7 @@ function InventoryManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/games/search?title=${encodeURIComponent(title)}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/games/search?title=${encodeURIComponent(title)}`,
         {
           credentials: 'include',
         }
@@ -218,16 +218,19 @@ function InventoryManagement() {
   // Update stock quantity in database
   const updateStockQuantity = async (gameId, stockQuantity) => {
     try {
-      const response = await fetch(`http://localhost:3000/admin/inventory?gameId=${gameId}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          stockQuantity: stockQuantity,
-        }),
-      });
+      const response = await fetch(
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/inventory?gameId=${gameId}`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            stockQuantity: stockQuantity,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to update inventory');

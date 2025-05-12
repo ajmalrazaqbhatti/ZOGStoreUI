@@ -72,7 +72,7 @@ function UserManagement() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3000/admin/users', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/admin/users', {
         credentials: 'include',
       });
 
@@ -99,7 +99,7 @@ function UserManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/users/search?query=${encodeURIComponent(query)}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/users/search?query=${encodeURIComponent(query)}`,
         {
           credentials: 'include',
         }
@@ -173,7 +173,7 @@ function UserManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/users?userId=${deleteConfirm.userId}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/users?userId=${deleteConfirm.userId}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -299,11 +299,11 @@ function UserManagement() {
       }
 
       // Determine if this is a password-specific update
-      let endpoint = `http://localhost:3000/admin/users?userId=${editUser.user_id}`;
+      let endpoint = `https://e31a-59-103-246-18.ngrok-free.app/admin/users?userId=${editUser.user_id}`;
 
       // Use a different endpoint if password is being updated
       if (requestBody.password) {
-        endpoint = `http://localhost:3000/admin/users/password?userId=${editUser.user_id}`;
+        endpoint = `https://e31a-59-103-246-18.ngrok-free.app/admin/users/password?userId=${editUser.user_id}`;
       }
 
       const response = await fetch(endpoint, {

@@ -64,7 +64,7 @@ function AdminSidebar() {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:3000/auth/logout', {
+      await fetch('https://e31a-59-103-246-18.ngrok-free.app/auth/logout', {
         method: 'GET',
         credentials: 'include',
       });

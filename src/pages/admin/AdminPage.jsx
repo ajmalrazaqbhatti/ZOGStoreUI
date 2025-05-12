@@ -45,7 +45,7 @@ function AdminPage() {
   // Get dashboard statistics
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch('http://localhost:3000/dashboard/stats', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/dashboard/stats', {
         credentials: 'include',
       });
 
@@ -64,9 +64,12 @@ function AdminPage() {
   // Get top selling games
   const fetchTopGames = async () => {
     try {
-      const response = await fetch('http://localhost:3000/dashboard/top-games', {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        'https://e31a-59-103-246-18.ngrok-free.app/dashboard/top-games',
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch top games');

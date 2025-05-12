@@ -126,7 +126,7 @@ function GameManagement() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3000/games', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games', {
         credentials: 'include',
       });
 
@@ -152,7 +152,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/games/filter?genre=${encodeURIComponent(genre)}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/games/filter?genre=${encodeURIComponent(genre)}`,
         {
           credentials: 'include',
         }
@@ -182,7 +182,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/games/search?title=${encodeURIComponent(title)}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/games/search?title=${encodeURIComponent(title)}`,
         {
           credentials: 'include',
         }
@@ -206,7 +206,7 @@ function GameManagement() {
   // Get available genres
   const fetchGenres = async () => {
     try {
-      const response = await fetch('http://localhost:3000/games/genres', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games/genres', {
         credentials: 'include',
       });
 
@@ -230,7 +230,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/games/delete?gameId=${gameToDelete.game_id}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/games/delete?gameId=${gameToDelete.game_id}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -372,7 +372,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/games/update?gameId=${gameToEdit.game_id}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/games/update?gameId=${gameToEdit.game_id}`,
         {
           method: 'PUT',
           credentials: 'include',
@@ -506,7 +506,7 @@ function GameManagement() {
     setAddingGame(true);
 
     try {
-      const response = await fetch(`http://localhost:3000/admin/games/insert`, {
+      const response = await fetch(`https://e31a-59-103-246-18.ngrok-free.app/admin/games/insert`, {
         method: 'POST',
         credentials: 'include',
         headers: {

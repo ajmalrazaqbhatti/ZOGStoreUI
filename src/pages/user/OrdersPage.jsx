@@ -75,9 +75,12 @@ function OrdersPage() {
         queryString = `?status=${activeFilter}`;
       }
 
-      const response = await fetch(`http://localhost:3000/orders${queryString}`, {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `https://e31a-59-103-246-18.ngrok-free.app/orders${queryString}`,
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
@@ -104,9 +107,12 @@ function OrdersPage() {
   const searchOrderById = async (orderId) => {
     setIsSearching(true);
     try {
-      const response = await fetch(`http://localhost:3000/orders/search?orderId=${orderId}`, {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `https://e31a-59-103-246-18.ngrok-free.app/orders/search?orderId=${orderId}`,
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         if (response.status === 404) {

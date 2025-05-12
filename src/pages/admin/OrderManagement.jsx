@@ -72,9 +72,12 @@ function OrderManagement() {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:3000/admin/orders/search?orderId=${orderId}`, {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/orders/search?orderId=${orderId}`,
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -140,7 +143,7 @@ function OrderManagement() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3000/admin/orders', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/admin/orders', {
         credentials: 'include',
       });
 
@@ -246,7 +249,7 @@ function OrderManagement() {
     setProcessingOrder(orderToDelete.order_id);
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/orders?orderId=${orderToDelete.order_id}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/orders?orderId=${orderToDelete.order_id}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -304,7 +307,7 @@ function OrderManagement() {
     setProcessingOrder(statusChangeOrder.order_id);
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
+        `https://e31a-59-103-246-18.ngrok-free.app/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
         {
           method: 'PUT',
           credentials: 'include',

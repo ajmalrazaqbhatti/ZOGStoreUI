@@ -104,7 +104,7 @@ function SignupPage() {
     setApiError('');
 
     try {
-      const response = await fetch('http://localhost:3000/auth/signup', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

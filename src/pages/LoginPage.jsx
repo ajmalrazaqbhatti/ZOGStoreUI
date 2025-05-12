@@ -22,7 +22,7 @@ function LoginPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('http://localhost:3000/auth/status', {
+        const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/auth/status', {
           method: 'GET',
           credentials: 'include',
         });
@@ -63,7 +63,7 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/auth/login', {
         method: 'POST',
         credentials: 'include',
         headers: {
