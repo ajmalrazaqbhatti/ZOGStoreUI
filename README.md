@@ -27,7 +27,7 @@ ZOGStore UI is a responsive web application that provides a seamless shopping ex
 ### Prerequisites
 
 - Node.js (v16+)
-- npm or yarn
+- npm
 
 ### Installation
 
@@ -42,16 +42,12 @@ ZOGStore UI is a responsive web application that provides a seamless shopping ex
 
    ```
    npm install
-   # or
-   yarn
    ```
 
 3. Start the development server
 
    ```
    npm run dev
-   # or
-   yarn dev
    ```
 
 4. Open your browser and navigate to `http://localhost:5173`
@@ -74,19 +70,19 @@ ZOGStoreUI/
 ├── .eslintrc.cjs    # ESLint configuration
 ├── index.html       # HTML template
 ├── package.json     # Project dependencies and scripts
-└── vite.config.js   # Vite configuration
+└── vite.config.js   # Vite development configuration
 ```
 
 ## Scripts
 
 - `npm run dev` - Start development server
-- `npm run build` - Build for production
 - `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build locally
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check code formatting
 
 ## Contributing
 
-Please read our contribution guidelines before submitting a pull request.
+Please read our contribution guidelines before submitting a pull request. This project is for development purposes only.
 
 ## License
 
