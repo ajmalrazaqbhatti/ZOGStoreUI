@@ -32,7 +32,7 @@ function HomePage() {
   // Get current cart item count
   const fetchCartCount = async () => {
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/cart/count', {
+      const response = await fetch('https://zogstorebackend-production.up.railway.app/cart/count', {
         credentials: 'include',
       });
 
@@ -85,7 +85,7 @@ function HomePage() {
 
       // Fetch all games
       setLoading(true);
-      fetch('https://e31a-59-103-246-18.ngrok-free.app/games', {
+      fetch('https://zogstorebackend-production.up.railway.app/games', {
         credentials: 'include',
       })
         .then((response) => {
@@ -110,9 +110,12 @@ function HomePage() {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games/genres', {
-          credentials: 'include',
-        });
+        const response = await fetch(
+          'https://zogstorebackend-production.up.railway.app/games/genres',
+          {
+            credentials: 'include',
+          }
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch genres');
         }
@@ -134,12 +137,12 @@ function HomePage() {
     try {
       let response;
       if (genre === 'All') {
-        response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games', {
+        response = await fetch('https://zogstorebackend-production.up.railway.app/games', {
           credentials: 'include',
         });
       } else {
         response = await fetch(
-          `https://e31a-59-103-246-18.ngrok-free.app/games/filter?genre=${genre}`,
+          `https://zogstorebackend-production.up.railway.app/games/filter?genre=${genre}`,
           {
             credentials: 'include',
           }
@@ -164,7 +167,7 @@ function HomePage() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games', {
+        const response = await fetch('https://zogstorebackend-production.up.railway.app/games', {
           credentials: 'include',
         });
         if (!response.ok) {
@@ -193,7 +196,7 @@ function HomePage() {
 
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/games/search?title=${encodeURIComponent(term)}`,
+        `https://zogstorebackend-production.up.railway.app/games/search?title=${encodeURIComponent(term)}`,
         {
           credentials: 'include',
         }
@@ -228,7 +231,7 @@ function HomePage() {
     navigate('/', { replace: true });
 
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games', {
+      const response = await fetch('https://zogstorebackend-production.up.railway.app/games', {
         credentials: 'include',
       });
 

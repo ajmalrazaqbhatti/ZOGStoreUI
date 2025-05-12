@@ -76,7 +76,7 @@ function OrdersPage() {
       }
 
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/orders${queryString}`,
+        `https://zogstorebackend-production.up.railway.app/orders${queryString}`,
         {
           credentials: 'include',
         }
@@ -108,7 +108,7 @@ function OrdersPage() {
     setIsSearching(true);
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/orders/search?orderId=${orderId}`,
+        `https://zogstorebackend-production.up.railway.app/orders/search?orderId=${orderId}`,
         {
           credentials: 'include',
         }

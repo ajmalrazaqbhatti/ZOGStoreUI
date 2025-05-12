@@ -57,7 +57,7 @@ function GameDetails() {
         try {
           setLoading(true);
           const response = await fetch(
-            `https://e31a-59-103-246-18.ngrok-free.app/games/game?gameId=${encodeURIComponent(gameId)}`,
+            `https://zogstorebackend-production.up.railway.app/games/game?gameId=${encodeURIComponent(gameId)}`,
             {
               credentials: 'include',
             }
@@ -95,7 +95,7 @@ function GameDetails() {
   // Get current cart item count
   const fetchCartCount = async () => {
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/cart/count', {
+      const response = await fetch('https://zogstorebackend-production.up.railway.app/cart/count', {
         credentials: 'include',
       });
 
@@ -143,7 +143,7 @@ function GameDetails() {
 
     setAddingToCart(true);
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/cart/add', {
+      const response = await fetch('https://zogstorebackend-production.up.railway.app/cart/add', {
         method: 'POST',
         credentials: 'include',
         headers: {

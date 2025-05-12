@@ -126,7 +126,7 @@ function GameManagement() {
     setError(null);
 
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games', {
+      const response = await fetch('https://zogstorebackend-production.up.railway.app/games', {
         credentials: 'include',
       });
 
@@ -152,7 +152,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/games/filter?genre=${encodeURIComponent(genre)}`,
+        `https://zogstorebackend-production.up.railway.app/games/filter?genre=${encodeURIComponent(genre)}`,
         {
           credentials: 'include',
         }
@@ -182,7 +182,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/games/search?title=${encodeURIComponent(title)}`,
+        `https://zogstorebackend-production.up.railway.app/games/search?title=${encodeURIComponent(title)}`,
         {
           credentials: 'include',
         }
@@ -206,9 +206,12 @@ function GameManagement() {
   // Get available genres
   const fetchGenres = async () => {
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/games/genres', {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        'https://zogstorebackend-production.up.railway.app/games/genres',
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch genres');
@@ -230,7 +233,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/admin/games/delete?gameId=${gameToDelete.game_id}`,
+        `https://zogstorebackend-production.up.railway.app/admin/games/delete?gameId=${gameToDelete.game_id}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -372,7 +375,7 @@ function GameManagement() {
 
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/admin/games/update?gameId=${gameToEdit.game_id}`,
+        `https://zogstorebackend-production.up.railway.app/admin/games/update?gameId=${gameToEdit.game_id}`,
         {
           method: 'PUT',
           credentials: 'include',
@@ -506,21 +509,24 @@ function GameManagement() {
     setAddingGame(true);
 
     try {
-      const response = await fetch(`https://e31a-59-103-246-18.ngrok-free.app/admin/games/insert`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: addForm.title,
-          description: addForm.description,
-          price: addForm.price,
-          genre: addForm.genre,
-          platform: addForm.platform,
-          gameicon: addForm.gameicon,
-        }),
-      });
+      const response = await fetch(
+        `https://zogstorebackend-production.up.railway.app/admin/games/insert`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: addForm.title,
+            description: addForm.description,
+            price: addForm.price,
+            genre: addForm.genre,
+            platform: addForm.platform,
+            gameicon: addForm.gameicon,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to add game');

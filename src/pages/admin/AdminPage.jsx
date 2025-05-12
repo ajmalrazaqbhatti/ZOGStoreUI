@@ -45,9 +45,12 @@ function AdminPage() {
   // Get dashboard statistics
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/dashboard/stats', {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        'https://zogstorebackend-production.up.railway.app/dashboard/stats',
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch dashboard statistics');
@@ -65,7 +68,7 @@ function AdminPage() {
   const fetchTopGames = async () => {
     try {
       const response = await fetch(
-        'https://e31a-59-103-246-18.ngrok-free.app/dashboard/top-games',
+        'https://zogstorebackend-production.up.railway.app/dashboard/top-games',
         {
           credentials: 'include',
         }

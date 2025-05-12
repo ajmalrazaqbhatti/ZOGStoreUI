@@ -73,7 +73,7 @@ function OrderManagement() {
 
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/admin/orders/search?orderId=${orderId}`,
+        `https://zogstorebackend-production.up.railway.app/admin/orders/search?orderId=${orderId}`,
         {
           credentials: 'include',
         }
@@ -143,9 +143,12 @@ function OrderManagement() {
     setError(null);
 
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/admin/orders', {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        'https://zogstorebackend-production.up.railway.app/admin/orders',
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
@@ -249,7 +252,7 @@ function OrderManagement() {
     setProcessingOrder(orderToDelete.order_id);
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/admin/orders?orderId=${orderToDelete.order_id}`,
+        `https://zogstorebackend-production.up.railway.app/admin/orders?orderId=${orderToDelete.order_id}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -307,7 +310,7 @@ function OrderManagement() {
     setProcessingOrder(statusChangeOrder.order_id);
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
+        `https://zogstorebackend-production.up.railway.app/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
         {
           method: 'PUT',
           credentials: 'include',

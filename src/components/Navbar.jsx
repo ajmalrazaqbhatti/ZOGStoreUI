@@ -41,13 +41,16 @@ function Navbar({ cartCount = 0 }) {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/auth/logout', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        'https://zogstorebackend-production.up.railway.app/auth/logout',
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (response.ok) {
         console.log('User logged out successfully');
@@ -68,7 +71,7 @@ function Navbar({ cartCount = 0 }) {
     try {
       // Call the search API
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/games/search?title=${encodeURIComponent(searchTerm)}`,
+        `https://zogstorebackend-production.up.railway.app/games/search?title=${encodeURIComponent(searchTerm)}`,
         {
           method: 'GET',
           credentials: 'include',

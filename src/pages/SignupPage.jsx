@@ -104,13 +104,16 @@ function SignupPage() {
     setApiError('');
 
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        'https://zogstorebackend-production.up.railway.app/auth/signup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
 

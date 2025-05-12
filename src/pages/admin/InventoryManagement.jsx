@@ -69,9 +69,12 @@ function InventoryManagement() {
     setError(null);
 
     try {
-      const response = await fetch('https://e31a-59-103-246-18.ngrok-free.app/admin/inventory', {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        'https://zogstorebackend-production.up.railway.app/admin/inventory',
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch inventory');
@@ -97,7 +100,7 @@ function InventoryManagement() {
 
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/games/search?title=${encodeURIComponent(title)}`,
+        `https://zogstorebackend-production.up.railway.app/games/search?title=${encodeURIComponent(title)}`,
         {
           credentials: 'include',
         }
@@ -219,7 +222,7 @@ function InventoryManagement() {
   const updateStockQuantity = async (gameId, stockQuantity) => {
     try {
       const response = await fetch(
-        `https://e31a-59-103-246-18.ngrok-free.app/admin/inventory?gameId=${gameId}`,
+        `https://zogstorebackend-production.up.railway.app/admin/inventory?gameId=${gameId}`,
         {
           method: 'PUT',
           credentials: 'include',
