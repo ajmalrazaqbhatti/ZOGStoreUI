@@ -6,12 +6,12 @@ body {
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }
 
 .animate-fadeIn {
@@ -31,7 +31,6 @@ body {
   animation: slideDown 0.3s ease-out forwards;
 }
 
-/* Smoother transitions for all interactive elements */
 button,
 a,
 input,

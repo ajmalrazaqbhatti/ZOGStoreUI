@@ -41,7 +41,6 @@ function LoginPage() {
         }
       } catch (error) {
         console.error('Auth check error:', error);
-        // If error, we stay on login page
       }
     };
 
@@ -78,7 +77,7 @@ function LoginPage() {
         throw new Error(data.message || 'Login failed');
       }
 
-      // Store user data in localStorage or context if needed
+      // Store user data in localStorage
       localStorage.setItem('user', JSON.stringify(data.user));
 
       // Check user role and redirect accordingly
