@@ -85,7 +85,7 @@ function CartPage() {
       setLoading(true);
       try {
         // Make a real API call to fetch cart items
-        const response = await fetch('https://zogstorebackend-production.up.railway.app/cart', {
+        const response = await fetch('http://localhost:3000/cart', {
           credentials: 'include',
         });
 
@@ -122,20 +122,17 @@ function CartPage() {
     setProcessingItem(itemId);
     try {
       // Updated to use POST and the correct parameter name
-      const response = await fetch(
-        `https://zogstorebackend-production.up.railway.app/cart/update`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            cartId: itemId, // Changed from id to cartId
-            quantity: newQuantity,
-          }),
-        }
-      );
+      const response = await fetch(`http://localhost:3000/cart/update`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cartId: itemId, // Changed from id to cartId
+          quantity: newQuantity,
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -148,7 +145,7 @@ function CartPage() {
       }
 
       // Refresh cart data after update
-      const cartResponse = await fetch('https://zogstorebackend-production.up.railway.app/cart', {
+      const cartResponse = await fetch('http://localhost:3000/cart', {
         credentials: 'include',
       });
 
@@ -179,26 +176,23 @@ function CartPage() {
   const removeItem = async (itemId) => {
     setProcessingItem(itemId);
     try {
-      const response = await fetch(
-        `https://zogstorebackend-production.up.railway.app/cart/remove`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            cartId: itemId, // Changed from 'id' to 'cartId' to match backend
-          }),
-        }
-      );
+      const response = await fetch(`http://localhost:3000/cart/remove`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cartId: itemId, // Changed from 'id' to 'cartId' to match backend
+        }),
+      });
 
       if (!response.ok) {
         throw new Error('Failed to remove cart item');
       }
 
       // Refresh cart data after removal
-      const cartResponse = await fetch('https://zogstorebackend-production.up.railway.app/cart', {
+      const cartResponse = await fetch('http://localhost:3000/cart', {
         credentials: 'include',
       });
 
@@ -253,19 +247,16 @@ function CartPage() {
 
     setCheckingOut(true);
     try {
-      const response = await fetch(
-        `https://zogstorebackend-production.up.railway.app/orders/create`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            paymentMethod: paymentMethod,
-          }),
-        }
-      );
+      const response = await fetch(`http://localhost:3000/orders/create`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentMethod: paymentMethod,
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();

@@ -64,7 +64,7 @@ function AdminSidebar() {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      await fetch('https://zogstorebackend-production.up.railway.app/auth/logout', {
+      await fetch('http://localhost:3000/auth/logout', {
         method: 'GET',
         credentials: 'include',
       });

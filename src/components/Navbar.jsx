@@ -41,16 +41,13 @@ function Navbar({ cartCount = 0 }) {
   // Handle user logout
   const handleLogout = async () => {
     try {
-      const response = await fetch(
-        'https://zogstorebackend-production.up.railway.app/auth/logout',
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await fetch('http://localhost:3000/auth/logout', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (response.ok) {
         console.log('User logged out successfully');
@@ -71,7 +68,7 @@ function Navbar({ cartCount = 0 }) {
     try {
       // Call the search API
       const response = await fetch(
-        `https://zogstorebackend-production.up.railway.app/games/search?title=${encodeURIComponent(searchTerm)}`,
+        `http://localhost:3000/games/search?title=${encodeURIComponent(searchTerm)}`,
         {
           method: 'GET',
           credentials: 'include',

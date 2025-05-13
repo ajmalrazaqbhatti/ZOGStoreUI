@@ -72,12 +72,9 @@ function OrderManagement() {
     setError(null);
 
     try {
-      const response = await fetch(
-        `https://zogstorebackend-production.up.railway.app/admin/orders/search?orderId=${orderId}`,
-        {
-          credentials: 'include',
-        }
-      );
+      const response = await fetch(`http://localhost:3000/admin/orders/search?orderId=${orderId}`, {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -109,8 +106,8 @@ function OrderManagement() {
   useEffect(() => {
     if (!orders.length) return;
 
-    // If searching by ID with numeric-only search term, use the API
-    if (searchTerm && /^\d+$/.test(searchTerm.trim())) {
+    // If searching by ID, use the API
+    if (searchTerm) {
       searchOrderById(searchTerm.trim());
       return;
     }
@@ -124,16 +121,6 @@ function OrderManagement() {
       );
     }
 
-    // Apply client-side search if not numeric-only
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (order) =>
-          order.order_id.toString().includes(searchTerm) ||
-          (order.username && order.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (order.email && order.email.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    }
-
     setFilteredOrders(filtered);
   }, [searchTerm, statusFilter, orders]);
 
@@ -143,12 +130,9 @@ function OrderManagement() {
     setError(null);
 
     try {
-      const response = await fetch(
-        'https://zogstorebackend-production.up.railway.app/admin/orders',
-        {
-          credentials: 'include',
-        }
-      );
+      const response = await fetch('http://localhost:3000/admin/orders', {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
@@ -252,7 +236,7 @@ function OrderManagement() {
     setProcessingOrder(orderToDelete.order_id);
     try {
       const response = await fetch(
-        `https://zogstorebackend-production.up.railway.app/admin/orders?orderId=${orderToDelete.order_id}`,
+        `http://localhost:3000/admin/orders?orderId=${orderToDelete.order_id}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -310,7 +294,7 @@ function OrderManagement() {
     setProcessingOrder(statusChangeOrder.order_id);
     try {
       const response = await fetch(
-        `https://zogstorebackend-production.up.railway.app/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
+        `http://localhost:3000/admin/orders/status?orderId=${statusChangeOrder.order_id}`,
         {
           method: 'PUT',
           credentials: 'include',
@@ -500,7 +484,7 @@ function OrderManagement() {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Search by order ID or customer info"
+                    placeholder="Search by order ID"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C5DF9]/50"
@@ -589,6 +573,7 @@ function OrderManagement() {
                         ? `No orders with status "${statusFilter}" found`
                         : 'There are no orders in the database'}
                   </p>
+
                   <button
                     onClick={() => {
                       setSearchTerm('');

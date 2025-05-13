@@ -57,7 +57,7 @@ function GameDetails() {
         try {
           setLoading(true);
           const response = await fetch(
-            `https://zogstorebackend-production.up.railway.app/games/game?gameId=${encodeURIComponent(gameId)}`,
+            `http://localhost:3000/games/game?gameId=${encodeURIComponent(gameId)}`,
             {
               credentials: 'include',
             }
@@ -95,7 +95,7 @@ function GameDetails() {
   // Get current cart item count
   const fetchCartCount = async () => {
     try {
-      const response = await fetch('https://zogstorebackend-production.up.railway.app/cart/count', {
+      const response = await fetch('http://localhost:3000/cart/count', {
         credentials: 'include',
       });
 
@@ -143,7 +143,7 @@ function GameDetails() {
 
     setAddingToCart(true);
     try {
-      const response = await fetch('https://zogstorebackend-production.up.railway.app/cart/add', {
+      const response = await fetch('http://localhost:3000/cart/add', {
         method: 'POST',
         credentials: 'include',
         headers: {

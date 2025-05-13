@@ -45,12 +45,9 @@ function AdminPage() {
   // Get dashboard statistics
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch(
-        'https://zogstorebackend-production.up.railway.app/dashboard/stats',
-        {
-          credentials: 'include',
-        }
-      );
+      const response = await fetch('http://localhost:3000/dashboard/stats', {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         throw new Error('Failed to fetch dashboard statistics');
@@ -67,12 +64,9 @@ function AdminPage() {
   // Get top selling games
   const fetchTopGames = async () => {
     try {
-      const response = await fetch(
-        'https://zogstorebackend-production.up.railway.app/dashboard/top-games',
-        {
-          credentials: 'include',
-        }
-      );
+      const response = await fetch('http://localhost:3000/dashboard/top-games', {
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         throw new Error('Failed to fetch top games');

@@ -20,13 +20,10 @@ const useAuthCheck = () => {
     const checkAuthentication = async () => {
       try {
         // Request auth status from backend
-        const response = await fetch(
-          'https://zogstorebackend-production.up.railway.app/auth/status',
-          {
-            method: 'GET',
-            credentials: 'include',
-          }
-        );
+        const response = await fetch('http://localhost:3000/auth/status', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
         if (response.ok) {
           const data = await response.json();
